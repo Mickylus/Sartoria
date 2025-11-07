@@ -5,17 +5,6 @@
 // Gruppo: Michele Valiati & Filippo Mancini
 // Progetto Sartoria
 
-/*
-Analisi:
-	Struct:
-
-	Funzioni:
-
-	Variabili:
-
-	Operazioni:
-
-*/
 
 int main(){
 	return 0;
