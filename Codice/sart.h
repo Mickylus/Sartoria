@@ -1,4 +1,4 @@
-// Libreria fatta da: Michele Valiati
+// Libreria che contiene funzioni minori
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
