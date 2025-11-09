@@ -23,9 +23,16 @@
 #define FILEINVENTARIO "Inventario.txt"
 #define FILEPROGETTI "Progetti.txt" 
 
+// pulizia schermo compatibile con i 2 sistemi operativi
+#ifdef _WIN32
+	#define CLEAR "cls"
+#else
+	#define CLEAR "clear"
+#endif
+
 //File
 // File usato per salvare l'inventario
-FILE *Finv;
+FILE *FInv;
 // File usato per salvare i progetti
 FILE *FProg;
 
@@ -99,6 +106,11 @@ void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
 
 // Main
 int main(){
+	int RCount=0,PCount=0,scelta,err;
+	char val[10],filter[MAXSTRING];
+	do{
+		scelta=menu();
+	}while(scelta!=41);
 	return 0;
 }
 /*
@@ -123,6 +135,66 @@ Funzione che stampa il menu:
 */
 int menu(){
 	int s1,s2;
-	
+	char val[10];
+	do{
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		printf("\t1) Gestione rotoli\n");
+		printf("\t2) Gestione progetti\n");
+		printf("\t3) Gestione inventario\n");
+		printf("\t4) Esci\n");
+		printf("Scelta: ");
+		scanf(" %s",val);
+		s1=checkVal(val);
+		if(s1<=0 || s1 > 4){
+			printf("ERRRORE: Scelta non valida!!\n");
+			pausa("Continua...\n");
+			system(CLEAR);
+		}
+	}while(s1<=0 || s1 > 4);
+	system("cls");
+	do{
+		switch(s1){
+			case 1:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Sartoria: Rotoli   |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("\t1) Nuovo rotolo\n");
+				printf("\t2) Modifica rotolo\n");
+				printf("\t3) Elimina rotolo\n");
+				break;
+			case 2:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Sartoria: Progetti |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("\t1) Nuovo progetto\n");
+				printf("\t2) Modifica progetto\n");
+				printf("\t3) Elimina progetto\n");
+				printf("\t4) Elenco progetti\n");
+				printf("\t5) Avvia taglio\n");
+				break;
+			case 3:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Sartoria: Inventario| Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("\t1) Elenco tessuti\n");
+				printf("\t2) Controllo tessuti\n");
+				printf("\t3) Rotazione scorte\n");
+				printf("\t4) Salvataggio manuale\n");
+				break;
+			case 4:
+				return 41;
+		}
+		printf("Scelta: ");
+		scanf(" %s",val);
+		s2=checkVal(val);
+		if((s1==1 && (s2 <=0 || s2 > 3)) || (s1==2 && (s2<=0 || s2 > 5)) || (s1==3 && (s2 <= 0 || s2 >4))){
+			printf("ERRORE: Scelta non valida!!\n");
+			pausa("Continua...\n");
+			system(CLEAR);
+		}
+	}while((s1==1 && (s2 <=0 || s2 > 3)) || (s1==2 && (s2<=0 || s2 > 5)) || (s1==3 && (s2 <= 0 || s2 >4)));
+	system(CLEAR);
 	return s1*10 + s2;
 }
