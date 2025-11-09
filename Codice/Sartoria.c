@@ -25,9 +25,9 @@
 
 // pulizia schermo compatibile con i 2 sistemi operativi
 #ifdef _WIN32
-	#define CLEAR "cls"
+	#define CLEAR "cls"		// Compatibile con Windows
 #else
-	#define CLEAR "clear"
+	#define CLEAR "clear"	// Compatibile con Linux e MacOS
 #endif
 
 //File
