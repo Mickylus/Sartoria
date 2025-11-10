@@ -110,6 +110,18 @@ int main(){
 	char val[10],filter[MAXSTRING];
 	do{
 		scelta=menu();
+		switch(scelta){
+			case 41:
+				salvaInventario(RCount,PCount);				// Salvo il programma
+				printf("Uscita in corso...\n");				// Termino il programma
+				break;
+			default:
+				printf("Si e' verificato un'errore!\n");	// In caso di qualche bug durante la scelta
+				break;
+		}
+		if(scelta != 41){
+			system(CLEAR);		// Pulisco lo schermo
+		}
 	}while(scelta!=41);
 	return 0;
 }
@@ -153,7 +165,7 @@ int menu(){
 			system(CLEAR);
 		}
 	}while(s1<=0 || s1 > 4);
-	system("cls");
+	system(CLEAR);
 	do{
 		switch(s1){
 			case 1:
