@@ -111,6 +111,12 @@ int main(){
 	do{
 		scelta=menu();
 		switch(scelta){
+			case 11:
+				err=nuovoRotolo(&RCount);
+				if(err==1){
+					printf("Dimensione massima inventario raggiunta!\n");
+				}
+				break;
 			case 41:
 				salvaInventario(RCount,PCount);				// Salvo il programma
 				printf("Uscita in corso...\n");				// Termino il programma
@@ -124,6 +130,117 @@ int main(){
 		}
 	}while(scelta!=41);
 	return 0;
+}
+/*
+Funzione che aggiunge un rotolo all'inventario
+ 0 = Inserimento avvenuto con successo
+ 1 = Dimensione massima superata
+*/
+int nuovoRotolo(int *RCount){
+	if(*RCount>=MAXTESSUTI){
+		return 1;
+	}else{
+		int i=*RCount,g,m,a,err;
+		char scelta='Y';
+		char val[10];
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		printf("Nuovo rotolo:\n");
+		printf("\tCodice Rotolo: ");
+		scanf(" %s",inventario[i].codice_rotolo);
+		printf("\tFornitore: ");
+		scanf(" %s",inventario[i].fornitore);
+		printf("\tDati rotolo:\n");
+		printf("\t\tTipo di tessuto: ");
+		scanf(" %s",inventario[i].rot.tipo_tessuto);
+		printf("\t\tColore: ");
+		scanf(" %s",inventario[i].rot.colore);
+		printf("\t\tFantasia: ");
+		scanf(" %s",inventario[i].rot.fantasia);
+		do{
+			printf("\t\tLunghezza (M): ");
+			scanf(" %s",val);
+			inventario[i].rot.lunghezza=checkValFloat(val);
+			if(inventario[i].rot.lunghezza<=0){
+				printf("\t\tERRORE: Valore non valido!!\n");
+			}
+		}while(inventario[i].rot.lunghezza<=0);
+		do{
+			printf("\t\tLarghezza (cm): ");
+			scanf(" %s",val);
+			inventario[i].rot.larghezza=checkValFloat(val);
+			if(inventario[i].rot.larghezza<=0){
+				printf("\t\tERRORE: Valore non valido!!\n");
+			}
+		}while(inventario[i].rot.larghezza<=0);
+		printf("\t\tCodice Fornitore: ");
+		scanf(" %s",inventario[i].rot.codice_fornitura);
+		do{
+			printf("\t\tCosto: ");
+			scanf(" %s",val);
+			inventario[i].rot.costo=checkValFloat(val);
+			if(inventario[i].rot.costo<0){
+				printf("\t\tERRORE: Valore non valido!!\n");
+			}
+			if(inventario[i].rot.costo>budget){
+				printf("\t\tIl costo va oltre il tuo budget. Sei sicuro di volerlo comprare? (Y/N):\n");
+				printf("\t\tScelta: ");
+				scanf(" %c",&scelta);
+			}
+			if(scelta!='y' && scelta !='Y'){
+				printf("\t\tVuoi interrompere l'inserimento? (Y/N) : ");
+				scanf(" %c",&scelta);
+				if(scelta=='y' || scelta=='Y'){
+					return 0;
+				}
+			}
+		}while(inventario[i].rot.costo<0 || scelta!='Y' && scelta!='y');
+		budget-=inventario[i].rot.costo;
+		inventario[i].rot.usura=0;
+		do{
+			printf("\n\tData di acquisto (GG MM AAAA): ");
+			scanf(" %d %d %d",&g,&m,&a);
+			err=checkData(g,m,a);
+			if(err!=0){
+				printf("\tData non valida!!\n");
+			}
+		}while(err!=0);
+		inventario[i].data_acquisto.g=g;
+		inventario[i].data_acquisto.m=m;
+		inventario[i].data_acquisto.a=a;
+		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
+		inventario[i].utilizzo_previsto=0;
+		inventario[i].scarti_utilizzabili=0;
+		printf("\n\nRotolo aggiunto con successo! ID: %s\n",inventario[i].codice_rotolo);
+		pausa("Continua...\n");
+		(*RCount)++;
+		return 0;
+	}
+}
+/*
+Funzione che salva i dati du due file separati, uno per l'inventario e uno per i progetti
+*/
+void salvaInventario(int RCount, int PCount){
+	int i;
+	FInv=fopen(FILEINVENTARIO,"w");
+	if(FInv==NULL){
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEINVENTARIO);
+	}else{
+		fprintf(FInv,"%d %f\n",RCount,budget);
+		for(i=0;i<RCount;i++){
+			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
+		}
+	}
+	FProg=fopen(FILEPROGETTI,"w");
+	if(FProg==NULL){
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEPROGETTI);
+	}else{
+		fprintf(FProg,"%d\n",PCount);
+		for(i=0;i<PCount;i++){
+			fprintf(FProg,"%s %s %f %f %d %f\n",progetti[i].nome_progetto,progetti[i].rotolo_richiesto,progetti[i].metraggio_richiesto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti);
+		}
+	}
 }
 /*
 Funzione che stampa il menu:
@@ -158,7 +275,7 @@ int menu(){
 		printf("\t4) Esci\n");
 		printf("Scelta: ");
 		scanf(" %s",val);
-		s1=checkVal(val);
+		s1=checkValInt(val);
 		if(s1<=0 || s1 > 4){
 			printf("ERRRORE: Scelta non valida!!\n");
 			pausa("Continua...\n");
@@ -200,7 +317,7 @@ int menu(){
 		}
 		printf("Scelta: ");
 		scanf(" %s",val);
-		s2=checkVal(val);
+		s2=checkValInt(val);
 		if((s1==1 && (s2 <=0 || s2 > 3)) || (s1==2 && (s2<=0 || s2 > 5)) || (s1==3 && (s2 <= 0 || s2 >4))){
 			printf("ERRORE: Scelta non valida!!\n");
 			pausa("Continua...\n");

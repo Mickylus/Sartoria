@@ -64,13 +64,26 @@ void pausa(const char *messaggio) {
     #endif
 }
 /*
-Funzione che controlla che il valore inserito non contenga lettere
+Funzione che controlla che il valore intero inserito non contenga lettere
 -1 = Lettere trovate
 num = Numero convertito
 */
-int checkVal(char valore[]){
+int checkValInt(char valore[]){
 	int num;
 	num=atoi(valore);
+	if(num==0){
+		return -1;
+	}
+	return num;
+}
+/*
+Funzione che controlla che il valore float inserito non contenga lettere
+-1 = Lettere trovate
+num = Numero convertito
+*/
+float checkValFloat(char valore[]){
+	float num;
+	num=atof(valore);
 	if(num==0){
 		return -1;
 	}
