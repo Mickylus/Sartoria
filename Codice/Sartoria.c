@@ -72,15 +72,20 @@ struct scheda{
 	int scarti_utilizzabili;		// Scarti utilizzabili (>50cm);
 } inventario[MAXTESSUTI];			// Array globale dei tessuti
 
+struct rotoli{
+	char rotolo_richiesto[MAXSTRING];
+	float metraggio_richiesto;
+};
+
 // Struttura per i progetti
 struct progetto{
 	char nome_progetto[MAXSTRING];		// Nome
-	char rotolo_richiesto[MAXSTRING];	// Codice rotolo richiesto
-	float metraggio_richiesto;			// Metraggio richiesto
+	struct rotoli rotoli_richiesti[10];	// Rotoli richiesti
 	float costo_approssimato;			// Costo approssimato (ottenuto da calcolaCostoProgetto() )
 	int mini;							// Variabile che stabilisce se e' un mini progetto (cravatta), ovvero che si crea utilizzando degli scarti
 	int scarti_richiesti;				// Scarti richiesti (se mini=1)
 	char tipoCapo[MAXSTRING];			// Il tipo di vestito ("Gonna", "Giacca")
+	int rdim;							// Numero di rotoli richiesti
 } progetti[MAXPROGETTI];				// Array globale dei progetti
 
 
@@ -223,7 +228,7 @@ int nuovoRotolo(int *RCount){
 Funzione che salva i dati du due file separati, uno per l'inventario e uno per i progetti
 */
 void salvaInventario(int RCount, int PCount){
-	int i;
+	int i,j;
 	FInv=fopen(FILEINVENTARIO,"w");
 	if(FInv==NULL){
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEINVENTARIO);
@@ -239,7 +244,10 @@ void salvaInventario(int RCount, int PCount){
 	}else{
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(FProg,"%s %s %f %f %d %f %s\n",progetti[i].nome_progetto,progetti[i].rotolo_richiesto,progetti[i].metraggio_richiesto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo);
+			fprintf(FProg,"%s %f %d %f %s %d\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim);
+			for(j=0;j<progetti[i].rdim;j++){
+				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].metraggio_richiesto);
+			}
 		}
 	}
 }
