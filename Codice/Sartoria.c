@@ -149,20 +149,20 @@ int nuovoRotolo(int *RCount){
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("Nuovo rotolo:\n");
 		printf("\tCodice Rotolo: ");
-		scanf(" %s",inventario[i].codice_rotolo);
+		scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
 		printf("\tFornitore: ");
-		scanf(" %s",inventario[i].fornitore);
+		scanf(" %s",inventario[i].fornitore);								// Input nome fornitore
 		printf("\tDati rotolo:\n");
 		printf("\t\tTipo di tessuto: ");
-		scanf(" %s",inventario[i].rot.tipo_tessuto);
+		scanf(" %s",inventario[i].rot.tipo_tessuto);						// Input Tipo di tessuto
 		printf("\t\tColore: ");
-		scanf(" %s",inventario[i].rot.colore);
+		scanf(" %s",inventario[i].rot.colore);								// Input colore tessuto
 		printf("\t\tFantasia: ");
-		scanf(" %s",inventario[i].rot.fantasia);
+		scanf(" %s",inventario[i].rot.fantasia);							// Input fantasia
 		do{
 			printf("\t\tLunghezza (M): ");
 			scanf(" %s",val);
-			inventario[i].rot.lunghezza=checkValFloat(val);
+			inventario[i].rot.lunghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.lunghezza<=0){
 				printf("\t\tERRORE: Valore non valido!!\n");
 			}
@@ -170,17 +170,17 @@ int nuovoRotolo(int *RCount){
 		do{
 			printf("\t\tLarghezza (cm): ");
 			scanf(" %s",val);
-			inventario[i].rot.larghezza=checkValFloat(val);
+			inventario[i].rot.larghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.larghezza<=0){
 				printf("\t\tERRORE: Valore non valido!!\n");
 			}
 		}while(inventario[i].rot.larghezza<=0);
 		printf("\t\tCodice Fornitore: ");
-		scanf(" %s",inventario[i].rot.codice_fornitura);
+		scanf(" %s",inventario[i].rot.codice_fornitura);					// Input coice del fornitore
 		do{
 			printf("\t\tCosto: ");
 			scanf(" %s",val);
-			inventario[i].rot.costo=checkValFloat(val);
+			inventario[i].rot.costo=checkValFloat(val);						// Controllo che il valore sia valido
 			if(inventario[i].rot.costo<0){
 				printf("\t\tERRORE: Valore non valido!!\n");
 			}
@@ -192,7 +192,7 @@ int nuovoRotolo(int *RCount){
 			if(scelta!='y' && scelta !='Y'){
 				printf("\t\tVuoi interrompere l'inserimento? (Y/N) : ");
 				scanf(" %c",&scelta);
-				if(scelta=='y' || scelta=='Y'){
+				if(scelta=='y' || scelta=='Y'){								// Se si vuole si può interrompere l'inserimento
 					return 0;
 				}
 			}
@@ -214,7 +214,7 @@ int nuovoRotolo(int *RCount){
 		inventario[i].utilizzo_previsto=0;
 		inventario[i].scarti_utilizzabili=0;
 		printf("\n\nRotolo aggiunto con successo! ID: %s\n",inventario[i].codice_rotolo);
-		pausa("Continua...\n");
+		pausa("Continua...\n");												// Attendo un input
 		(*RCount)++;
 		return 0;
 	}
