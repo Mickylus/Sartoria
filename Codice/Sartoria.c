@@ -80,6 +80,7 @@ struct progetto{
 	float costo_approssimato;			// Costo approssimato (ottenuto da calcolaCostoProgetto() )
 	int mini;							// Variabile che stabilisce se e' un mini progetto (cravatta), ovvero che si crea utilizzando degli scarti
 	int scarti_richiesti;				// Scarti richiesti (se mini=1)
+	char tipoCapo[MAXSTRING];			// Il tipo di vestito ("Gonna", "Giacca")
 } progetti[MAXPROGETTI];				// Array globale dei progetti
 
 
@@ -238,7 +239,7 @@ void salvaInventario(int RCount, int PCount){
 	}else{
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(FProg,"%s %s %f %f %d %f\n",progetti[i].nome_progetto,progetti[i].rotolo_richiesto,progetti[i].metraggio_richiesto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti);
+			fprintf(FProg,"%s %s %f %f %d %f %s\n",progetti[i].nome_progetto,progetti[i].rotolo_richiesto,progetti[i].metraggio_richiesto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo);
 		}
 	}
 }
