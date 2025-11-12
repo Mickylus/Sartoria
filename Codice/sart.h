@@ -44,11 +44,11 @@ int checkData(int g,int m, int a){
 Stampa il messaggio e attende un input (qualunque tasto).
 
 */
-void pausa(const char *messaggio) {
+int pausa(const char *messaggio) {
     printf("%s", messaggio);
     fflush(stdout);  // forza la stampa immediata del messaggio
     #ifdef _WIN32
-        getch();  // attende un tasto senza Invio (Windows)
+        return getch();  // attende un tasto senza Invio (Windows)
     #else
         struct termios oldt, newt;
         int ch;
