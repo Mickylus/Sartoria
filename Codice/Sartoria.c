@@ -108,6 +108,7 @@ int rotazioneScorte(int);			// Ruota le scorte
 float aumentoUsura();				// Aumenta l'usura (a ogni azione o a caso. ancora da decidere...)
 void salvaInventario(int,int);		// Sotto forma di file .txt
 void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
+void reset(int*,int*);
 
 
 // Main
@@ -548,6 +549,7 @@ int menu(){
 				printf("\t2) Controllo tessuti\n");
 				printf("\t3) Rotazione scorte\n");
 				printf("\t4) Salvataggio manuale\n");
+				printf("\t5) Reset");
 				break;
 			case 4:
 				return 41;
@@ -555,14 +557,14 @@ int menu(){
 		printf("Scelta: ");
 		scanf(" %s",val);
 		s2=checkValInt(val);
-		if((s1==1 && (s2 <=0 || s2 > 3)) || (s1==2 && (s2<=0 || s2 > 5)) || (s1==3 && (s2 <= 0 || s2 >4))){
+		if((s1==1 && (s2 <=0 || s2 > 3)) || (s1>=2 && (s2<=0 || s2 > 5))){
 			co(4);
 			printf("ERRORE: Scelta non valida!!\n");
 			co(7);
 			pausa("Continua...\n");
 			system(CLEAR);
 		}
-	}while((s1==1 && (s2 <=0 || s2 > 3)) || (s1==2 && (s2<=0 || s2 > 5)) || (s1==3 && (s2 <= 0 || s2 >4)));
+	}while((s1==1 && (s2 <=0 || s2 > 3)) || (s1>=2 && (s2<=0 || s2 > 5)));
 	system(CLEAR);
 	return s1*10 + s2;
 }
