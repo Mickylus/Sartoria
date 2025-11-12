@@ -144,7 +144,7 @@ int main(){
 }
 
 int modificaRotolo(int dim, char filtro[]){
-	int i,tasto;
+	int i,tasto,stato=0,j;
 	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 	printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
@@ -153,8 +153,24 @@ int modificaRotolo(int dim, char filtro[]){
 			printf("Rotolo trovato!\n");
 			do{
 				tasto=pausa("");
-				printf("Codice Tasto: %d\n",tasto);
-			}while(tasto!=9);
+				if(tasto==1000){
+					stato--;
+				}
+				if(tasto==1001){
+					stato++;
+				}
+				if(stato<0){
+					stato=0;
+				}
+				for(j=0;j<16;j++){
+					switch(j){
+						case 0:
+							printf("Codice\n");
+							break;
+						
+					}
+				}
+			}while(tasto!=13);
 		}
 	}
 	return 1;
