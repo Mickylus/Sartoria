@@ -116,6 +116,7 @@ int main(){
 	int RCount=0,PCount=0,scelta,err,tasto;
 	char val[10],filter[MAXSTRING];
 	caricaInventario(&RCount,&PCount);
+	system(CLEAR);
 	do{
 		scelta=menu();
 		switch(scelta){
@@ -364,17 +365,17 @@ int nuovoRotolo(int *RCount){
 		printf("Nuovo rotolo:\n");
 		printf("\tCodice Rotolo: ");
 		scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
-		printf("\tFornitore: ");
+		printf("\tFornitore    : ");
 		scanf(" %s",inventario[i].fornitore);								// Input nome fornitore
-		printf("\tDati rotolo:\n");
+		printf("\tDati rotolo  :\n");
 		printf("\t\tTipo di tessuto: ");
 		scanf(" %s",inventario[i].rot.tipo_tessuto);						// Input Tipo di tessuto
-		printf("\t\tColore: ");
+		printf("\t\tColore         : ");
 		scanf(" %s",inventario[i].rot.colore);								// Input colore tessuto
-		printf("\t\tFantasia: ");
+		printf("\t\tFantasia       : ");
 		scanf(" %s",inventario[i].rot.fantasia);							// Input fantasia
 		do{
-			printf("\t\tLunghezza (M): ");
+			printf("\t\tLunghezza (M)  : ");
 			scanf(" %s",val);
 			inventario[i].rot.lunghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.lunghezza<=0){
@@ -384,7 +385,7 @@ int nuovoRotolo(int *RCount){
 			}
 		}while(inventario[i].rot.lunghezza<=0);
 		do{
-			printf("\t\tLarghezza (cm): ");
+			printf("\t\tLarghezza (cm)  : ");
 			scanf(" %s",val);
 			inventario[i].rot.larghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.larghezza<=0){
@@ -393,10 +394,10 @@ int nuovoRotolo(int *RCount){
 				co(7);
 			}
 		}while(inventario[i].rot.larghezza<=0);
-		printf("\t\tCodice Fornitore: ");
+		printf("\t\tCodice Fornitore    : ");
 		scanf(" %s",inventario[i].rot.codice_fornitura);					// Input coice del fornitore
 		do{
-			printf("\t\tCosto: ");
+			printf("\t\tCosto           : ");
 			scanf(" %s",val);
 			inventario[i].rot.costo=checkValFloat(val);						// Controllo che il valore sia valido
 			if(inventario[i].rot.costo<0){
@@ -456,7 +457,7 @@ void caricaInventario(int *RCount, int *PCount){
 	}else{
 		fscanf(FInv,"%d %f",RCount,&budget);
 		for(i=0;i<*RCount;i++){
-			fscanf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %d",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,&inventario[i].rot.lunghezza,&inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,&inventario[i].rot.costo,&inventario[i].rot.usura,&inventario[i].data_acquisto.g,&inventario[i].data_acquisto.m,&inventario[i].data_acquisto.a,&inventario[i].quantita_disponibile,&inventario[i].utilizzo_previsto,&inventario[i].scarti_utilizzabili);
+			fscanf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %f %f %d",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,&inventario[i].rot.lunghezza,&inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,&inventario[i].rot.costo,&inventario[i].rot.usura,&inventario[i].data_acquisto.g,&inventario[i].data_acquisto.m,&inventario[i].data_acquisto.a,&inventario[i].quantita_disponibile,&inventario[i].utilizzo_previsto,&inventario[i].scarti_utilizzabili);
 		}
 		co(2);
 		printf("Caricati con successo i tessuti!\n");
@@ -494,7 +495,7 @@ void salvaInventario(int RCount, int PCount){
 	}else{
 		fprintf(FInv,"%d %f\n",RCount,budget);
 		for(i=0;i<RCount;i++){
-			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
+			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
 		}
 	}
 	FProg=fopen(FILEPROGETTI,"w");
