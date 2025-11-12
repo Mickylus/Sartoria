@@ -114,6 +114,7 @@ void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
 int main(){
 	int RCount=0,PCount=0,scelta,err;
 	char val[10],filter[MAXSTRING];
+	caricaInventario(&RCount,&PCount);
 	do{
 		scelta=menu();
 		switch(scelta){
@@ -405,22 +406,64 @@ int nuovoRotolo(int *RCount){
 	}
 }
 /*
+Funzione che carica i dati dai due file e stampa messaggi di errore se si verificano
+*/
+void caricaInventario(int *RCount, int *PCount){
+	int i,j;
+	FInv=fopen(FILEINVENTARIO,"r");
+	if(FInv==NULL){
+		co(4);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEINVENTARIO);
+		co(7);
+	}else{
+		fscanf(FInv,"%d %f",RCount,&budget);
+		for(i=0;i<*RCount;i++){
+			fscanf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %d",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,&inventario[i].rot.lunghezza,&inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,&inventario[i].rot.costo,&inventario[i].rot.usura,&inventario[i].data_acquisto.g,&inventario[i].data_acquisto.m,&inventario[i].data_acquisto.a,&inventario[i].quantita_disponibile,&inventario[i].utilizzo_previsto,&inventario[i].scarti_utilizzabili);
+		}
+		co(2);
+		printf("Caricati con successo i tessuti!\n");
+		co(7);
+	}
+	FProg=fopen(FILEPROGETTI,"r");
+	if(FProg==NULL){
+		co(4);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEPROGETTI);
+		co(7);
+	}else{
+		fscanf(FProg,"%d",PCount);
+		for(i=0;i<*PCount;i++){
+			fscanf(FProg,"%s %f %d %f %s %d",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim);
+			for(j=0;j<progetti[i].rdim;j++){
+				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].metraggio_richiesto);
+			}
+		}
+		co(2);
+		printf("Caricati con successo i progetti!\n");
+		co(7);
+		pausa("Continua...\n");
+	}
+}
+/*
 Funzione che salva i dati du due file separati, uno per l'inventario e uno per i progetti
 */
 void salvaInventario(int RCount, int PCount){
 	int i,j;
 	FInv=fopen(FILEINVENTARIO,"w");
 	if(FInv==NULL){
+		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEINVENTARIO);
+		co(7);
 	}else{
 		fprintf(FInv,"%d %f\n",RCount,budget);
 		for(i=0;i<RCount;i++){
-			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
+			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
 		}
 	}
 	FProg=fopen(FILEPROGETTI,"w");
 	if(FProg==NULL){
+		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEPROGETTI);
+		co(7);
 	}else{
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
