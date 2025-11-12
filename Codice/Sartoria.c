@@ -185,6 +185,7 @@ int eliminaRotolo(int *RCount, char filtro[]){
 			for(j=i;j<*RCount-1;j++){
 				inventario[j]=inventario[j+1];
 			}
+			(*RCount)--;
 			return 0;
 		}
 	}
@@ -292,14 +293,15 @@ int modificaRotolo(int dim, char filtro[]){
 							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 							break;
 						case 7:
-							float vecchio=inventario[i].rot.costo;
+							// float vecchio=inventario[i].rot.costo;
 							do{
 								printf("Nuovo Costo (euro): ");
 								scanf(" %s",val);
 								inventario[i].rot.costo=checkValFloat(val);
 							}while(inventario[i].rot.costo < 0);
-							budget+=vecchio;
-							budget-=inventario[i].rot.costo;
+							//Errato
+							// budget+=vecchio;
+							// budget-=inventario[i].rot.costo;
 							break;
 					}
 				}
