@@ -42,13 +42,39 @@ int checkData(int g,int m, int a){
 }
 /*
 Stampa il messaggio e attende un input (qualunque tasto).
-
+Codici tasti:
+ Invio: 13
+ Spazio: 32
+ SU: 1000
+ GIU: 1001
+ SINISTRA: 1002
+ DESTRA: 1003
 */
 int pausa(const char *messaggio) {
     printf("%s", messaggio);
     fflush(stdout);  // forza la stampa immediata del messaggio
     #ifdef _WIN32
-        return getch();  // attende un tasto senza Invio (Windows)
+        int ch = getch();  // attende un tasto senza Invio (Windows)
+		if (ch == 0 || ch == 224) { // tasti speciali
+        	ch = getch(); // leggi il secondo byte
+			switch (ch) {
+				case 72:
+					return 1000;
+					break;
+				case 80:
+					return 1001;
+					break;
+				case 75:
+					return 1002;
+					break;
+				case 77:
+					return 1003;
+					break;
+				default:
+					return ch;
+					break;// altri tasti speciali
+        }
+    }
     #else
         struct termios oldt, newt;
         int ch;
@@ -59,9 +85,22 @@ int pausa(const char *messaggio) {
         newt.c_lflag &= ~(ICANON | ECHO);
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
         ch = getchar(); // legge un singolo carattere
+		if (ch == 27) { // ESC
+			int next1 = getchar();
+			if (next1 == '[') {
+				int next2 = getchar();
+				switch (next2) {
+					case 'A': ch = 1000; break; // ↑
+					case 'B': ch = 1001; break; // ↓
+					case 'D': ch = 1002; break; // ←
+					case 'C': ch = 1003; break; // →
+					default: break;
+				}
+			}
+		}
         // Ripristina le impostazioni originali
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        (void)ch; // evita warning "unused variable"
+        return ch; // restituisce il tasto premuto
     #endif
 }
 /*

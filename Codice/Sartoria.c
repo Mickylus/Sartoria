@@ -123,6 +123,11 @@ int main(){
 					printf("Dimensione massima inventario raggiunta!\n");
 				}
 				break;
+			case 12:
+				printf("Inserisci il codice da cercare: ");
+				scanf(" %s",filter);
+				modificaRotolo(RCount,filter);
+				break;
 			case 41:
 				salvaInventario(RCount,PCount);				// Salvo il programma
 				printf("Uscita in corso...\n");				// Termino il programma
@@ -139,14 +144,17 @@ int main(){
 }
 
 int modificaRotolo(int dim, char filtro[]){
-	int i;
+	int i,tasto;
 	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 	printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 	for(i=0;i<dim;i++){
 		if(strcmp(filtro,inventario[i].codice_rotolo)==0){
 			printf("Rotolo trovato!\n");
-			
+			do{
+				tasto=pausa("");
+				printf("Codice Tasto: %d\n",tasto);
+			}while(tasto!=9);
 		}
 	}
 	return 1;
