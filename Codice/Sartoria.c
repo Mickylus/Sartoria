@@ -94,7 +94,7 @@ struct progetto{
 int menu();							// Stampa il menu
 int nuovoRotolo(int*);				// Aggiunge un nuovo rotolo
 int modificaRotolo(int,char[]);			// Modifica un rotolo esistente
-int eliminaRotolo(int*);			// Elimina un rotolo (azzera la scheda e diminusce la dimensione logica)
+int eliminaRotolo(int*,char[]);			// Elimina un rotolo (azzera la scheda e diminusce la dimensione logica)
 int nuovoProgetto(int*);			// Aggiunge un nuovo progetto
 int modificaProgetto(int);			// Modifica un progetto
 int eliminaProgetto(int*);			// Elimina un progetto
@@ -120,7 +120,9 @@ int main(){
 			case 11:
 				err=nuovoRotolo(&RCount);
 				if(err==1){
+					co(4);
 					printf("Dimensione massima inventario raggiunta!\n");
+					co(7);
 				}
 				break;
 			case 12:
@@ -136,6 +138,22 @@ int main(){
 					pausa("Continua...\n");
 				}
 				break;
+			case 13:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("Inserisci il codice da cercare: ");
+				scanf(" %s",filter);
+				if(eliminaRotolo(&RCount,filter)==1){
+					co(4);
+					printf("Rotolo non trovato!\n");
+					co(7);
+				}else{
+					co(2);
+					printf("Rotolo eliminato con successo!\n");
+					co(7);
+				}
+				break;
 			case 41:
 				salvaInventario(RCount,PCount);				// Salvo il programma
 				printf("Uscita in corso...\n");				// Termino il programma
@@ -149,12 +167,34 @@ int main(){
 		if(scelta != 41){
 			system(CLEAR);		// Pulisco lo schermo
 		}
+		co(7);
 	}while(scelta!=41);
 	return 0;
 }
-
+/*
+Funzione che elimina un rotolo
+0: Eliminato
+1: Non trovato
+*/
+int eliminaRotolo(int *RCount, char filtro[]){
+	int i,j;
+	for(i=0;i<*RCount;i++){
+		if(strcmp(inventario[i].codice_rotolo,filtro)==0){
+			for(j=i;j<*RCount-1;j++){
+				inventario[j]=inventario[j+1];
+			}
+			return 0;
+		}
+	}
+	return 1;
+}
+/*
+Funzione che modifica i dati di un rotolo
+0: Modfica andata a buon fine
+1: Nessun rotolo trovato
+*/
 int modificaRotolo(int dim, char filtro[]){
-	int i,tasto=0,stato=0,j;
+	int i,tasto=0,stato=0,j,f=1;
 	char val[10];
 	for(i=0;i<dim;i++){
 		if(strcmp(filtro,inventario[i].codice_rotolo)==0){
@@ -262,10 +302,10 @@ int modificaRotolo(int dim, char filtro[]){
 					}
 				}
 			}while(tasto!=27);
-			return 0;
+			f=0;
 		}
 	}
-	return 1;
+	return f;
 }
 /*
 Funzione che aggiunge un rotolo all'inventario
