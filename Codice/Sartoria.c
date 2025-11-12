@@ -124,16 +124,26 @@ int main(){
 				}
 				break;
 			case 12:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 				printf("Inserisci il codice da cercare: ");
 				scanf(" %s",filter);
-				modificaRotolo(RCount,filter);
+				if(modificaRotolo(RCount,filter)==1){
+					co(4);
+					printf("Rotolo non trovato!\n");
+					co(7);
+					pausa("Continua...\n");
+				}
 				break;
 			case 41:
 				salvaInventario(RCount,PCount);				// Salvo il programma
 				printf("Uscita in corso...\n");				// Termino il programma
 				break;
 			default:
+				co(4);
 				printf("Si e' verificato un'errore!\n");	// In caso di qualche bug durante la scelta
+				co(7);
 				break;
 		}
 		if(scelta != 41){
@@ -144,15 +154,15 @@ int main(){
 }
 
 int modificaRotolo(int dim, char filtro[]){
-	int i,tasto,stato=0,j;
-	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
-	printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
-	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+	int i,tasto=0,stato=0,j;
+	char val[10];
 	for(i=0;i<dim;i++){
 		if(strcmp(filtro,inventario[i].codice_rotolo)==0){
 			printf("Rotolo trovato!\n");
 			do{
-				tasto=pausa("");
+				system(CLEAR);
+				printf("MODIFICA:\n");
+				printf("(SU/GIU): Spostati, (INVIO): Seleziona, (ESC): Esci\n\n");
 				if(tasto==1000){
 					stato--;
 				}
@@ -162,15 +172,95 @@ int modificaRotolo(int dim, char filtro[]){
 				if(stato<0){
 					stato=0;
 				}
-				for(j=0;j<16;j++){
+				if(stato>7){
+					stato=7;
+				}
+				for(j=0;j<8;j++){
+                    if(stato==j){
+						co(15);
+					}else{
+						co(8);
+					}
 					switch(j){
-						case 0:
-							printf("Codice\n");
-							break;
-						
+                        case 0:
+                            printf("Codice rotolo: %s\n", inventario[i].codice_rotolo);
+                            break;
+                        case 1:
+                            printf("Fornitore: %s\n", inventario[i].fornitore);
+                            break;
+                        case 2:
+                            printf("Tipo tessuto: %s\n", inventario[i].rot.tipo_tessuto);
+                            break;
+                        case 3:
+                            printf("Colore: %s\n", inventario[i].rot.colore);
+                            break;
+                        case 4:
+                            printf("Fantasia: %s\n", inventario[i].rot.fantasia);
+                            break;
+                        case 5:
+                            printf("Lunghezza: %.2f m\n", inventario[i].rot.lunghezza);
+                            break;
+                        case 6:
+                            printf("Larghezza: %.2f cm\n", inventario[i].rot.larghezza);
+                            break;
+                        case 7:
+                            printf("Costo: %.2f euro\n",inventario[i].rot.costo);
+                            break;
 					}
 				}
-			}while(tasto!=13);
+				co(7);
+				printf("- - - - - - - - - - - - - - - - - - -\n");
+				tasto=pausa("");
+				if(tasto==13){
+					switch(stato){
+						case 0:
+							printf("Nuovo Codice: ");
+							scanf(" %s",inventario[i].codice_rotolo);
+							break;
+						case 1:
+							printf("Nuovo Fornitore: ");
+							scanf(" %s",inventario[i].fornitore);
+							break;
+						case 2:
+							printf("Nuovo Tipo tessuto: ");
+							scanf(" %s",inventario[i].rot.tipo_tessuto);
+							break;
+						case 3:
+							printf("Nuovo Colore: ");
+							scanf(" %s",inventario[i].rot.colore);
+							break;
+						case 4:
+							printf("Nuova Fantasia: ");
+							scanf(" %s",inventario[i].rot.fantasia);
+							break;
+						case 5:
+							do{
+								printf("Nuova Lunghezza (m): ");
+								scanf(" %s",val);
+								inventario[i].rot.lunghezza=checkValFloat(val);
+							}while(inventario[i].rot.lunghezza <= 0);
+							break;
+						case 6:
+							do{
+								printf("Nuova Larghezza (cm): ");
+								scanf(" %s",val);
+								inventario[i].rot.larghezza=checkValFloat(val);
+							}while(inventario[i].rot.larghezza <= 0);
+							break;
+						case 7:
+							float vecchio=inventario[i].rot.costo;
+							do{
+								printf("Nuovo Costo (euro): ");
+								scanf(" %s",val);
+								inventario[i].rot.costo=checkValFloat(val);
+							}while(inventario[i].rot.costo < 0);
+							budget+=vecchio;
+							budget-=inventario[i].rot.costo;
+							break;
+					}
+				}
+			}while(tasto!=27);
+			return 0;
 		}
 	}
 	return 1;
@@ -207,7 +297,9 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.lunghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.lunghezza<=0){
+				co(4);
 				printf("\t\tERRORE: Valore non valido!!\n");
+				co(7);
 			}
 		}while(inventario[i].rot.lunghezza<=0);
 		do{
@@ -215,7 +307,9 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.larghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.larghezza<=0){
+				co(4);
 				printf("\t\tERRORE: Valore non valido!!\n");
+				co(7);
 			}
 		}while(inventario[i].rot.larghezza<=0);
 		printf("\t\tCodice Fornitore: ");
@@ -225,7 +319,9 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.costo=checkValFloat(val);						// Controllo che il valore sia valido
 			if(inventario[i].rot.costo<0){
+				co(4);
 				printf("\t\tERRORE: Valore non valido!!\n");
+				co(7);
 			}
 			if(inventario[i].rot.costo>budget){
 				printf("\t\tIl costo va oltre il tuo budget. Sei sicuro di volerlo comprare? (Y/N):\n");
@@ -247,7 +343,9 @@ int nuovoRotolo(int *RCount){
 			scanf(" %d %d %d",&g,&m,&a);
 			err=checkData(g,m,a);
 			if(err!=0){
+				co(4);
 				printf("\tData non valida!!\n");
+				co(7);
 			}
 		}while(err!=0);
 		inventario[i].data_acquisto.g=g;
@@ -256,7 +354,9 @@ int nuovoRotolo(int *RCount){
 		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 		inventario[i].utilizzo_previsto=0;
 		inventario[i].scarti_utilizzabili=0;
+		co(8);
 		printf("\n\nRotolo aggiunto con successo! ID: %s\n",inventario[i].codice_rotolo);
+		co(7);
 		pausa("Continua...\n");												// Attendo un input
 		(*RCount)++;
 		return 0;
@@ -324,7 +424,9 @@ int menu(){
 		scanf(" %s",val);
 		s1=checkValInt(val);
 		if(s1<=0 || s1 > 4){
+			co(4);
 			printf("ERRRORE: Scelta non valida!!\n");
+			co(7);
 			pausa("Continua...\n");
 			system(CLEAR);
 		}
@@ -366,7 +468,9 @@ int menu(){
 		scanf(" %s",val);
 		s2=checkValInt(val);
 		if((s1==1 && (s2 <=0 || s2 > 3)) || (s1==2 && (s2<=0 || s2 > 5)) || (s1==3 && (s2 <= 0 || s2 >4))){
+			co(4);
 			printf("ERRORE: Scelta non valida!!\n");
+			co(7);
 			pausa("Continua...\n");
 			system(CLEAR);
 		}

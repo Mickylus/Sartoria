@@ -45,6 +45,7 @@ Stampa il messaggio e attende un input (qualunque tasto).
 Codici tasti:
  Invio: 13
  Spazio: 32
+ ESC: 27
  SU: 1000
  GIU: 1001
  SINISTRA: 1002
