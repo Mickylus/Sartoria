@@ -7,6 +7,7 @@
 // Librerie per la funzione pausa()
 #ifdef _WIN32
     #include <conio.h>   // per getch() su Windows
+	#include <windows.h>
 #else
     #include <termios.h> // per impostazioni terminale su Linux/macOS
     #include <unistd.h>  // per STDIN_FILENO
@@ -88,4 +89,32 @@ float checkValFloat(char valore[]){
 		return -1;
 	}
 	return num;
+}
+/*
+| Valore | Colore testo     |
+| ------ | ---------------- |
+| 0      | Nero             |
+| 1      | Blu              |
+| 2      | Verde            |
+| 3      | Azzurro          |
+| 4      | Rosso            |
+| 5      | Viola            |
+| 6      | Giallo scuro     |
+| 7      | Bianco (default) |
+| 8      | Grigio           |
+| 9      | Blu chiaro       |
+| 10     | Verde chiaro     |
+| 11     | Azzurro chiaro   |
+| 12     | Rosso chiaro     |
+| 13     | Magenta          |
+| 14     | Giallo           |
+| 15     | Bianco brillante |
+*/
+void co(int colore){
+	#ifdef _WIN32
+    	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    	SetConsoleTextAttribute(hConsole, colore);
+	#else
+		printf("Funzione non disponibile sul tuo OS!\n");
+	#endif
 }

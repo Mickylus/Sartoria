@@ -93,7 +93,7 @@ struct progetto{
 
 int menu();							// Stampa il menu
 int nuovoRotolo(int*);				// Aggiunge un nuovo rotolo
-int modificaRotolo(int);			// Modifica un rotolo esistente
+int modificaRotolo(int,char[]);			// Modifica un rotolo esistente
 int eliminaRotolo(int*);			// Elimina un rotolo (azzera la scheda e diminusce la dimensione logica)
 int nuovoProgetto(int*);			// Aggiunge un nuovo progetto
 int modificaProgetto(int);			// Modifica un progetto
@@ -136,6 +136,20 @@ int main(){
 		}
 	}while(scelta!=41);
 	return 0;
+}
+
+int modificaRotolo(int dim, char filtro[]){
+	int i;
+	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+	printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+	printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+	for(i=0;i<dim;i++){
+		if(strcmp(filtro,inventario[i].codice_rotolo)==0){
+			printf("Rotolo trovato!\n");
+			
+		}
+	}
+	return 1;
 }
 /*
 Funzione che aggiunge un rotolo all'inventario
