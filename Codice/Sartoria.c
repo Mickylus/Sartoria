@@ -113,7 +113,7 @@ void reset(int*,int*);
 
 // Main
 int main(){
-	int RCount=0,PCount=0,scelta,err;
+	int RCount=0,PCount=0,scelta,err,tasto;
 	char val[10],filter[MAXSTRING];
 	caricaInventario(&RCount,&PCount);
 	do{
@@ -156,6 +156,40 @@ int main(){
 					co(7);
 				}
 				pausa("Continua...\n");
+				break;
+			case 35:
+				int i=0;
+				do{
+					system(CLEAR);
+					printf("Sei sicuro di voler resetare?\n");
+					if(i%2==0){
+						co(7);
+						printf("[CONFERMA] ");
+						co(8);
+						printf("[ANNULLA]\n");
+						co(7);
+					}else{
+						co(8);
+						printf("[CONFERMA] ");
+						co(7);
+						printf("[ANNULLA]\n");
+					}
+					tasto=pausa(" ");
+					if(tasto!=13){
+						i++;
+					}
+				}while(tasto!=13);
+				if(i%2==0){
+					reset(&RCount,&PCount);
+					co(2);
+					printf("Reset effettuato!\n");
+					co(7);
+				}else{
+					co(4);
+					printf("Reset annullato\n");
+					co(7);
+				}
+				pausa("\nContinua...\n");
 				break;
 			case 41:
 				salvaInventario(RCount,PCount);				// Salvo il programma
@@ -549,7 +583,7 @@ int menu(){
 				printf("\t2) Controllo tessuti\n");
 				printf("\t3) Rotazione scorte\n");
 				printf("\t4) Salvataggio manuale\n");
-				printf("\t5) Reset");
+				printf("\t5) Reset\n");
 				break;
 			case 4:
 				return 41;
@@ -567,4 +601,10 @@ int menu(){
 	}while((s1==1 && (s2 <=0 || s2 > 3)) || (s1>=2 && (s2<=0 || s2 > 5)));
 	system(CLEAR);
 	return s1*10 + s2;
+}
+// Funzione che resetta il programma
+void reset(int *RCount, int *PCount){
+	budget=BUDGETINIZIALE;
+	*RCount=0;
+	*PCount=0;
 }
