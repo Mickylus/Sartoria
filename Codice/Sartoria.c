@@ -154,6 +154,7 @@ int main(){
 					printf("Rotolo eliminato con successo!\n");
 					co(7);
 				}
+				pausa("Continua...\n");
 				break;
 			case 41:
 				salvaInventario(RCount,PCount);				// Salvo il programma
