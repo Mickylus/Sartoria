@@ -239,6 +239,7 @@ int modificaRotolo(int dim, char filtro[]){
 								scanf(" %s",val);
 								inventario[i].rot.lunghezza=checkValFloat(val);
 							}while(inventario[i].rot.lunghezza <= 0);
+							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 							break;
 						case 6:
 							do{
@@ -246,6 +247,7 @@ int modificaRotolo(int dim, char filtro[]){
 								scanf(" %s",val);
 								inventario[i].rot.larghezza=checkValFloat(val);
 							}while(inventario[i].rot.larghezza <= 0);
+							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 							break;
 						case 7:
 							float vecchio=inventario[i].rot.costo;
