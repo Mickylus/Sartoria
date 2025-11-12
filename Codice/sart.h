@@ -115,6 +115,60 @@ void co(int colore){
     	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     	SetConsoleTextAttribute(hConsole, colore);
 	#else
-		printf("Funzione non disponibile sul tuo OS!\n");
+		// --- macOS / Linux ---
+    	switch (colore) {
+        	case 0:
+				printf("\033[30m");
+				break; // Nero
+        	case 1:
+				printf("\033[34m");
+				break; // Blu
+        	case 2:
+				printf("\033[32m");
+				break; // Verde
+        	case 3:
+				printf("\033[36m");
+				break; // Azzurro
+        	case 4:
+				printf("\033[31m");
+				break; // Rosso
+			case 5:
+				printf("\033[35m");
+				break; // Viola
+			case 6:
+				printf("\033[33m");
+				break; // Giallo scuro
+			case 7:
+				printf("\033[37m");
+				break; // Bianco
+			case 8:
+				printf("\033[90m");
+				break; // Grigio
+			case 9:
+				printf("\033[94m");
+				break; // Blu chiaro
+			case 10:
+				printf("\033[92m");
+				break; // Verde chiaro
+			case 11:
+				printf("\033[96m");
+				break; // Azzurro chiaro
+			case 12:
+				printf("\033[91m");
+				break; // Rosso chiaro
+			case 13:
+				printf("\033[95m");
+				break; // Magenta
+			case 14:
+				printf("\033[93m"); 
+				break; // Giallo chiaro
+			case 15:
+				printf("\033[97m");
+				break; // Bianco brillante
+			default:	
+				printf("\033[0m");
+				break;  // Reset
+    	}
+    	fflush(stdout);
 	#endif
 }
