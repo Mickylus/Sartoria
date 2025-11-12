@@ -413,7 +413,7 @@ void caricaInventario(int *RCount, int *PCount){
 	FInv=fopen(FILEINVENTARIO,"r");
 	if(FInv==NULL){
 		co(4);
-		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEINVENTARIO);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEINVENTARIO);
 		co(7);
 	}else{
 		fscanf(FInv,"%d %f",RCount,&budget);
@@ -427,7 +427,7 @@ void caricaInventario(int *RCount, int *PCount){
 	FProg=fopen(FILEPROGETTI,"r");
 	if(FProg==NULL){
 		co(4);
-		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEPROGETTI);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPROGETTI);
 		co(7);
 	}else{
 		fscanf(FProg,"%d",PCount);
@@ -440,8 +440,8 @@ void caricaInventario(int *RCount, int *PCount){
 		co(2);
 		printf("Caricati con successo i progetti!\n");
 		co(7);
-		pausa("Continua...\n");
 	}
+	pausa("Continua...\n");
 }
 /*
 Funzione che salva i dati du due file separati, uno per l'inventario e uno per i progetti
@@ -451,7 +451,7 @@ void salvaInventario(int RCount, int PCount){
 	FInv=fopen(FILEINVENTARIO,"w");
 	if(FInv==NULL){
 		co(4);
-		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEINVENTARIO);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEINVENTARIO);
 		co(7);
 	}else{
 		fprintf(FInv,"%d %f\n",RCount,budget);
@@ -462,7 +462,7 @@ void salvaInventario(int RCount, int PCount){
 	FProg=fopen(FILEPROGETTI,"w");
 	if(FProg==NULL){
 		co(4);
-		printf("Si e' verificato un'errore nell'apertura del file '%s'.",FILEPROGETTI);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPROGETTI);
 		co(7);
 	}else{
 		fprintf(FProg,"%d\n",PCount);
