@@ -256,10 +256,14 @@ void mostraTessuti(int dim){
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
 			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
-			tasto=pausa("[->]");
-		}while(tasto!=1003);
+			tasto=pausa("[<-] [->]");
+			if(tasto==1002){
+				if(i>0){
+					i-=2;
+				}
+			}
+		}while(tasto!=1003 && tasto != 1002);
 	}
-	printf("\n");
 }
 // Funzione che crea un nuovo progetto
 int nuovoProgetto(int *PCount,int RCount){
