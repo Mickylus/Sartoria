@@ -112,6 +112,7 @@ float aumentoUsura();				// Aumenta l'usura (a ogni azione o a caso. ancora da d
 void salvaInventario(int,int);		// Sotto forma di file .txt
 void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
 void reset(int*,int*);
+void aggiorna(int,int);
 
 
 // Main
@@ -239,12 +240,28 @@ int main(){
 				co(7);
 				break;
 		}
+		aggiorna(RCount,PCount);
 		if(scelta != 41){
 			system(CLEAR);		// Pulisco lo schermo
 		}
 		co(7);
 	}while(scelta!=41);
 	return 0;
+}
+void aggiorna(int RCount,int PCount){
+	int i,j,k;
+	for(i=0;i<RCount;i++){
+		inventario[i].utilizzo_previsto=0;
+		for(j=0;j<PCount;j++){
+			if(progetti[j].mini!=1){
+				for(k=0;k<progetti[i].rdim;k++){
+					if(strcmp(inventario[i].codice_rotolo,progetti[j].rotoli_richiesti[k].rotolo_richiesto)==0){
+						inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].metraggio_richiesto;
+					}
+				}
+			}
+		}
+	}
 }
 /*
 Funzione che modifica un progetto
@@ -423,16 +440,6 @@ void mostraTessuti(int dim,int pdim){
 			printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
 			printf("Data di acquisto: %d/%d/%d\n",inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a);
 			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
-			inventario[i].utilizzo_previsto=0;
-			for(j=0;j<pdim;j++){
-				if(progetti[j].mini!=1){
-					for(k=0;k<progetti[i].rdim;k++){
-						if(strcmp(inventario[i].codice_rotolo,progetti[j].rotoli_richiesti[k].rotolo_richiesto)==0){
-							inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].metraggio_richiesto;
-						}
-					}
-				}
-			}
 			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
