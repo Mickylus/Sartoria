@@ -99,8 +99,8 @@ int nuovoRotolo(int*);				// Aggiunge un nuovo rotolo
 int modificaRotolo(int,char[]);			// Modifica un rotolo esistente
 int eliminaRotolo(int*,char[]);			// Elimina un rotolo (azzera la scheda e diminusce la dimensione logica)
 int nuovoProgetto(int*,int);			// Aggiunge un nuovo progetto
-int modificaProgetto(int);			// Modifica un progetto
-int eliminaProgetto(int*);			// Elimina un progetto
+int modificaProgetto(int,char[],int);			// Modifica un progetto
+int eliminaProgetto(int*,char[]);			// Elimina un progetto
 float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
 void mostraProgetti(int);			// Stampa i progetti
 int avviaTaglio(int*);				// Avvia il taglio (rimuove i progetti in attesa)
@@ -168,6 +168,19 @@ int main(){
 					co(7);
 				}
 				break;
+			case 22:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("Inserisci il nome da cercare: ");							// Input nome da cercare
+				scanf(" %s",filter);
+				if(modificaProgetto(PCount,filter,RCount)==1){
+					co(4);
+					printf("Rotolo non trovato!\n");
+					co(7);
+					pausa("Continua...\n");
+				}
+				break;
 			case 31:
 				mostraTessuti(RCount);
 				break;
@@ -232,6 +245,158 @@ int main(){
 		co(7);
 	}while(scelta!=41);
 	return 0;
+}
+/*
+Funzione che modifica un progetto
+1: se non è stato trovato
+0: se è stato trovato
+*/
+int modificaProgetto(int dim,char filtro[],int RCount){
+	int i,j,tasto,stato=0,f=1,err=1,k;
+	char val[10];
+	for(i=0;i<dim;i++){
+		if(strcmp(progetti[i].nome_progetto,filtro)==0){
+			do{	
+				system(CLEAR);
+				printf("MODIFICA:\n");
+				printf("(SU/GIU): Spostati, (INVIO): Seleziona, (ESC): Esci\n\n");
+				if(tasto==1000){
+					stato--;
+				}
+				if(tasto==1001){
+					stato++;
+				}
+				if(stato<0){
+					stato=0;
+				}
+				if(stato>4){
+					stato=4;
+				}
+				if(stato==3 && progetti[i].mini==0){
+					stato=4;
+				}
+				for(j=0;j<5;j++){
+                    if(stato==j){	
+						co(15);	// se il campo è quello scelto allora lo evidenzio
+					}else{
+						co(8);
+					}
+					switch(j){
+                        case 0:
+                            printf("Nome progetto: %s\n", progetti[i].nome_progetto);
+                            break;
+                        case 1:
+                            printf("Tipo capo: %s\n", progetti[i].tipoCapo);
+                            break;
+                        case 2:
+							if(progetti[i].mini==0){
+								printf("Tessuti:...\n");
+							}else{
+								printf("Scarti richiesti: %d\n",progetti[i].scarti_richiesti);
+							}
+							break;
+                        case 3:
+							if(progetti[i].mini==1){
+                            	printf("Tessuto: %s\n", progetti[i].rotoli_richiesti[0].rotolo_richiesto);
+							}
+							break;
+                        case 4:
+                            printf("Paga: %.2f\n", progetti[i].paga);
+                            break;
+					}
+				}
+				co(7);
+				printf("- - - - - - - - - - - - - - - - - - -\n");
+				tasto=pausa("");
+				if(tasto==13){
+					switch(stato){
+						case 0:
+							printf("Nuovo nome: ");
+							scanf(" %s",progetti[i].nome_progetto);
+							break;
+						case 1:
+							printf("Nuovo tipo capo: ");
+							scanf(" %s",progetti[i].tipoCapo);
+							break;
+						case 2:
+							if(progetti[i].mini==0){
+								printf("Rotoli:\n");
+								for(j=0;j<progetti[i].rdim;j++){
+									do{
+										printf("\tCodice rotolo [%d/%d]: ",j+1,progetti[i].rdim);
+										scanf(" %s",progetti[i].rotoli_richiesti[j].rotolo_richiesto);
+										for(k=0;k<RCount;k++){
+											if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){		// Controllo che ci sia il rotolo scelto
+												err=0;
+											}
+										}
+										if(err!=0){
+											co(4);
+											printf("\tERRORE: Rotolo non trovato!\n");
+											co(7);
+										}
+									}while(err!=0);
+									err=1;
+									do{
+										printf("\tMetraggio richiesto (M^2): ");
+										scanf(" %s",val);
+										progetti[i].rotoli_richiesti[j].metraggio_richiesto=checkValFloat(val);
+										if(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0){
+											co(4);
+											printf("\tERRORE: Valore non valido!\n");
+											co(7);
+										}
+									}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
+								}
+							}else{
+								do{
+									printf("Nuovi scarti: ");
+									scanf(" %s",val);
+									progetti[i].scarti_richiesti=checkValInt(val);
+									if(progetti[i].scarti_richiesti<=0){
+										co(4);
+										printf("ERRORE: Valore non valido!\n");
+										co(7);
+									}
+								}while(progetti[i].scarti_richiesti<=0);
+							}
+							break;
+						case 3:
+							do{
+								err=1;
+								printf("Nuovo tessuto: ");
+								scanf(" %s",progetti[i].rotoli_richiesti[0].rotolo_richiesto);
+								for(k=0;k<RCount;k++){
+									if(strcmp(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[k].codice_rotolo)==0){
+										err==0;
+									}
+								}
+								if(err!=0){
+									co(4);
+									printf("ERRORE: Rotolo non trovato!\n");
+									co(7);
+								}
+							}while(err!=0);
+							break;
+						case 4:
+							do{
+								printf("Nuova paga: ");
+								scanf(" %s",val);
+								progetti[i].paga=checkValFloat(val);
+								if(progetti[i].paga<=0){
+									co(4);
+									printf("ERRORE: Valore non valido!\n");
+									co(7);
+								}
+							}while(progetti[i].paga<=0);
+							break;
+					}
+				}
+			}while(tasto!=27);
+			f=0;
+		}
+	}
+	return f;
 }
 // Funzione che stampa i tessuti
 void mostraTessuti(int dim){
@@ -307,6 +472,11 @@ int nuovoProgetto(int *PCount,int RCount){
 				co(7);
 			}
 		}while(scelta<1 || scelta >2);
+		if(scelta==2){
+			progetti[i].mini=1;
+		}else{
+			progetti[i].mini=0;
+		}
 		printf("\tTipo di capo: ");
 		scanf(" %s",progetti[i].tipoCapo);
 		if(scelta==1){
