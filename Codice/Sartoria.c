@@ -351,6 +351,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
 								}
 								progetti[i].costo_approssimato=calcolaCostoProgetto(i,dim);
+								pausa("Continua...\n");
 							}else{
 								do{
 									printf("Nuovi scarti: ");
