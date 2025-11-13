@@ -19,6 +19,8 @@
 #define MAXPROGETTI 20
 // Budget iniziale della sartoria
 #define BUDGETINIZIALE 1000
+// Massimo di rotoli per ogni progetto
+#define MAXP 10
 // Nome del file di salvataggio
 #define FILEINVENTARIO "Inventario.txt"
 #define FILEPROGETTI "Progetti.txt" 
@@ -80,7 +82,7 @@ struct rotoli{
 // Struttura per i progetti
 struct progetto{
 	char nome_progetto[MAXSTRING];		// Nome
-	struct rotoli rotoli_richiesti[10];	// Rotoli richiesti
+	struct rotoli rotoli_richiesti[MAXP];// Rotoli richiesti
 	float costo_approssimato;			// Costo approssimato (ottenuto da calcolaCostoProgetto() )
 	int mini;							// Variabile che stabilisce se e' un mini progetto (cravatta), ovvero che si crea utilizzando degli scarti
 	int scarti_richiesti;				// Scarti richiesti (se mini=1)
@@ -96,10 +98,10 @@ int menu();							// Stampa il menu
 int nuovoRotolo(int*);				// Aggiunge un nuovo rotolo
 int modificaRotolo(int,char[]);			// Modifica un rotolo esistente
 int eliminaRotolo(int*,char[]);			// Elimina un rotolo (azzera la scheda e diminusce la dimensione logica)
-int nuovoProgetto(int*);			// Aggiunge un nuovo progetto
+int nuovoProgetto(int*,int);			// Aggiunge un nuovo progetto
 int modificaProgetto(int);			// Modifica un progetto
 int eliminaProgetto(int*);			// Elimina un progetto
-float calcolaCostoProgetto(int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
+float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
 void mostraProgetti(int);			// Stampa i progetti
 int avviaTaglio(int*);				// Avvia il taglio (rimuove i progetti in attesa)
 void mostraTessuti(int);			// Mostra i tessuti
@@ -159,6 +161,13 @@ int main(){
 				}
 				pausa("Continua...\n");
 				break;
+			case 21:
+				if(nuovoProgetto(&PCount,RCount)==1){
+					co(4);
+					printf("ERRORE: dimensione massima raggiunta!\n");
+					co(7);
+				}
+				break;
 			case 34:
 				co(8);
 				printf("Salvataggio in corso...\n");
@@ -217,6 +226,168 @@ int main(){
 		co(7);
 	}while(scelta!=41);
 	return 0;
+}
+// Funzione che crea un nuovo progetto
+int nuovoProgetto(int *PCount,int RCount){
+	if(*PCount>=MAXPROGETTI){
+		return 1;
+	}else{
+		int i=*PCount,j,k,scelta,err=1;
+		char val[10];
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		printf("Nuovo progetto:\n");
+		printf("\tNome progetto: ");
+		scanf(" %s",progetti[i].nome_progetto);
+		do{
+			printf("\tTipo progetto:\n");
+			printf("\t1: Normale - 2: Mini (Utilizza gli scarti)\n");
+			scanf(" %s",val);
+			scelta=checkValInt(val);
+			if(scelta<1 || scelta >2){
+				co(4);
+				printf("\tERRORE: Valore non valio!\n");
+				co(7);
+			}
+		}while(scelta<1 || scelta >2);
+		printf("\tTipo di capo: ");
+		scnaf(" %s",progetti[i].tipoCapo);
+		if(scelta==1){
+			do{	
+				printf("\tQuanti rotoli usa il progetto (MAX: %d): ",MAXP);
+				scanf(" %s",val);
+				progetti[i].rdim=checkValInt(val);
+				if(progetti[i].rdim<=0){
+					co(4);
+					printf("\tERRORE: Valore non valido!\n");
+					co(7);
+				}
+			}while(progetti[i].rdim<=0);
+			printf("\n\tRotoli:\n");
+			for(j=0;j<progetti[i].rdim;j++){
+				do{
+					printf("\t\tCodice rotolo [%d/%d]: ",j+1,progetti[i].rdim);
+					scanf(" %s",progetti[i].rotoli_richiesti[j].rotolo_richiesto);
+					for(k=0;k<RCount;k++){
+						if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
+							err=0;
+						}
+					}
+					if(err!=0){
+						co(4);
+						printf("\t\tERRORE: Rotolo non trovato!\n");
+						co(7);
+					}
+				}while(err!=0);
+				err=1;
+				do{
+					printf("\t\tMetraggio richiesto (M^2): ");
+					scanf(" %s",val);
+					progetti[i].rotoli_richiesti[j].metraggio_richiesto=checkValFloat(val);
+					if(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0){
+						co(4);
+						printf("\t\tERRORE: Valore non valido!\n");
+						co(7);
+					}
+				}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
+			}
+		}else{
+			do{
+				printf("\tScarti richiesti: ");
+				scanf(" %s",val);
+				progetti[i].scarti_richiesti=checkValInt(val);
+				if(progetti[i].scarti_richiesti<=0){
+					co(4);
+					printf("\tERRORE: Valore non valido!\n");
+					co(7);
+				}
+			}while(progetti[i].scarti_richiesti<=0);
+			do{
+				printf("\tRotolo da cui prendere gli scarti: ");
+				scanf(" %s",progetti[i].rotoli_richiesti[j].rotolo_richiesto);
+				for(k=0;k<RCount;k++){
+					if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
+						err=0;
+					}
+				}
+				if(err!=0){
+					co(4);
+					printf("\tERRORE: Rotolo non trovato!\n");
+					co(7);
+				}
+			}while(err!=0);
+			for(j=0;j<PCount;j++){
+				if(strcmp(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[j].codice_rotolo)==0){
+					if(progetti[i].scarti_richiesti>inventario[j].scarti_utilizzabili){
+						co(4);
+						printf("\tImpossibile eseguire il progetto, non ci sono scarti a sufficenza!\n");
+						co(7);
+						return 0;
+					}
+				}
+			}
+			progetti[i].rotoli_richiesti[0].metraggio_richiesto=0;
+			progetti[i].rdim=1;
+		}
+		do{
+			printf("\tPaga del progetto: ");
+			scanf(" %s",val);
+			progetti[i].paga=checkValFloat(val);
+			if(progetti[i].paga<=0){
+				co(4);
+				printf("\tERRORE: Valore non valido!\n");
+				co(7);
+			}
+		}while(progetti[i].paga<=0);
+		co(3);
+		printf("\n\tCalcolo costo in corso...\n");
+		co(7);
+		progetti[i].costo_approssimato=calcolaCostoProgetto(i,PCount);
+		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
+		(*PCount)++;
+		printf("Continua...\n");
+		return 0;
+	}
+}
+// Funzione che calcola il costo di un progetto
+float calcolaCostoProgetto(int dim,int PCount){
+	int i,j,flag=0,g,m,a;
+	float costo=0;
+	for(i=0;i<PCount;i++){
+		for(j=0;j<progetti[dim].rdim;j++){
+			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
+				inventario[i].utilizzo_previsto+=progetti[dim].rotoli_richiesti[j].metraggio_richiesto;
+				do{
+					if(inventario[i].utilizzo_previsto>inventario[i].quantita_disponibile){
+						co(8);
+						printf("\tIl rotolo %s non e' sufficente per questo progetto, procedo con l'acquisto...\n",inventario[i].codice_rotolo);
+						if(flag==0){
+							do{
+								printf("\tInserisci la data di oggi (GG MM AAAA): ");
+								scanf(" %d %d %d",&g,&m,&a);
+								if(checkData(g,m,a)==1){
+									co(4);
+									printf("\tERRRORE: Data non valida!\n");
+									co(8);
+								}
+							}while(checkData(g,m,a)==1);
+							inventario[i].data_acquisto.g=g;
+							inventario[i].data_acquisto.m=m;
+							inventario[i].data_acquisto.a=a;
+							flag=1;
+						}
+						inventario[i].quantita_disponibile+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
+						costo+=inventario[i].rot.costo;
+						printf("\tProcedo con l'acquisto...\n");
+						printf("\t(Costo: %.2f)\n",costo);
+					}
+				}while(inventario[i].utilizzo_previsto>inventario[i].quantita_disponibile);
+			}
+		}
+	}
+	co(7);
+	return costo;
 }
 /*
 Funzione che elimina un rotolo
