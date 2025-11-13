@@ -170,7 +170,6 @@ int main(){
 				break;
 			case 31:
 				mostraTessuti(RCount);
-				pausa("Continua...\n");
 				break;
 			case 34:
 				co(8);
