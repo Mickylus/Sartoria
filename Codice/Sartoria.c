@@ -275,7 +275,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 				if(stato==3 && progetti[i].mini==0 && tasto==1001){
 					stato=4;
 				}else if(stato==4 && progetti[i].mini==0 && tasto==1000){
-					stato=2;
+					stato=1;
 				}
 				for(j=0;j<5;j++){
                     if(stato==j){	
@@ -350,6 +350,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 										}
 									}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
 								}
+								progetti[i].costo_approssimato=calcolaCostoProgetto(i,dim);
 							}else{
 								do{
 									printf("Nuovi scarti: ");
@@ -591,14 +592,14 @@ int nuovoProgetto(int *PCount,int RCount){
 // Funzione che calcola il costo di un progetto
 float calcolaCostoProgetto(int dim,int PCount){
 	int i,j;
-	float costo=0,q;
+	float costo=0,q,u;
 	for(i=0;i<PCount;i++){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
-				inventario[i].utilizzo_previsto+=progetti[dim].rotoli_richiesti[j].metraggio_richiesto;
+				u=progetti[dim].rotoli_richiesti[j].metraggio_richiesto;
 				q=inventario[i].quantita_disponibile;
 				do{
-					if(inventario[i].utilizzo_previsto>q){
+					if(u>q){
 						co(8);
 						printf("\tAl momento il rotolo '%s' non e' sufficente per questo progetto.\n",inventario[i].codice_rotolo);
 						q+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
@@ -606,7 +607,7 @@ float calcolaCostoProgetto(int dim,int PCount){
 						printf("\tCalcolo costo in corso...\n");
 						printf("\t(Costo: %.2f)\n",costo);
 					}
-				}while(inventario[i].utilizzo_previsto>q);
+				}while(u>q);
 			}
 		}
 	}
