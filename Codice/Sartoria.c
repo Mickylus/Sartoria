@@ -383,6 +383,15 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(7);
 		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
+		printf("\tRicavi stimati: ");
+		if(progetti[i].paga-progetti[i].costo_approssimato>=0){
+			co(2);
+		}else{
+			co(4);
+		}
+		printf("%.2f ",progetti[i].paga-progetti[i].costo_approssimato);
+		co(7);
+		printf("euro\n");
 		(*PCount)++;
 		pausa("Continua...\n");
 		return 0;
@@ -390,8 +399,8 @@ int nuovoProgetto(int *PCount,int RCount){
 }
 // Funzione che calcola il costo di un progetto
 float calcolaCostoProgetto(int dim,int PCount){
-	int i,j,flag=0,g,m,a;
-	float costo=0;
+	int i,j;
+	float costo=0,q;
 	for(i=0;i<PCount;i++){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
@@ -399,28 +408,14 @@ float calcolaCostoProgetto(int dim,int PCount){
 				do{
 					if(inventario[i].utilizzo_previsto>inventario[i].quantita_disponibile){
 						co(8);
-						printf("\tIl rotolo %s non e' sufficente per questo progetto, procedo con l'acquisto...\n",inventario[i].codice_rotolo);
-						if(flag==0){
-							do{
-								printf("\tInserisci la data di oggi (GG MM AAAA): ");
-								scanf(" %d %d %d",&g,&m,&a);
-								if(checkData(g,m,a)==1){
-									co(4);
-									printf("\tERRRORE: Data non valida!\n");
-									co(8);
-								}
-							}while(checkData(g,m,a)==1);
-							inventario[i].data_acquisto.g=g;
-							inventario[i].data_acquisto.m=m;
-							inventario[i].data_acquisto.a=a;
-							flag=1;
-						}
-						inventario[i].quantita_disponibile+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
+						printf("\tAl momento il rotolo '%s' non e' sufficente per questo progetto.\n",inventario[i].codice_rotolo);
+						q=inventario[i].quantita_disponibile;
+						q+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
 						costo+=inventario[i].rot.costo;
-						printf("\tProcedo con l'acquisto...\n");
+						printf("\tCalcolo costo in corso...\n");
 						printf("\t(Costo: %.2f)\n",costo);
 					}
-				}while(inventario[i].utilizzo_previsto>inventario[i].quantita_disponibile);
+				}while(inventario[i].utilizzo_previsto>q);
 			}
 		}
 	}
