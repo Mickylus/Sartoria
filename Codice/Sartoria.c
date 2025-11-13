@@ -124,7 +124,7 @@ int main(){
 		scelta=menu();
 		switch(scelta){
 			case 11:
-				err=nuovoRotolo(&RCount);
+				err=nuovoRotolo(&RCount);											// Input nuovo rotolo
 				if(err==1){
 					co(4);
 					printf("Dimensione massima inventario raggiunta!\n");
@@ -135,9 +135,9 @@ int main(){
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("Inserisci il codice da cercare: ");
+				printf("Inserisci il codice da cercare: ");							// Input codice da cercare
 				scanf(" %s",filter);
-				if(modificaRotolo(RCount,filter)==1){
+				if(modificaRotolo(RCount,filter)==1){								// procedo con la modifica
 					co(4);
 					printf("Rotolo non trovato!\n");
 					co(7);
@@ -148,9 +148,9 @@ int main(){
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("Inserisci il codice da cercare: ");
+				printf("Inserisci il codice da cercare: ");							// Input codice da cercare
 				scanf(" %s",filter);
-				if(eliminaRotolo(&RCount,filter)==1){
+				if(eliminaRotolo(&RCount,filter)==1){								// Procedo con l'eliminazione
 					co(4);
 					printf("Rotolo non trovato!\n");
 					co(7);
@@ -162,7 +162,7 @@ int main(){
 				pausa("Continua...\n");
 				break;
 			case 21:
-				if(nuovoProgetto(&PCount,RCount)==1){
+				if(nuovoProgetto(&PCount,RCount)==1){								// Input nuovo progetto
 					co(4);
 					printf("ERRORE: dimensione massima raggiunta!\n");
 					co(7);
@@ -175,7 +175,7 @@ int main(){
 				co(8);
 				printf("Salvataggio in corso...\n");
 				co(7);
-				salvaInventario(RCount,PCount);
+				salvaInventario(RCount,PCount);										// Salvataggio manuale
 				co(2);
 				printf("Salvataggio effettuato!\n");
 				co(7);
@@ -205,7 +205,7 @@ int main(){
 				}while(tasto!=13);
 				printf("\n");
 				if(i%2==0){
-					reset(&RCount,&PCount);
+					reset(&RCount,&PCount);											// Resetto il programma
 					co(2);
 					printf("Reset effettuato!\n");
 					co(7);
@@ -238,6 +238,7 @@ void mostraTessuti(int dim){
 	int i,tasto;
 	for(i=0;i<dim;i++){
 		do{
+			// Stampo tutti i campi
 			system(CLEAR);
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
@@ -255,7 +256,9 @@ void mostraTessuti(int dim){
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
 			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
+			// Attendo un input
 			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [ESC] Esci");
+			// Se <- torno indietro di 1
 			if(tasto==1002){
 				if(i>0){
 					i-=2;
@@ -263,12 +266,15 @@ void mostraTessuti(int dim){
 					i--;
 				}
 			}
+			// Se -> e sono al limite rimane sullo stesso tessuto
 			if(tasto==1003 && i==dim-1){
 				i--;
 			}
+			// Modifico il rotolo corrente
 			if(tasto==32){
 				modificaRotolo(dim,inventario[i].codice_rotolo);
 			}
+			// Esco dalla funzione
 			if(tasto==27){
 				i=dim;
 			}
@@ -288,6 +294,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		printf("Nuovo progetto:\n");
 		printf("\tNome progetto: ");
 		scanf(" %s",progetti[i].nome_progetto);
+		// Chiedo che tipo di progetto è
 		do{
 			printf("\tTipo progetto:\n");
 			printf("\t1: Normale - 2: Mini (Utilizza gli scarti)\n");
@@ -319,7 +326,7 @@ int nuovoProgetto(int *PCount,int RCount){
 					printf("\t\tCodice rotolo [%d/%d]: ",j+1,progetti[i].rdim);
 					scanf(" %s",progetti[i].rotoli_richiesti[j].rotolo_richiesto);
 					for(k=0;k<RCount;k++){
-						if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
+						if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){		// Controllo che ci sia il rotolo scelto
 							err=0;
 						}
 					}
@@ -342,6 +349,7 @@ int nuovoProgetto(int *PCount,int RCount){
 				}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
 			}
 		}else{
+			// Se il progetto è 'mini' allora chiedo gli scarti che servono
 			do{
 				printf("\tScarti richiesti: ");
 				scanf(" %s",val);
@@ -392,7 +400,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(3);
 		printf("\n\tCalcolo costo in corso...\n");
 		co(7);
-		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
+		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);		// Calcolo il costo del progetto in base alle scorte attuali
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
 		printf("\tRicavi stimati: ");
 		if(progetti[i].paga-progetti[i].costo_approssimato>=0){
@@ -400,7 +408,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		}else{
 			co(4);
 		}
-		printf("%.2f ",progetti[i].paga-progetti[i].costo_approssimato);
+		printf("%.2f ",progetti[i].paga-progetti[i].costo_approssimato);		// Stampo il ricavo
 		co(7);
 		printf("euro\n");
 		(*PCount)++;
@@ -422,7 +430,7 @@ float calcolaCostoProgetto(int dim,int PCount){
 						co(8);
 						printf("\tAl momento il rotolo '%s' non e' sufficente per questo progetto.\n",inventario[i].codice_rotolo);
 						q+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
-						costo+=inventario[i].rot.costo;
+						costo+=inventario[i].rot.costo;	// Aumento il costo fino a quando ne ho abbastanza
 						printf("\tCalcolo costo in corso...\n");
 						printf("\t(Costo: %.2f)\n",costo);
 					}
@@ -443,7 +451,7 @@ int eliminaRotolo(int *RCount, char filtro[]){
 	for(i=0;i<*RCount;i++){
 		if(strcmp(inventario[i].codice_rotolo,filtro)==0){
 			for(j=i;j<*RCount-1;j++){
-				inventario[j]=inventario[j+1];
+				inventario[j]=inventario[j+1];	// Sposto tutto di uno
 			}
 			(*RCount)--;
 			return 0;
@@ -479,8 +487,8 @@ int modificaRotolo(int dim, char filtro[]){
 					stato=7;
 				}
 				for(j=0;j<8;j++){
-                    if(stato==j){
-						co(15);
+                    if(stato==j){	
+						co(15);	// se il campo è quello scelto allora lo evidenzio
 					}else{
 						co(8);
 					}
@@ -683,6 +691,7 @@ void caricaInventario(int *RCount, int *PCount){
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEINVENTARIO);
 		co(7);
 	}else{
+		// leggo i tessuti
 		fscanf(FInv,"%d %f",RCount,&budget);
 		for(i=0;i<*RCount;i++){
 			fscanf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,&inventario[i].rot.lunghezza,&inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,&inventario[i].rot.costo,&inventario[i].rot.usura,&inventario[i].data_acquisto.g,&inventario[i].data_acquisto.m,&inventario[i].data_acquisto.a,&inventario[i].quantita_disponibile,&inventario[i].utilizzo_previsto,&inventario[i].scarti_utilizzabili);
@@ -697,6 +706,7 @@ void caricaInventario(int *RCount, int *PCount){
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPROGETTI);
 		co(7);
 	}else{
+		// leggo i progetti
 		fscanf(FProg,"%d",PCount);
 		for(i=0;i<*PCount;i++){
 			fscanf(FProg,"%s %f %d %f %s %d %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga);
@@ -721,6 +731,7 @@ void salvaInventario(int RCount, int PCount){
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEINVENTARIO);
 		co(7);
 	}else{
+		// Salvo i tessuti
 		fprintf(FInv,"%d %f\n",RCount,budget);
 		for(i=0;i<RCount;i++){
 			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
@@ -732,6 +743,7 @@ void salvaInventario(int RCount, int PCount){
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPROGETTI);
 		co(7);
 	}else{
+		// Salvo i progetti
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
 			fprintf(FProg,"%s %f %d %f %s %d %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga);
@@ -758,6 +770,7 @@ Funzione che stampa il menu:
 	3.2) Controlla i tessuti
 	3.3) Rotazione Scorta
 	3.4) Salvataggio
+	3.5) Reset
  4) Uscita
 	4.1) Termina il programma
 */
