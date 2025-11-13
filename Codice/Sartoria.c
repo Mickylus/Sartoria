@@ -168,6 +168,10 @@ int main(){
 					co(7);
 				}
 				break;
+			case 31:
+				mostraTessuti(RCount);
+				pausa("Continua...\n");
+				break;
 			case 34:
 				co(8);
 				printf("Salvataggio in corso...\n");
@@ -229,6 +233,32 @@ int main(){
 		co(7);
 	}while(scelta!=41);
 	return 0;
+}
+// Funzione che stampa i tessuti
+void mostraTessuti(int dim){
+	int i,tasto;
+	for(i=0;i<dim;i++){
+		do{
+			system(CLEAR);
+			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");	
+			printf("Rotolo [%d/%d]\n",i+1,dim);
+			printf("Codice: %s\n",inventario[i].codice_rotolo);
+			printf("Fornitore: %s\n",inventario[i].fornitore);
+			printf("Tipo di tessuto: %s\n",inventario[i].rot.tipo_tessuto);
+			printf("Colore: %s\n",inventario[i].rot.colore);
+			printf("Fantasia: %s\n",inventario[i].rot.fantasia);
+			printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
+			printf("Data di acquisto: %d/%d/%d\n",inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a);
+			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
+			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
+			print("Scarti: %d\n",inventario[i].scarti_utilizzabili);
+			printf("Usura: %.1f\n",inventario[i].rot.usura);
+			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
+			tasto=pausa("[->]");
+		}while(tasto!=1003);
+	}
 }
 // Funzione che crea un nuovo progetto
 int nuovoProgetto(int *PCount,int RCount){
