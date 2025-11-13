@@ -111,8 +111,8 @@ int rotazioneScorte(int);			// Ruota le scorte
 float aumentoUsura();				// Aumenta l'usura (a ogni azione o a caso. ancora da decidere...)
 void salvaInventario(int,int);		// Sotto forma di file .txt
 void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
-void reset(int*,int*);
-void aggiorna(int,int);
+void reset(int*,int*);				// reset inventario
+void aggiorna(int,int);				// aggiorna i dati
 
 
 // Main
