@@ -474,7 +474,7 @@ int nuovoProgetto(int *PCount,int RCount){
 	if(*PCount>=MAXPROGETTI){
 		return 1;
 	}else{
-		int i=*PCount,j,k,scelta,err=1;
+		int i=*PCount,j,k,scelta,err=1,tasto=0;
 		char val[10];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
@@ -515,21 +515,40 @@ int nuovoProgetto(int *PCount,int RCount){
 			}while(progetti[i].rdim<=0);
 			printf("\n\tRotoli:\n");
 			for(j=0;j<progetti[i].rdim;j++){
-				do{
-					printf("\t\tCodice rotolo [%d/%d]: ",j+1,progetti[i].rdim);
-					scanf(" %s",progetti[i].rotoli_richiesti[j].rotolo_richiesto);
-					for(k=0;k<RCount;k++){
-						if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){		// Controllo che ci sia il rotolo scelto
-							err=0;
+				for(k=0;k<RCount;k++){
+					system(CLEAR);
+					printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+					printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+					printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+					printf("Nuovo progetto:\n");
+					printf("\tNome progetto: %s\n",progetti[i].nome_progetto);
+					printf("\tTipo progetto:\n");
+					printf("\t1: Normale - 2: Mini (Utilizza gli scarti)\n");
+					printf("\tScelta: %d\n",scelta);
+					printf("\tTipo di capo: %s\n",progetti[i].tipoCapo);
+					printf("\tQuanti rotoli usa il progetto (MAX: %d): %d\n",MAXP,progetti[i].rdim);
+					printf("\n\tRotoli:\n");
+					printf("\t\tRotolo [%d/%d]\n",j+1,progetti[i].rdim);
+					printf("\t\tCodice rotolo: ");
+					co(15);
+					printf("%s",inventario[k].codice_rotolo);
+					co(7);
+					tasto=pausa("\n");
+					if(tasto==1002){
+						if(k>0){
+							k-=2;
+						}else{
+							k--;
 						}
 					}
-					if(err!=0){
-						co(4);
-						printf("\t\tERRORE: Rotolo non trovato!\n");
-						co(7);
+					if(tasto==1003 && k==RCount-1){
+						k--;
 					}
-				}while(err!=0);
-				err=1;
+					if(tasto==13){
+						strcpy(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo);
+						k=RCount;
+					}
+				}
 				do{
 					printf("\t\tMetraggio richiesto (M^2): ");
 					scanf(" %s",val);
