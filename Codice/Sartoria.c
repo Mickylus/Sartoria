@@ -420,6 +420,7 @@ void mostraTessuti(int dim,int pdim){
 			printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
 			printf("Data di acquisto: %d/%d/%d\n",inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a);
 			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
+			inventario[i].utilizzo_previsto=0;
 			for(j=0;j<pdim;j++){
 				if(progetti[j].mini!=1){
 					for(k=0;k<progetti[i].rdim;k++){
