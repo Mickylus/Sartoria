@@ -253,7 +253,7 @@ void mostraTessuti(int dim){
 			printf("Data di acquisto: %d/%d/%d\n",inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a);
 			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
 			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
-			print("Scarti: %d\n",inventario[i].scarti_utilizzabili);
+			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
 			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
 			tasto=pausa("[->]");
