@@ -252,7 +252,7 @@ int nuovoProgetto(int *PCount,int RCount){
 			}
 		}while(scelta<1 || scelta >2);
 		printf("\tTipo di capo: ");
-		scnaf(" %s",progetti[i].tipoCapo);
+		scanf(" %s",progetti[i].tipoCapo);
 		if(scelta==1){
 			do{	
 				printf("\tQuanti rotoli usa il progetto (MAX: %d): ",MAXP);
@@ -317,7 +317,7 @@ int nuovoProgetto(int *PCount,int RCount){
 					co(7);
 				}
 			}while(err!=0);
-			for(j=0;j<PCount;j++){
+			for(j=0;j<*PCount;j++){
 				if(strcmp(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[j].codice_rotolo)==0){
 					if(progetti[i].scarti_richiesti>inventario[j].scarti_utilizzabili){
 						co(4);
@@ -343,7 +343,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(3);
 		printf("\n\tCalcolo costo in corso...\n");
 		co(7);
-		progetti[i].costo_approssimato=calcolaCostoProgetto(i,PCount);
+		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
 		(*PCount)++;
 		printf("Continua...\n");
