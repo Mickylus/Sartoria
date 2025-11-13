@@ -272,8 +272,10 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 				if(stato>4){
 					stato=4;
 				}
-				if(stato==3 && progetti[i].mini==0){
+				if(stato==3 && progetti[i].mini==0 && tasto==1001){
 					stato=4;
+				}else if(stato==4 && progetti[i].mini==0 && tasto==1000){
+					stato=2;
 				}
 				for(j=0;j<5;j++){
                     if(stato==j){	
