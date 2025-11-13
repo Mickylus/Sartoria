@@ -104,7 +104,7 @@ int eliminaProgetto(int*,char[]);			// Elimina un progetto
 float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
 void mostraProgetti(int);			// Stampa i progetti
 int avviaTaglio(int*);				// Avvia il taglio (rimuove i progetti in attesa)
-void mostraTessuti(int);			// Mostra i tessuti
+void mostraTessuti(int,int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
 int rotazioneScorte(int);			// Ruota le scorte
 // Should
@@ -182,7 +182,7 @@ int main(){
 				}
 				break;
 			case 31:
-				mostraTessuti(RCount);
+				mostraTessuti(RCount,PCount);
 				break;
 			case 34:
 				co(8);
@@ -402,8 +402,8 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 	return f;
 }
 // Funzione che stampa i tessuti
-void mostraTessuti(int dim){
-	int i,tasto;
+void mostraTessuti(int dim,int pdim){
+	int i,tasto,j,k;
 	for(i=0;i<dim;i++){
 		do{
 			// Stampo tutti i campi
@@ -420,6 +420,15 @@ void mostraTessuti(int dim){
 			printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
 			printf("Data di acquisto: %d/%d/%d\n",inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a);
 			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
+			for(j=0;j<pdim;j++){
+				if(progetti[j].mini!=1){
+					for(k=0;k<progetti[i].rdim;k++){
+						if(strcmp(inventario[i].codice_rotolo,progetti[j].rotoli_richiesti[k].rotolo_richiesto)==0){
+							inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].metraggio_richiesto;
+						}
+					}
+				}
+			}
 			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
