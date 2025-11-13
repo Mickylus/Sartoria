@@ -173,7 +173,7 @@ int main(){
 				printf("Salvataggio in corso...\n");
 				co(7);
 				salvaInventario(RCount,PCount);
-				co(4);
+				co(2);
 				printf("Salvataggio effettuato!\n");
 				co(7);
 				pausa("Continua...\n");
@@ -246,6 +246,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		do{
 			printf("\tTipo progetto:\n");
 			printf("\t1: Normale - 2: Mini (Utilizza gli scarti)\n");
+			printf("\tScelta: ");
 			scanf(" %s",val);
 			scelta=checkValInt(val);
 			if(scelta<1 || scelta >2){
@@ -348,7 +349,6 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(7);
 		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
-		budget-=progetti[i].costo_approssimato;
 		(*PCount)++;
 		pausa("Continua...\n");
 		return 0;
@@ -549,17 +549,17 @@ int nuovoRotolo(int *RCount){
 		printf("Nuovo rotolo:\n");
 		printf("\tCodice Rotolo: ");
 		scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
-		printf("\tFornitore    : ");
+		printf("\tFornitore: ");
 		scanf(" %s",inventario[i].fornitore);								// Input nome fornitore
-		printf("\tDati rotolo  :\n");
+		printf("\tDati rotolo:\n");
 		printf("\t\tTipo di tessuto: ");
 		scanf(" %s",inventario[i].rot.tipo_tessuto);						// Input Tipo di tessuto
-		printf("\t\tColore         : ");
+		printf("\t\tColore: ");
 		scanf(" %s",inventario[i].rot.colore);								// Input colore tessuto
-		printf("\t\tFantasia       : ");
+		printf("\t\tFantasia: ");
 		scanf(" %s",inventario[i].rot.fantasia);							// Input fantasia
 		do{
-			printf("\t\tLunghezza (M)  : ");
+			printf("\t\tLunghezza (M): ");
 			scanf(" %s",val);
 			inventario[i].rot.lunghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.lunghezza<=0){
@@ -569,7 +569,7 @@ int nuovoRotolo(int *RCount){
 			}
 		}while(inventario[i].rot.lunghezza<=0);
 		do{
-			printf("\t\tLarghezza (cm)  : ");
+			printf("\t\tLarghezza (cm): ");
 			scanf(" %s",val);
 			inventario[i].rot.larghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.larghezza<=0){
@@ -578,10 +578,14 @@ int nuovoRotolo(int *RCount){
 				co(7);
 			}
 		}while(inventario[i].rot.larghezza<=0);
-		printf("\t\tCodice Fornitore    : ");
+		printf("\t\tCodice Fornitore: ");
 		scanf(" %s",inventario[i].rot.codice_fornitura);					// Input coice del fornitore
 		do{
-			printf("\t\tCosto           : ");
+			printf("\t\tCosto ");
+			co(8);
+			printf("(per l'intero rotolo)");
+			co(7);
+			printf(": ");
 			scanf(" %s",val);
 			inventario[i].rot.costo=checkValFloat(val);						// Controllo che il valore sia valido
 			if(inventario[i].rot.costo<0){
