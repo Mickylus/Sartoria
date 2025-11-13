@@ -351,6 +351,8 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
 								}
 								progetti[i].costo_approssimato=calcolaCostoProgetto(i,dim);
+								co(8);
+								printf("\t(Costo: %.2f)\n",progetti[i].costo_approssimato);
 								pausa("Continua...\n");
 							}else{
 								do{
@@ -807,6 +809,10 @@ int nuovoRotolo(int *RCount){
 				co(7);
 			}
 		}while(inventario[i].rot.larghezza<=0);
+		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
+		co(8);
+		printf("\t\tQuantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
+		co(7);
 		printf("\t\tCodice Fornitore: ");
 		scanf(" %s",inventario[i].rot.codice_fornitura);					// Input coice del fornitore
 		do{
@@ -850,7 +856,6 @@ int nuovoRotolo(int *RCount){
 		inventario[i].data_acquisto.g=g;
 		inventario[i].data_acquisto.m=m;
 		inventario[i].data_acquisto.a=a;
-		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 		inventario[i].utilizzo_previsto=0;
 		inventario[i].scarti_utilizzabili=0;
 		co(8);
