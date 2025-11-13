@@ -259,6 +259,7 @@ void mostraTessuti(int dim){
 			tasto=pausa("[->]");
 		}while(tasto!=1003);
 	}
+	printf("\n");
 }
 // Funzione che crea un nuovo progetto
 int nuovoProgetto(int *PCount,int RCount){
