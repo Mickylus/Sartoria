@@ -513,7 +513,6 @@ int nuovoProgetto(int *PCount,int RCount){
 					co(7);
 				}
 			}while(progetti[i].rdim<=0);
-			printf("\n\tRotoli:\n");
 			for(j=0;j<progetti[i].rdim;j++){
 				for(k=0;k<RCount;k++){
 					system(CLEAR);
