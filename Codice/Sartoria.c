@@ -86,6 +86,7 @@ struct progetto{
 	int scarti_richiesti;				// Scarti richiesti (se mini=1)
 	char tipoCapo[MAXSTRING];			// Il tipo di vestito ("Gonna", "Giacca")
 	int rdim;							// Numero di rotoli richiesti
+	float paga;							// Paga del progetto
 } progetti[MAXPROGETTI];				// Array globale dei progetti
 
 
@@ -479,7 +480,7 @@ void caricaInventario(int *RCount, int *PCount){
 	}else{
 		fscanf(FProg,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(FProg,"%s %f %d %f %s %d",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim);
+			fscanf(FProg,"%s %f %d %f %s %d %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga);
 			for(j=0;j<progetti[i].rdim;j++){
 				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].metraggio_richiesto);
 			}
@@ -514,7 +515,7 @@ void salvaInventario(int RCount, int PCount){
 	}else{
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(FProg,"%s %f %d %f %s %d\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim);
+			fprintf(FProg,"%s %f %d %f %s %d %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga);
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].metraggio_richiesto);
 			}
