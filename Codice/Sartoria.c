@@ -158,6 +158,14 @@ int main(){
 				}
 				pausa("Continua...\n");
 				break;
+			case 34:
+				co(8);
+				printf("Salvataggio in corso...\n");
+				co(7);
+				salvaInventario(RCount,PCount);
+				printf("Salvataggio effettuato!\n");
+				pausa("Continua...\n");
+				break;
 			case 35:
 				int i=0;
 				do{
