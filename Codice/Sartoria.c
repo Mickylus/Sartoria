@@ -252,7 +252,7 @@ Funzione che modifica un progetto
 0: se è stato trovato
 */
 int modificaProgetto(int dim,char filtro[],int RCount){
-	int i,j,tasto,stato=0,f=1,err=1,k;
+	int i,j,tasto=0,stato=0,f=1,err=1,k;
 	char val[10];
 	for(i=0;i<dim;i++){
 		if(strcmp(progetti[i].nome_progetto,filtro)==0){
@@ -274,8 +274,8 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 				}
 				if(stato==3 && progetti[i].mini==0 && tasto==1001){
 					stato=4;
-				}else if(stato==4 && progetti[i].mini==0 && tasto==1000){
-					stato=1;
+				}else if((stato==4 || stato==3) && progetti[i].mini==0 && tasto==1000){
+					stato=2;
 				}
 				for(j=0;j<5;j++){
                     if(stato==j){	
@@ -372,7 +372,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 								scanf(" %s",progetti[i].rotoli_richiesti[0].rotolo_richiesto);
 								for(k=0;k<RCount;k++){
 									if(strcmp(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[k].codice_rotolo)==0){
-										err==0;
+										err=0;
 									}
 								}
 								if(err!=0){
@@ -404,7 +404,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 }
 // Funzione che stampa i tessuti
 void mostraTessuti(int dim,int pdim){
-	int i,tasto,j,k;
+	int i,tasto=0,j,k;
 	for(i=0;i<dim;i++){
 		do{
 			// Stampo tutti i campi
@@ -585,7 +585,9 @@ int nuovoProgetto(int *PCount,int RCount){
 		printf("\n\tCalcolo costo in corso...\n");
 		co(7);
 		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);		// Calcolo il costo del progetto in base alle scorte attuali
+		co(8);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
+		co(7);
 		printf("\tRicavi stimati: ");
 		if(progetti[i].paga-progetti[i].costo_approssimato>=0){
 			co(2);
@@ -611,18 +613,13 @@ float calcolaCostoProgetto(int dim,int PCount){
 				q=inventario[i].quantita_disponibile;
 				do{
 					if(u>q){
-						co(8);
-						printf("\tAl momento il rotolo '%s' non e' sufficente per questo progetto.\n",inventario[i].codice_rotolo);
 						q+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
 						costo+=inventario[i].rot.costo;	// Aumento il costo fino a quando ne ho abbastanza
-						printf("\tCalcolo costo in corso...\n");
-						printf("\t(Costo: %.2f)\n",costo);
 					}
 				}while(u>q);
 			}
 		}
 	}
-	co(7);
 	return costo;
 }
 /*
