@@ -173,7 +173,9 @@ int main(){
 				printf("Salvataggio in corso...\n");
 				co(7);
 				salvaInventario(RCount,PCount);
+				co(4);
 				printf("Salvataggio effettuato!\n");
+				co(7);
 				pausa("Continua...\n");
 				break;
 			case 35:
@@ -185,19 +187,20 @@ int main(){
 						co(7);
 						printf("[CONFERMA] ");
 						co(8);
-						printf("[ANNULLA]\n");
+						printf("[ANNULLA]");
 						co(7);
 					}else{
 						co(8);
 						printf("[CONFERMA] ");
 						co(7);
-						printf("[ANNULLA]\n");
+						printf("[ANNULLA]");
 					}
 					tasto=pausa(" ");
 					if(tasto!=13){
 						i++;
 					}
 				}while(tasto!=13);
+				printf("\n");
 				if(i%2==0){
 					reset(&RCount,&PCount);
 					co(2);
@@ -345,8 +348,9 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(7);
 		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
+		budget-=progetti[i].costo_approssimato;
 		(*PCount)++;
-		printf("Continua...\n");
+		pausa("Continua...\n");
 		return 0;
 	}
 }
