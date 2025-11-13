@@ -255,13 +255,24 @@ void mostraTessuti(int dim){
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
 			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
-			tasto=pausa("[<-] [->]");
+			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [ESC] Esci");
 			if(tasto==1002){
 				if(i>0){
 					i-=2;
+				}else{
+					i--;
 				}
 			}
-		}while(tasto!=1003 && tasto != 1002);
+			if(tasto==1003 && i==dim-1){
+				i--;
+			}
+			if(tasto==32){
+				modificaRotolo(dim,inventario[i].codice_rotolo);
+			}
+			if(tasto==27){
+				i=dim;
+			}
+		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
 }
 // Funzione che crea un nuovo progetto
@@ -405,11 +416,11 @@ float calcolaCostoProgetto(int dim,int PCount){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				inventario[i].utilizzo_previsto+=progetti[dim].rotoli_richiesti[j].metraggio_richiesto;
+				q=inventario[i].quantita_disponibile;
 				do{
-					if(inventario[i].utilizzo_previsto>inventario[i].quantita_disponibile){
+					if(inventario[i].utilizzo_previsto>q){
 						co(8);
 						printf("\tAl momento il rotolo '%s' non e' sufficente per questo progetto.\n",inventario[i].codice_rotolo);
-						q=inventario[i].quantita_disponibile;
 						q+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
 						costo+=inventario[i].rot.costo;
 						printf("\tCalcolo costo in corso...\n");
