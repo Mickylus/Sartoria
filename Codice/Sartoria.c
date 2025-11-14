@@ -1141,6 +1141,7 @@ int menu(){
 		}
 	}while(tasto!=13);
 	co(7);
+	system(CLEAR);
 	return s1*10 + s2;
 }
 // Funzione che resetta il programma
