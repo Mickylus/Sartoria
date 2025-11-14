@@ -986,7 +986,89 @@ Funzione che stampa il menu:
 	4.1) Termina il programma
 */
 int menu(){
-	int s1,s2;
+	int s1,s2,tasto=0,stato=1,i;
+	char val[10];
+	do{
+		system(CLEAR);
+		co(7);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		for(i=1;i<=4;i++){
+			if(stato==i){
+				co(15);
+			}else{
+				co(8);
+			}
+			switch(i){
+				case 1:
+					printf("\tGestione rotoli\n");
+					co(8);
+					printf("\t\tNuovo rotolo\n");
+					printf("\t\tModifica rotolo\n");
+					printf("\t\tElimina rotolo\n");
+					break;
+				case 2:
+					printf("\tGestione progetti\n");
+					co(8);
+					printf("\t\tNuovo progetto\n");
+					printf("\t\tModifica progetto\n");
+					printf("\t\tElimina progetto\n");
+					printf("\t\tElenco progetti\n");
+					printf("\t\tAvvia taglio\n");
+					break;
+				case 3:
+					printf("\tGestione inventario: ");
+					co(8);
+					printf("\t\tElenco tessuti\n");
+					printf("\t\tControllo tessuti\n");
+					printf("\t\tRotazione scorte\n");
+					printf("\t\tSalvataggio manuale\n");
+					printf("\t\tReset\n");
+					break;
+				case 4:
+					printf("\tEsci\n");
+					break;
+			}
+		}
+		tasto=pausa("\n");
+		if(tasto==1000){
+			stato--;
+		}else if(tasto==1001){
+			stato++;
+		}
+		if(stato<1){
+			stato=1;
+		}else if(stato>4){
+			stato=4;
+		}
+		if(tasto==13){
+			s1=stato;
+		}
+	}while(tasto!=13);
+	stato=1;
+	do{
+		system(CLEAR);
+		co(7);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		for(i=1;i<=5;i++){
+			if(stato==i){
+				co(7);
+			}else{
+				co(8);
+			}
+			switch(i){
+				
+			}
+		}
+	}while(tasto!=13);
+	return s1*10 + s2;
+}
+/*
+int menu(){
+	int s1,s2,tasto=0,stato=1;
 	char val[10];
 	do{
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
@@ -1055,6 +1137,7 @@ int menu(){
 	system(CLEAR);
 	return s1*10 + s2;
 }
+*/
 // Funzione che resetta il programma
 void reset(int *RCount, int *PCount){
 	budget=BUDGETINIZIALE;
