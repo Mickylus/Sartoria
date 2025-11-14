@@ -1042,7 +1042,7 @@ int menu(){
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("[SU/GIU] Muoviti, [INVIO] Seleziona, [ESC] Esci\n");
-		for(j=1;j<4;j++){
+		for(j=1;j<5;j++){
 			if(j==s1){
 				co(15);
 			}else{
@@ -1140,6 +1140,7 @@ int menu(){
 			s2=stato;
 		}
 	}while(tasto!=13);
+	co(7);
 	return s1*10 + s2;
 }
 // Funzione che resetta il programma
