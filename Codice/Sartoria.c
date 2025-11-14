@@ -994,6 +994,7 @@ int menu(){
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+		printf("[SU/GIU] Muoviti, [INVIO] Seleziona\n");
 		for(i=1;i<=4;i++){
 			if(stato==i){
 				co(15);
@@ -1003,28 +1004,12 @@ int menu(){
 			switch(i){
 				case 1:
 					printf("\tGestione rotoli\n");
-					co(8);
-					printf("\t\tNuovo rotolo\n");
-					printf("\t\tModifica rotolo\n");
-					printf("\t\tElimina rotolo\n");
 					break;
 				case 2:
 					printf("\tGestione progetti\n");
-					co(8);
-					printf("\t\tNuovo progetto\n");
-					printf("\t\tModifica progetto\n");
-					printf("\t\tElimina progetto\n");
-					printf("\t\tElenco progetti\n");
-					printf("\t\tAvvia taglio\n");
 					break;
 				case 3:
-					printf("\tGestione inventario: ");
-					co(8);
-					printf("\t\tElenco tessuti\n");
-					printf("\t\tControllo tessuti\n");
-					printf("\t\tRotazione scorte\n");
-					printf("\t\tSalvataggio manuale\n");
-					printf("\t\tReset\n");
+					printf("\tGestione inventario:\n");
 					break;
 				case 4:
 					printf("\tEsci\n");
@@ -1056,7 +1041,7 @@ int menu(){
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-		co(15);
+		printf("[SU/GIU] Muoviti, [INVIO] Seleziona, [ESC] Esci\n");
 		for(j=1;j<4;j++){
 			if(j==s1){
 				co(15);
@@ -1103,89 +1088,60 @@ int menu(){
 								printf("\t\tControlla i tessuti\n");
 							}
 							break;
+						case 3:
+							if(s1==1){
+								printf("\t\tElimina rotolo\n");
+							}else if(s1==2){
+								printf("\t\tElimina progetto\n");
+							}else{
+								printf("\t\tRotazione scorte\n");
+							}
+							break;
+						case 4:
+							if(s1==2){
+								printf("\t\tMostra progetti\n");
+							}else if(s1==3){
+								printf("\t\tSalvataggio\n");
+							}
+							break;
+						case 5:
+							if(s1==2){
+								printf("\t\tAvvia taglio\n");
+							}else if(s1==3){
+								printf("\t\tReset\n");
+							}
+							break;
 					}
 				}
 			}
 		}
-		tasto=pausa("\n");
+		tasto=pausa("");
 		if(tasto==27){
 			return menu();
+		}
+		if(tasto==1000){
+			stato--;
+		}else if(tasto==1001){
+			stato++;
+		}
+		if(stato<1){
+			stato=1;
+		}
+		if(s1==1){
+			if(stato>3){
+				stato=3;
+			}
+		}else{
+			if(stato>5){
+				stato=5;
+			}
+		}
+		if(tasto==13){
+			s2=stato;
 		}
 	}while(tasto!=13);
 	return s1*10 + s2;
 }
-/*
-int menu(){
-	int s1,s2,tasto=0,stato=1;
-	char val[10];
-	do{
-		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
-		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
-		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-		printf("\t1) Gestione rotoli\n");
-		printf("\t2) Gestione progetti\n");
-		printf("\t3) Gestione inventario\n");
-		printf("\t4) Esci\n");
-		printf("Scelta: ");
-		scanf(" %s",val);
-		s1=checkValInt(val);
-		if(s1<=0 || s1 > 4){
-			co(4);
-			printf("ERRRORE: Scelta non valida!!\n");
-			co(7);
-			pausa("Continua...\n");
-			system(CLEAR);
-		}
-	}while(s1<=0 || s1 > 4);
-	system(CLEAR);
-	do{
-		switch(s1){
-			case 1:
-				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
-				printf(" Sartoria: Rotoli   |  Budget: %.2f euro\n",budget);
-				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("\t1) Nuovo rotolo\n");
-				printf("\t2) Modifica rotolo\n");
-				printf("\t3) Elimina rotolo\n");
-				break;
-			case 2:
-				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
-				printf(" Sartoria: Progetti |  Budget: %.2f euro\n",budget);
-				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("\t1) Nuovo progetto\n");
-				printf("\t2) Modifica progetto\n");
-				printf("\t3) Elimina progetto\n");
-				printf("\t4) Elenco progetti\n");
-				printf("\t5) Avvia taglio\n");
-				break;
-			case 3:
-				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
-				printf(" Sartoria: Inventario| Budget: %.2f euro\n",budget);
-				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("\t1) Elenco tessuti\n");
-				printf("\t2) Controllo tessuti\n");
-				printf("\t3) Rotazione scorte\n");
-				printf("\t4) Salvataggio manuale\n");
-				printf("\t5) Reset\n");
-				break;
-			case 4:
-				return 41;
-		}
-		printf("Scelta: ");
-		scanf(" %s",val);
-		s2=checkValInt(val);
-		if((s1==1 && (s2 <=0 || s2 > 3)) || (s1>=2 && (s2<=0 || s2 > 5))){
-			co(4);
-			printf("ERRORE: Scelta non valida!!\n");
-			co(7);
-			pausa("Continua...\n");
-			system(CLEAR);
-		}
-	}while((s1==1 && (s2 <=0 || s2 > 3)) || (s1>=2 && (s2<=0 || s2 > 5)));
-	system(CLEAR);
-	return s1*10 + s2;
-}
-*/
 // Funzione che resetta il programma
 void reset(int *RCount, int *PCount){
 	budget=BUDGETINIZIALE;
