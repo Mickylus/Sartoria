@@ -986,7 +986,7 @@ Funzione che stampa il menu:
 	4.1) Termina il programma
 */
 int menu(){
-	int s1,s2,tasto=0,stato=1,i;
+	int s1,s2,tasto=0,stato=1,i,j;
 	char val[10];
 	do{
 		system(CLEAR);
@@ -1047,21 +1047,69 @@ int menu(){
 		}
 	}while(tasto!=13);
 	stato=1;
+	if(s1==4){
+		return 41;
+	}
 	do{
 		system(CLEAR);
 		co(7);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-		for(i=1;i<=5;i++){
-			if(stato==i){
-				co(7);
+		co(15);
+		for(j=1;j<4;j++){
+			if(j==s1){
+				co(15);
 			}else{
 				co(8);
 			}
-			switch(i){
-				
+			switch(j){
+				case 1:
+					printf("\tGestione rotolo\n");
+					break;
+				case 2:
+					printf("\tGestione progetti\n");
+					break;
+				case 3:
+					printf("\tGestione inventario\n");
+					break;
+				case 4:
+					printf("\tEsci\n");
 			}
+			if(j==s1){
+				for(i=1;i<=5;i++){
+					if(stato==i){
+						co(7);
+					}else{
+						co(8);
+					}
+					
+					switch(i){
+						case 1:
+							if(s1==1){
+								printf("\t\tNuovo rotolo\n");
+							}else if(s1==2){
+								printf("\t\tNuovo progetto\n");
+							}else{
+								printf("\t\tMostra tessuti\n");
+							}
+							break;
+						case 2:
+							if(s1==1){
+								printf("\t\tModifica rotolo\n");
+							}else if(s1==2){
+								printf("\t\tModifica progetto\n");
+							}else{
+								printf("\t\tControlla i tessuti\n");
+							}
+							break;
+					}
+				}
+			}
+		}
+		tasto=pausa("\n");
+		if(tasto==27){
+			return menu();
 		}
 	}while(tasto!=13);
 	return s1*10 + s2;
