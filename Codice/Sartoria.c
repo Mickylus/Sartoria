@@ -954,7 +954,7 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
 			for(j=0;j<RCount;j++){
 				if(strcmp(inventario[j].codice_rotolo,inventario[i].codice_rotolo)==0){
-					errore("\tERRORE: Rotolo gia' esistente!\n");
+					errore("\tERRORE: Rotolo gia' esistente!\n\n");
 					err=1;
 				}
 			}
