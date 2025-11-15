@@ -200,8 +200,12 @@ int main(){
 					co(4);
 					printf("Progetto non trovato!\n");
 					co(7);
-					pausa("Continua...\n");
-				}	
+				}else{
+					co(2);
+					printf("Progetto eliminato con sucesso!\n");
+					co(7);
+				}
+				pausa("Continua...\n");
 				break;
 			case 31:
 				if(mostraTessuti(RCount,PCount)==1){
@@ -554,12 +558,15 @@ int nuovoProgetto(int *PCount,int RCount){
 				printf("\tQuanti rotoli usa il progetto (MAX: %d): ",MAXP);
 				scanf(" %s",val);
 				progetti[i].rdim=checkValInt(val);
+				co(4);
 				if(progetti[i].rdim<=0){
-					co(4);
 					printf("\tERRORE: Valore non valido!\n");
-					co(7);
 				}
-			}while(progetti[i].rdim<=0);
+				if(progetti[i].rdim>RCount){
+					printf("\tERRORE: Non ci sono abbastanza rotoli!\n");
+				}
+				co(7);
+			}while(progetti[i].rdim<=0 || progetti[i].rdim>RCount);
 			for(j=0;j<progetti[i].rdim;j++){
 				for(k=0;k<RCount;k++){
 					system(CLEAR);
