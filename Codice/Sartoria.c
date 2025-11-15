@@ -555,7 +555,15 @@ int nuovoProgetto(int *PCount,int RCount){
 		scanf(" %s",progetti[i].tipoCapo);
 		if(scelta==1){
 			do{	
-				printf("\tQuanti rotoli usa il progetto (MAX: %d): ",MAXP);
+				printf("\tQuanti rotoli usa il progetto (MAX: ");
+				if(RCount<MAXP){
+					printf("%d",RCount);
+				}else{
+					co(2);
+					printf("%d",MAXP);
+					co(7);
+				}
+				printf(") : ");
 				scanf(" %s",val);
 				progetti[i].rdim=checkValInt(val);
 				co(4);
