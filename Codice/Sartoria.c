@@ -587,12 +587,12 @@ int nuovoProgetto(int *PCount,int RCount){
 							k--;
 						}
 					}
-					if(k==RCount-1){
-						k--;
-					}
 					if(tasto==13){
 						strcpy(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo);
 						k=RCount;
+					}
+					if(k==RCount-1){
+						k--;
 					}
 				}
 				do{
@@ -646,12 +646,12 @@ int nuovoProgetto(int *PCount,int RCount){
 						k--;
 					}
 				}
-				if(k==RCount-1){
-					k--;
-				}
 				if(tasto==13){
 					strcpy(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[k].codice_rotolo);
 					k=RCount;
+				}
+				if(k==RCount-1){
+					k--;
 				}
 			}
 			for(j=0;j<RCount;j++){
