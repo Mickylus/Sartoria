@@ -525,14 +525,26 @@ int nuovoProgetto(int *PCount,int RCount){
 	if(*PCount>=MAXPROGETTI){
 		return 1;
 	}else{
-		int i=*PCount,j,k,scelta,err=1,tasto=0;
+		int i=*PCount,j,k,scelta,err,tasto=0;
 		char val[10];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("Nuovo progetto:\n");
-		printf("\tNome progetto: ");
-		scanf(" %s",progetti[i].nome_progetto);
+		do{
+			err=0;
+			printf("\tNome progetto: ");
+			scanf(" %s",progetti[i].nome_progetto);
+			for(j=0;j<*PCount;j++){
+				if(strcmp(progetti[j].nome_progetto,progetti[i].nome_progetto)==0){
+					co(4);
+					printf("\tERRORE: Nome gia' esistente!\n");
+					co(7);
+					err=1;
+				}
+			}
+		}while(err==1);
+		err=1;
 		// Chiedo che tipo di progetto è
 		do{
 			printf("\tTipo progetto:\n");
