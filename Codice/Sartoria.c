@@ -76,7 +76,7 @@ struct scheda{
 
 struct rotoli{
 	char rotolo_richiesto[MAXSTRING];
-	float metraggio_richiesto;
+	float quantita_richiesta;
 };
 
 // Struttura per i progetti
@@ -287,7 +287,7 @@ int mostraProgetti(int PCount, int RCount){
 				printf("Capo: %s\n",progetti[i].tipoCapo);
 				printf("Rotoli: ");
 				for(j=0;j<progetti[i].rdim;j++){
-					printf("| Rotolo: %s, %.2f M^2 |",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].metraggio_richiesto);
+					printf("%s, %.2f M^2 | ",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 				}
 				printf("\n");
 			}else{
@@ -330,6 +330,7 @@ int mostraProgetti(int PCount, int RCount){
 	}
 	return f;
 }
+// Funzione che aggiorna i dati
 void aggiorna(int RCount,int PCount){
 	int i,j,k;
 	// Aggiorno i rotoli
@@ -340,7 +341,7 @@ void aggiorna(int RCount,int PCount){
 			if(progetti[j].mini!=1){
 				for(k=0;k<progetti[i].rdim;k++){
 					if(strcmp(inventario[i].codice_rotolo,progetti[j].rotoli_richiesti[k].rotolo_richiesto)==0){
-						inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].metraggio_richiesto;
+						inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].quantita_richiesta;
 					}
 				}
 			}
@@ -444,13 +445,13 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									}while(err!=0);
 									err=1;
 									do{
-										printf("\tMetraggio richiesto (M^2): ");
+										printf("\tQuantita' richiesta (M^2): ");
 										scanf(" %s",val);
-										progetti[i].rotoli_richiesti[j].metraggio_richiesto=checkValFloat(val);
-										if(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0){
+										progetti[i].rotoli_richiesti[j].quantita_richiesta=checkValFloat(val);
+										if(progetti[i].rotoli_richiesti[j].quantita_richiesta<=0){
 											errore("\tERRORE: Valore non valido!\n");
 										}
-									}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
+									}while(progetti[i].rotoli_richiesti[j].quantita_richiesta<=0);
 								}
 								progetti[i].costo_approssimato=calcolaCostoProgetto(i,dim);
 								co(8);
@@ -673,13 +674,13 @@ int nuovoProgetto(int *PCount,int RCount){
 					}
 				}
 				do{
-					printf("\t\tMetraggio richiesto (M^2): ");
+					printf("\t\tQuantita' richiesta (M^2): ");
 					scanf(" %s",val);
-					progetti[i].rotoli_richiesti[j].metraggio_richiesto=checkValFloat(val);
-					if(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0){
+					progetti[i].rotoli_richiesti[j].quantita_richiesta=checkValFloat(val);
+					if(progetti[i].rotoli_richiesti[j].quantita_richiesta<=0){
 						errore("\t\tERRORE: Valore non valido!\n");
 					}
-				}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
+				}while(progetti[i].rotoli_richiesti[j].quantita_richiesta<=0);
 			}
 		}else{
 			// Se il progetto è 'mini' allora chiedo gli scarti che servono
@@ -736,7 +737,7 @@ int nuovoProgetto(int *PCount,int RCount){
 					}
 				}
 			}
-			progetti[i].rotoli_richiesti[0].metraggio_richiesto=0;
+			progetti[i].rotoli_richiesti[0].quantita_richiesta=0;
 			progetti[i].rdim=1;
 		}
 		do{
@@ -775,7 +776,7 @@ float calcolaCostoProgetto(int dim,int PCount){
 	for(i=0;i<PCount;i++){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
-				u=progetti[dim].rotoli_richiesti[j].metraggio_richiesto;
+				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
 				q=inventario[i].quantita_disponibile;
 				do{
 					if(u>q){
@@ -897,7 +898,7 @@ int modificaRotolo(int dim, char filtro[]){
 									errore("ERRORE: Valore non valido!\n");
 								}
 							}while(inventario[i].rot.lunghezza <= 0);
-							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
+							inventario[i].quantita_disponibile=(inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza;
 							break;
 						case 6:
 							do{
@@ -908,7 +909,7 @@ int modificaRotolo(int dim, char filtro[]){
 									errore("ERRORE: Valore non valido!\n");
 								}
 							}while(inventario[i].rot.larghezza <= 0);
-							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
+							inventario[i].quantita_disponibile=(inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza;
 							break;
 						case 7:
 							// float vecchio=inventario[i].rot.costo;
@@ -984,11 +985,11 @@ int nuovoRotolo(int *RCount){
 				errore("\t\tERRORE: Valore non valido!!\n");
 			}
 		}while(inventario[i].rot.larghezza<=0);
-		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
+		inventario[i].quantita_disponibile=(inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza;
 		co(8);
 		printf("\t\tQuantita' disponibile: %.2f M^2\n",inventario[i].quantita_disponibile);
 		co(7);
-		printf("\t\tCodice Fornitore: ");
+		printf("\t\tCodice Fornitura: ");
 		scanf(" %s",inventario[i].rot.codice_fornitura);					// Input coice del fornitore
 		do{
 			printf("\t\tCosto ");
@@ -1069,7 +1070,7 @@ void caricaInventario(int *RCount, int *PCount){
 		for(i=0;i<*PCount;i++){
 			fscanf(FProg,"%s %f %d %f %s %d %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga);
 			for(j=0;j<progetti[i].rdim;j++){
-				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].metraggio_richiesto);
+				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 		co(2);
@@ -1106,7 +1107,7 @@ void salvaInventario(int RCount, int PCount){
 		for(i=0;i<PCount;i++){
 			fprintf(FProg,"%s %f %d %f %s %d %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga);
 			for(j=0;j<progetti[i].rdim;j++){
-				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].metraggio_richiesto);
+				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 	}
