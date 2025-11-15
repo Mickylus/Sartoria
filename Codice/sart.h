@@ -212,3 +212,9 @@ void co(int colore){
     	fflush(stdout);
 	#endif
 }
+// Funzione che converte la data da stringa a int
+void inputData(char g[], char m[], char a[],int *giorno, int *mese, int *anno){
+	*giorno=atoi(g);
+	*mese=atoi(m);
+	*anno=atoi(a);
+}

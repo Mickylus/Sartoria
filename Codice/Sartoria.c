@@ -189,6 +189,19 @@ int main(){
 					pausa("Continua...\n");
 				}
 				break;
+			case 23:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("Inserisci il nome da cercare: ");
+				scanf(" %s",filter);
+				if(eliminaProgetto(&PCount,filter)==1){
+					co(4);
+					printf("Progetto non trovato!\n");
+					co(7);
+					pausa("Continua...\n");
+				}	
+				break;
 			case 31:
 				if(mostraTessuti(RCount,PCount)==1){
 					co(4);
@@ -483,6 +496,24 @@ int mostraTessuti(int dim,int pdim){
 		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
 	return f;
+}
+/*
+Funzione che elimina un progetto
+0: Eliminato
+1: Non trovato
+*/
+int eliminaRotolo(int *PCount, char filtro[]){
+	int i,j;
+	for(i=0;i<*PCount;i++){
+		if(strcmp(progetti[i].nome_progetto,filtro)==0){
+			for(j=i;j<*PCount-1;j++){
+				progetti[j]=progetti[j+1];
+			}
+			(*PCount)--;
+			return 0;
+		}
+	}
+	return 1;
 }
 // Funzione che crea un nuovo progetto
 int nuovoProgetto(int *PCount,int RCount){
@@ -813,7 +844,7 @@ int nuovoRotolo(int *RCount){
 	}else{
 		int i=*RCount,g,m,a,err;
 		char scelta='Y';
-		char val[10];
+		char val[10],v1[10],v2[10],v3[10];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
@@ -885,7 +916,8 @@ int nuovoRotolo(int *RCount){
 		inventario[i].rot.usura=0;
 		do{
 			printf("\n\tData di acquisto (GG MM AAAA): ");
-			scanf(" %d %d %d",&g,&m,&a);
+			scanf(" %s %s %s",v1,v2,v3);
+			inputData(v1,v2,v3,&g,&m,&a);
 			err=checkData(g,m,a);
 			if(err!=0){
 				co(4);
