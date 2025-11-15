@@ -163,9 +163,15 @@ int main(){
 				pausa("Continua...\n");
 				break;
 			case 21:
-				if(nuovoProgetto(&PCount,RCount)==1){								// Input nuovo progetto
+				if(RCount>0){
+					if(nuovoProgetto(&PCount,RCount)==1){								// Input nuovo progetto
+						co(4);
+						printf("ERRORE: dimensione massima raggiunta!\n");
+						co(7);
+					}
+				}else{
 					co(4);
-					printf("ERRORE: dimensione massima raggiunta!\n");
+					printf("ERRORE: Non ci sono rotoli in magazzino!\n");
 					co(7);
 				}
 				break;
@@ -1047,7 +1053,7 @@ int menu(int mode){
 		printf("[SU/GIU] Muoviti, [INVIO] Seleziona, [ESC] Esci\n");
 		for(j=1;j<5;j++){
 			if(j==s1){
-				co(15);
+				co(11);
 			}else{
 				co(8);
 			}
