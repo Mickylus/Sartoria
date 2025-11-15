@@ -174,7 +174,7 @@ int main(){
 					printf("ERRORE: Non ci sono rotoli in magazzino!\n");
 					co(7);
 				}
-				printf("\nContinua...\n");
+				pausa("\nContinua...\n");
 				break;
 			case 22:
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
