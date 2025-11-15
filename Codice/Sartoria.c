@@ -127,9 +127,7 @@ int main(){
 			case 11:
 				err=nuovoRotolo(&RCount);											// Input nuovo rotolo
 				if(err==1){
-					co(4);
-					printf("Dimensione massima inventario raggiunta!\n");
-					co(7);
+					errore("Dimensione massima inventario raggiunta!\n");
 				}
 				break;
 			case 12:
@@ -139,9 +137,7 @@ int main(){
 				printf("Inserisci il codice da cercare: ");							// Input codice da cercare
 				scanf(" %s",filter);
 				if(modificaRotolo(RCount,filter)==1){								// procedo con la modifica
-					co(4);
-					printf("Rotolo non trovato!\n");
-					co(7);
+					errore("Rotolo non trovato!\n");
 					pausa("Continua...\n");
 				}
 				break;
@@ -152,9 +148,7 @@ int main(){
 				printf("Inserisci il codice da cercare: ");							// Input codice da cercare
 				scanf(" %s",filter);
 				if(eliminaRotolo(&RCount,filter)==1){								// Procedo con l'eliminazione
-					co(4);
-					printf("Rotolo non trovato!\n");
-					co(7);
+					errore("Rotolo non trovato!\n");
 				}else{
 					co(2);
 					printf("Rotolo eliminato con successo!\n");
@@ -165,15 +159,11 @@ int main(){
 			case 21:
 				if(RCount>0){
 					if(nuovoProgetto(&PCount,RCount)==1){								// Input nuovo progetto
-						co(4);
-						printf("ERRORE: dimensione massima raggiunta!\n");
-						co(7);
+						errore("ERRORE: dimensione massima raggiunta!\n");
 						pausa("\nContinua...\n");
 					}
 				}else{
-					co(4);
-					printf("ERRORE: Non ci sono rotoli in magazzino!\n");
-					co(7);
+					errore("ERRORE: Non ci sono rotoli in magazzino!\n");
 					pausa("\nContinua...\n");
 				}
 				break;
@@ -184,9 +174,7 @@ int main(){
 				printf("Inserisci il nome da cercare: ");							// Input nome da cercare
 				scanf(" %s",filter);
 				if(modificaProgetto(PCount,filter,RCount)==1){
-					co(4);
-					printf("Rotolo non trovato!\n");
-					co(7);
+					errore("Rotolo non trovato!\n");
 					pausa("Continua...\n");
 				}
 				break;
@@ -197,9 +185,7 @@ int main(){
 				printf("Inserisci il nome da cercare: ");
 				scanf(" %s",filter);
 				if(eliminaProgetto(&PCount,filter)==1){
-					co(4);
-					printf("Progetto non trovato!\n");
-					co(7);
+					errore("Progetto non trovato!\n");
 				}else{
 					co(2);
 					printf("Progetto eliminato con sucesso!\n");
@@ -209,17 +195,13 @@ int main(){
 				break;
 			case 24:
 				if(mostraProgetti(PCount,RCount)==1){
-					co(4);
-					printf("Non ci sono tessuti al momento!\n");
-					co(7);
+					errore("Non ci sono progetti al momento!\n");
 					pausa("\nContinua...\n");
 				}
 				break;
 			case 31:
 				if(mostraTessuti(RCount)==1){
-					co(4);
-					printf("Non ci sono tessuti al momento!\n");
-					co(7);
+					errore("Non ci sono tessuti al momento!\n");
 					pausa("\nContinua...\n");
 				}
 				break;
@@ -262,9 +244,7 @@ int main(){
 					printf("Reset effettuato!\n");
 					co(7);
 				}else{
-					co(4);
-					printf("Reset annullato\n");
-					co(7);
+					errore("Reset annullato\n");
 				}
 				pausa("\nContinua...\n");
 				break;
@@ -273,9 +253,7 @@ int main(){
 				printf("Uscita in corso...\n");				// Termino il programma
 				break;
 			default:
-				co(4);
-				printf("Funzione non ancora disponibile!\n");	// In caso di qualche bug durante la scelta
-				co(7);
+				errore("Funzione non ancora disponibile!\n");	// In caso di qualche bug durante la scelta
 				pausa("\nContinua...\n");
 				break;
 		}
@@ -287,6 +265,9 @@ int main(){
 	}while(scelta!=41);
 	return 0;
 }
+/*
+Funzione che stampa a schermo i progetti
+*/
 int mostraProgetti(int PCount, int RCount){
 	int i,tasto=0,j,k,f=1;
 	float ricavi;
@@ -458,9 +439,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 											}
 										}
 										if(err!=0){
-											co(4);
-											printf("\tERRORE: Rotolo non trovato!\n");
-											co(7);
+											errore("\tERRORE: Rotolo non trovato!\n");
 										}
 									}while(err!=0);
 									err=1;
@@ -469,9 +448,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 										scanf(" %s",val);
 										progetti[i].rotoli_richiesti[j].metraggio_richiesto=checkValFloat(val);
 										if(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0){
-											co(4);
-											printf("\tERRORE: Valore non valido!\n");
-											co(7);
+											errore("\tERRORE: Valore non valido!\n");
 										}
 									}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
 								}
@@ -485,9 +462,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									scanf(" %s",val);
 									progetti[i].scarti_richiesti=checkValInt(val);
 									if(progetti[i].scarti_richiesti<=0){
-										co(4);
-										printf("ERRORE: Valore non valido!\n");
-										co(7);
+										errore("ERRORE: Valore non valido!\n");
 									}
 								}while(progetti[i].scarti_richiesti<=0);
 							}
@@ -503,9 +478,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									}
 								}
 								if(err!=0){
-									co(4);
-									printf("ERRORE: Rotolo non trovato!\n");
-									co(7);
+									errore("ERRORE: Rotolo non trovato!\n");
 								}
 							}while(err!=0);
 							break;
@@ -515,9 +488,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 								scanf(" %s",val);
 								progetti[i].paga=checkValFloat(val);
 								if(progetti[i].paga<=0){
-									co(4);
-									printf("ERRORE: Valore non valido!\n");
-									co(7);
+									errore("ERRORE: Valore non valido!\n");
 								}
 							}while(progetti[i].paga<=0);
 							break;
@@ -614,9 +585,7 @@ int nuovoProgetto(int *PCount,int RCount){
 			scanf(" %s",progetti[i].nome_progetto);
 			for(j=0;j<*PCount;j++){
 				if(strcmp(progetti[j].nome_progetto,progetti[i].nome_progetto)==0){
-					co(4);
-					printf("\tERRORE: Nome gia' esistente!\n");
-					co(7);
+					errore("\tERRORE: Nome gia' esistente!\n");
 					err=1;
 				}
 			}
@@ -630,9 +599,7 @@ int nuovoProgetto(int *PCount,int RCount){
 			scanf(" %s",val);
 			scelta=checkValInt(val);
 			if(scelta<1 || scelta >2){
-				co(4);
-				printf("\tERRORE: Valore non valio!\n");
-				co(7);
+				errore("\tERRORE: Valore non valio!\n");
 			}
 		}while(scelta<1 || scelta >2);
 		if(scelta==2){
@@ -655,14 +622,12 @@ int nuovoProgetto(int *PCount,int RCount){
 				printf(") : ");
 				scanf(" %s",val);
 				progetti[i].rdim=checkValInt(val);
-				co(4);
 				if(progetti[i].rdim<=0){
-					printf("\tERRORE: Valore non valido!\n");
+					errore("\tERRORE: Valore non valido!\n");
 				}
 				if(progetti[i].rdim>RCount){
-					printf("\tERRORE: Non ci sono abbastanza rotoli!\n");
+					errore("\tERRORE: Non ci sono abbastanza rotoli!\n");
 				}
-				co(7);
 			}while(progetti[i].rdim<=0 || progetti[i].rdim>RCount);
 			for(j=0;j<progetti[i].rdim;j++){
 				for(k=0;k<RCount;k++){
@@ -712,9 +677,7 @@ int nuovoProgetto(int *PCount,int RCount){
 					scanf(" %s",val);
 					progetti[i].rotoli_richiesti[j].metraggio_richiesto=checkValFloat(val);
 					if(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0){
-						co(4);
-						printf("\t\tERRORE: Valore non valido!\n");
-						co(7);
+						errore("\t\tERRORE: Valore non valido!\n");
 					}
 				}while(progetti[i].rotoli_richiesti[j].metraggio_richiesto<=0);
 			}
@@ -725,9 +688,7 @@ int nuovoProgetto(int *PCount,int RCount){
 				scanf(" %s",val);
 				progetti[i].scarti_richiesti=checkValInt(val);
 				if(progetti[i].scarti_richiesti<=0){
-					co(4);
-					printf("\tERRORE: Valore non valido!\n");
-					co(7);
+					errore("\tERRORE: Valore non valido!\n");
 				}
 			}while(progetti[i].scarti_richiesti<=0);
 			for(k=0;k<RCount;k++){
@@ -769,9 +730,7 @@ int nuovoProgetto(int *PCount,int RCount){
 			for(j=0;j<RCount;j++){
 				if(strcmp(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[j].codice_rotolo)==0){
 					if(progetti[i].scarti_richiesti>inventario[j].scarti_utilizzabili){
-						co(4);
-						printf("\tImpossibile eseguire il progetto, non ci sono scarti a sufficenza!\n");
-						co(7);
+						errore("\tImpossibile eseguire il progetto, non ci sono scarti a sufficenza!\n");
 						pausa("Continua...\n");
 						return 0;
 					}
@@ -785,9 +744,7 @@ int nuovoProgetto(int *PCount,int RCount){
 			scanf(" %s",val);
 			progetti[i].paga=checkValFloat(val);
 			if(progetti[i].paga<=0){
-				co(4);
-				printf("\tERRORE: Valore non valido!\n");
-				co(7);
+				errore("\tERRORE: Valore non valido!\n");
 			}
 		}while(progetti[i].paga<=0);
 		co(3);
@@ -936,6 +893,9 @@ int modificaRotolo(int dim, char filtro[]){
 								printf("Nuova Lunghezza (m): ");
 								scanf(" %s",val);
 								inventario[i].rot.lunghezza=checkValFloat(val);
+								if(inventario[i].rot.lunghezza<=0){
+									errore("ERRORE: Valore non valido!\n");
+								}
 							}while(inventario[i].rot.lunghezza <= 0);
 							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 							break;
@@ -944,6 +904,9 @@ int modificaRotolo(int dim, char filtro[]){
 								printf("Nuova Larghezza (cm): ");
 								scanf(" %s",val);
 								inventario[i].rot.larghezza=checkValFloat(val);
+								if(inventario[i].rot.larghezza<=0){
+									errore("ERRORE: Valore non valido!\n");
+								}
 							}while(inventario[i].rot.larghezza <= 0);
 							inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 							break;
@@ -953,6 +916,9 @@ int modificaRotolo(int dim, char filtro[]){
 								printf("Nuovo Costo (euro): ");
 								scanf(" %s",val);
 								inventario[i].rot.costo=checkValFloat(val);
+								if(inventario[i].rot.costo<0){
+									errore("ERRORE: Valore non valido!\n");
+								}
 							}while(inventario[i].rot.costo < 0);
 							//Errato
 							// budget+=vecchio;
@@ -998,9 +964,7 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.lunghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.lunghezza<=0){
-				co(4);
-				printf("\t\tERRORE: Valore non valido!!\n");
-				co(7);
+				errore("\t\tERRORE: Valore non valido!!\n");
 			}
 		}while(inventario[i].rot.lunghezza<=0);
 		do{
@@ -1008,9 +972,7 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.larghezza=checkValFloat(val);					// Controllo che il valore sia valido
 			if(inventario[i].rot.larghezza<=0){
-				co(4);
-				printf("\t\tERRORE: Valore non valido!!\n");
-				co(7);
+				errore("\t\tERRORE: Valore non valido!!\n");
 			}
 		}while(inventario[i].rot.larghezza<=0);
 		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
@@ -1028,9 +990,7 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.costo=checkValFloat(val);						// Controllo che il valore sia valido
 			if(inventario[i].rot.costo<0){
-				co(4);
-				printf("\t\tERRORE: Valore non valido!!\n");
-				co(7);
+				errore("\t\tERRORE: Valore non valido!!\n");
 			}
 			if(inventario[i].rot.costo>budget){
 				printf("\t\tIl costo va oltre il tuo budget. Sei sicuro di volerlo comprare? (Y/N):\n");
@@ -1053,9 +1013,7 @@ int nuovoRotolo(int *RCount){
 			inputData(v1,v2,v3,&g,&m,&a);
 			err=checkData(g,m,a);
 			if(err!=0){
-				co(4);
-				printf("\tData non valida!!\n");
-				co(7);
+				errore("\tData non valida!!\n");
 			}
 		}while(err!=0);
 		inventario[i].data_acquisto.g=g;

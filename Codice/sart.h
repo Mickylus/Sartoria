@@ -41,6 +41,14 @@ int checkData(int g,int m, int a){
 	return 0;
 }
 /*
+Funzione che stampa il messaggio di errore (in rosso)
+*/
+void errore(const char *messaggio){
+	co(4);
+	printf("%s",messaggio);
+	co(7);
+}
+/*
 Stampa il messaggio e attende un input (qualunque tasto).
 Codici tasti:
  Invio: 13
