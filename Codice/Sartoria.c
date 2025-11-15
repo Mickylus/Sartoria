@@ -104,7 +104,7 @@ int eliminaProgetto(int*,char[]);			// Elimina un progetto
 float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
 void mostraProgetti(int);			// Stampa i progetti
 int avviaTaglio(int*);				// Avvia il taglio (rimuove i progetti in attesa)
-void mostraTessuti(int,int);			// Mostra i tessuti
+int mostraTessuti(int,int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
 int rotazioneScorte(int);			// Ruota le scorte
 // Should
@@ -190,7 +190,12 @@ int main(){
 				}
 				break;
 			case 31:
-				mostraTessuti(RCount,PCount);
+				if(mostraTessuti(RCount,PCount)==1){
+					co(4);
+					printf("Non ci sono tessuti al momento!\n");
+					co(7);
+					pausa("\nContinua...\n");
+				}
 				break;
 			case 34:
 				co(8);
@@ -430,9 +435,10 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 	return f;
 }
 // Funzione che stampa i tessuti
-void mostraTessuti(int dim,int pdim){
-	int i,tasto=0,j,k;
+int mostraTessuti(int dim,int pdim){
+	int i,tasto=0,j,k,f=1;
 	for(i=0;i<dim;i++){
+		f=0;
 		do{
 			// Stampo tutti i campi
 			system(CLEAR);
@@ -476,6 +482,7 @@ void mostraTessuti(int dim,int pdim){
 			}
 		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
+	return f;
 }
 // Funzione che crea un nuovo progetto
 int nuovoProgetto(int *PCount,int RCount){
