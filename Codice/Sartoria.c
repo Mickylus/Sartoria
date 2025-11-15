@@ -239,6 +239,7 @@ int main(){
 				}while(tasto!=13);
 				printf("\n");
 				if(i%2==0){
+					caricamento("Reset in corso",1);
 					reset(&RCount,&PCount);											// Resetto il programma
 					co(2);
 					printf("Reset effettuato!\n");
@@ -1031,6 +1032,8 @@ int nuovoRotolo(int *RCount){
 		inventario[i].data_acquisto.a=a;
 		inventario[i].utilizzo_previsto=0;
 		inventario[i].scarti_utilizzabili=0;
+		printf("\n");
+		caricamento("Salvataggio in corso",1);
 		co(8);
 		printf("\n\nRotolo aggiunto con successo! ID: %s\n",inventario[i].codice_rotolo);
 		co(7);

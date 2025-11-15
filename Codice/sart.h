@@ -226,3 +226,45 @@ void errore(const char *messaggio){
 	printf("%s",messaggio);
 	co(7);
 }
+/*
+Funzione che simula una barra di caricamento:
+Parametri: descrizione, secondi
+*/
+void caricamento(const char *messaggio,int secondi){
+    if (secondi<=0){
+        printf("[####################] 100%\n");
+        return;
+    }
+
+    const int totalBlocks = 20;
+    int interval_ms=(secondi*1000)/totalBlocks,i,j;
+	#ifdef _WIN32
+		for (i = 0; i <= totalBlocks; i++) {
+			printf("\r%s :[",messaggio);
+			for (j = 0; j < totalBlocks; j++) {
+				if (j < i){
+					printf("#");
+				}else{
+					printf("-");
+				}
+			}
+			printf("] %3d%%", (i * 100) / totalBlocks);
+			fflush(stdout);
+			Sleep(interval_ms);
+		}
+	#else
+		for (i=0;i<=totalBlocks;i++) {
+			printf("\r%s :[",messaggio);
+			for(j=0;j<i;j++){
+				printf("#");
+			}
+			for (j=i;j<totalBlocks;j++){
+				printf("-");
+			}
+			printf("] %3d%%",(i*100)/totalBlocks);
+			fflush(stdout);
+			usleep((secondi*1000000)/totalBlocks);
+		}
+	#endif
+	printf("\n");
+}
