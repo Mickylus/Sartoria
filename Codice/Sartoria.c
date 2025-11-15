@@ -102,9 +102,9 @@ int nuovoProgetto(int*,int);			// Aggiunge un nuovo progetto
 int modificaProgetto(int,char[],int);			// Modifica un progetto
 int eliminaProgetto(int*,char[]);			// Elimina un progetto
 float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
-void mostraProgetti(int);			// Stampa i progetti
+int mostraProgetti(int,int);			// Stampa i progetti
 int avviaTaglio(int*);				// Avvia il taglio (rimuove i progetti in attesa)
-int mostraTessuti(int,int);			// Mostra i tessuti
+int mostraTessuti(int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
 int rotazioneScorte(int);			// Ruota le scorte
 // Should
@@ -207,8 +207,16 @@ int main(){
 				}
 				pausa("Continua...\n");
 				break;
+			case 24:
+				if(mostraProgetti(PCount,RCount)==1){
+					co(4);
+					printf("Non ci sono tessuti al momento!\n");
+					co(7);
+					pausa("\nContinua...\n");
+				}
+				break;
 			case 31:
-				if(mostraTessuti(RCount,PCount)==1){
+				if(mostraTessuti(RCount)==1){
 					co(4);
 					printf("Non ci sono tessuti al momento!\n");
 					co(7);
@@ -279,9 +287,73 @@ int main(){
 	}while(scelta!=41);
 	return 0;
 }
+int mostraProgetti(int PCount, int RCount){
+	int i,tasto=0,j,k,f=1;
+	float ricavi;
+	for(i=0;i<PCount;i++){
+		// Controllo se ci sono progetti
+		f=0;
+		do{
+			system(CLEAR);
+			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+			printf("Progetto [%d/%d]\n",i+1,PCount);
+			printf("Nome: %s\n",progetti[i].nome_progetto);
+			printf("Tipo: ");
+			if(progetti[i].mini==0){
+				printf("Normale\n");
+				printf("Capo: %s\n",progetti[i].tipoCapo);
+				printf("Rotoli: ");
+				for(j=0;j<progetti[i].rdim;j++){
+					printf("| Rotolo: %s, %.2f M^2 |",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].metraggio_richiesto);
+				}
+				printf("\n");
+			}else{
+				printf("Mini\n");
+				printf("Capo: %s\n",progetti[i].tipoCapo);
+				printf("Rotolo: %s\n",progetti[i].rotoli_richiesti[0].rotolo_richiesto);
+				printf("Scarti richiesti: %d\n",progetti[i].scarti_richiesti);
+			}
+			printf("Costo approssimato: %.2f euro\n",progetti[i].costo_approssimato);
+			printf("Paga: %.2f euro\n",progetti[i].paga);
+			ricavi=progetti[i].paga-progetti[i].costo_approssimato;
+			printf("Ricavi: ");
+			if(ricavi<0){
+				co(4);
+			}else{
+				co(2);
+			}
+			printf("%.2f ",ricavi);
+			co(7);
+			printf("euro\n");
+			// Attendo un input
+			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [ESC] Esci");
+			if(tasto==1002){
+				if(i==0){
+					i--;
+				}else{
+					i-=2;
+				}
+			}
+			if(tasto==32){
+				modificaProgetto(PCount,progetti[i].nome_progetto,RCount);
+			}
+			if(i>=RCount-1){
+				i--;
+			}
+			if(tasto==27){
+				i=RCount;
+			}
+		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
+	}
+	return f;
+}
 void aggiorna(int RCount,int PCount){
 	int i,j,k;
+	// Aggiorno i rotoli
 	for(i=0;i<RCount;i++){
+		// Aggiorno l'utilizzo previsto
 		inventario[i].utilizzo_previsto=0;
 		for(j=0;j<PCount;j++){
 			if(progetti[j].mini!=1){
@@ -292,6 +364,11 @@ void aggiorna(int RCount,int PCount){
 				}
 			}
 		}
+	}
+	// Aggiorno i progetti
+	for(i=0;i<PCount;i++){
+		// Aggiorno il costo approssimato
+		progetti[i].costo_approssimato=calcolaCostoProgetto(i,PCount);
 	}
 }
 /*
@@ -453,7 +530,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 	return f;
 }
 // Funzione che stampa i tessuti
-int mostraTessuti(int dim,int pdim){
+int mostraTessuti(int dim){
 	int i,tasto=0,j,k,f=1;
 	for(i=0;i<dim;i++){
 		f=0;
