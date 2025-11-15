@@ -941,15 +941,24 @@ int nuovoRotolo(int *RCount){
 	if(*RCount>=MAXTESSUTI){
 		return 1;
 	}else{
-		int i=*RCount,g,m,a,err;
+		int i=*RCount,g,m,a,err,j;
 		char scelta='Y';
 		char val[10],v1[10],v2[10],v3[10];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("Nuovo rotolo:\n");
-		printf("\tCodice Rotolo: ");
-		scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
+		do{
+			err=0;
+			printf("\tCodice Rotolo: ");
+			scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
+			for(j=0;j<RCount;j++){
+				if(strcmp(inventario[j].codice_rotolo,inventario[i].codice_rotolo)==0){
+					errore("\tERRORE: Rotolo gia' esistente!\n");
+					err=1;
+				}
+			}
+		}while(err!=0);
 		printf("\tFornitore: ");
 		scanf(" %s",inventario[i].fornitore);								// Input nome fornitore
 		printf("\tDati rotolo:\n");
