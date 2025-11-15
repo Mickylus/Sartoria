@@ -329,21 +329,21 @@ int mostraProgetti(int PCount, int RCount){
 			printf("euro\n");
 			// Attendo un input
 			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [ESC] Esci");
+			if(tasto==32){
+				modificaProgetto(PCount,progetti[i].nome_progetto,RCount);
+			}
 			if(tasto==1002){
-				if(i==0){
+				if(i>0){
 					i--;
 				}else{
 					i-=2;
 				}
 			}
-			if(tasto==32){
-				modificaProgetto(PCount,progetti[i].nome_progetto,RCount);
-			}
-			if(i>=RCount-1){
+			if(i>=PCount-1){
 				i--;
 			}
 			if(tasto==27){
-				i=RCount;
+				i=PCount;
 			}
 		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
