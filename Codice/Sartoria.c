@@ -793,8 +793,8 @@ int modificaRotolo(int dim, char filtro[]){
 				if(tasto==1001){
 					stato++;
 				}
-				if(stato<0){
-					stato=0;
+				if(stato<1){
+					stato=1;
 				}
 				if(stato>7){
 					stato=7;
@@ -807,6 +807,7 @@ int modificaRotolo(int dim, char filtro[]){
 					}
 					switch(j){
                         case 0:
+							co(11);
                             printf("Codice rotolo: %s\n", inventario[i].codice_rotolo);
                             break;
                         case 1:
@@ -837,10 +838,6 @@ int modificaRotolo(int dim, char filtro[]){
 				tasto=pausa("");
 				if(tasto==13){
 					switch(stato){
-						case 0:
-							printf("Nuovo Codice: ");
-							scanf(" %s",inventario[i].codice_rotolo);
-							break;
 						case 1:
 							printf("Nuovo Fornitore: ");
 							scanf(" %s",inventario[i].fornitore);
