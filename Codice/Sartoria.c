@@ -587,7 +587,15 @@ int nuovoProgetto(int *PCount,int RCount){
 					printf("\t1: Normale - 2: Mini (Utilizza gli scarti)\n");
 					printf("\tScelta: %d\n",scelta);
 					printf("\tTipo di capo: %s\n",progetti[i].tipoCapo);
-					printf("\tQuanti rotoli usa il progetto (MAX: %d): %d\n",MAXP,progetti[i].rdim);
+					printf("\tQuanti rotoli usa il progetto (MAX: ");
+					if(RCount<MAXP){
+						printf("%d",RCount);
+					}else{
+						co(2);
+						printf("%d",MAXP);
+						co(7);
+					}
+					printf(") : %d\n",progetti[i].rdim);
 					printf("\n\tRotoli:\n");
 					printf("\t\tRotolo [%d/%d]\n",j+1,progetti[i].rdim);
 					printf("\t\tCodice rotolo: ");
