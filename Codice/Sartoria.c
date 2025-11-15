@@ -502,7 +502,7 @@ Funzione che elimina un progetto
 0: Eliminato
 1: Non trovato
 */
-int eliminaRotolo(int *PCount, char filtro[]){
+int eliminaProgetto(int *PCount, char filtro[]){
 	int i,j;
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,filtro)==0){
