@@ -587,7 +587,7 @@ int nuovoProgetto(int *PCount,int RCount){
 							k--;
 						}
 					}
-					if(tasto==1003 && k==RCount-1){
+					if(k==RCount-1){
 						k--;
 					}
 					if(tasto==13){
