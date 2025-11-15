@@ -243,8 +243,9 @@ int main(){
 				break;
 			default:
 				co(4);
-				printf("Si e' verificato un'errore!\n");	// In caso di qualche bug durante la scelta
+				printf("Funzione non ancora disponibile!\n");	// In caso di qualche bug durante la scelta
 				co(7);
+				pausa("\nContinua...\n");
 				break;
 		}
 		aggiorna(RCount,PCount);
