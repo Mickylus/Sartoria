@@ -23,7 +23,7 @@
 #define MAXP 10
 // Nome del file di salvataggio
 #define FILEINVENTARIO "Inventario.txt"
-#define FILEPROGETTI "Progetti.txt" 
+#define FILEPROGETTI "Progetti.txt"
 
 // pulizia schermo compatibile con i 2 sistemi operativi
 #ifdef _WIN32
