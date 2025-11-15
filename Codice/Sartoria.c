@@ -636,7 +636,7 @@ int nuovoProgetto(int *PCount,int RCount){
 				}else{
 					co(4);
 				}
-				printf("%s",inventario[k].codice_rotolo);
+				printf("%s (%d)",inventario[k].codice_rotolo,inventario[k].scarti_utilizzabili);
 				co(7);
 				tasto=pausa("\n");
 				if(tasto==1002){
@@ -660,6 +660,7 @@ int nuovoProgetto(int *PCount,int RCount){
 						co(4);
 						printf("\tImpossibile eseguire il progetto, non ci sono scarti a sufficenza!\n");
 						co(7);
+						pausa("Continua...\n");
 						return 0;
 					}
 				}
@@ -905,14 +906,14 @@ int nuovoRotolo(int *RCount){
 		}while(inventario[i].rot.larghezza<=0);
 		inventario[i].quantita_disponibile=inventario[i].rot.larghezza*inventario[i].rot.lunghezza;
 		co(8);
-		printf("\t\tQuantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
+		printf("\t\tQuantita' disponibile: %.2f M^2\n",inventario[i].quantita_disponibile);
 		co(7);
 		printf("\t\tCodice Fornitore: ");
 		scanf(" %s",inventario[i].rot.codice_fornitura);					// Input coice del fornitore
 		do{
 			printf("\t\tCosto ");
 			co(8);
-			printf("(per l'intero rotolo)");
+			printf("(rotolo intero)");
 			co(7);
 			printf(": ");
 			scanf(" %s",val);
