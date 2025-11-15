@@ -168,13 +168,14 @@ int main(){
 						co(4);
 						printf("ERRORE: dimensione massima raggiunta!\n");
 						co(7);
+						pausa("\nContinua...\n");
 					}
 				}else{
 					co(4);
 					printf("ERRORE: Non ci sono rotoli in magazzino!\n");
 					co(7);
+					pausa("\nContinua...\n");
 				}
-				pausa("\nContinua...\n");
 				break;
 			case 22:
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
@@ -617,21 +618,43 @@ int nuovoProgetto(int *PCount,int RCount){
 					co(7);
 				}
 			}while(progetti[i].scarti_richiesti<=0);
-			do{
-				printf("\tRotolo da cui prendere gli scarti: ");
-				scanf(" %s",progetti[i].rotoli_richiesti[j].rotolo_richiesto);
-				for(k=0;k<RCount;k++){
-					if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
-						err=0;
+			for(k=0;k<RCount;k++){
+				system(CLEAR);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("Nuovo progetto:\n");
+				printf("\tNome progetto: %s\n",progetti[i].nome_progetto);
+				printf("\tTipo progetto:\n");
+				printf("\t1: Normale - 2: Mini (Utilizza gli scarti)\n");
+				printf("\tScelta: %d\n",scelta);
+				printf("\tTipo di capo: %s\n",progetti[i].tipoCapo);
+				printf("\tScarti richiesti: %d\n",progetti[i].scarti_richiesti);
+				printf("\tRotolo: ");
+				if(inventario[k].scarti_utilizzabili>=progetti[i].scarti_richiesti){
+					co(15);
+				}else{
+					co(4);
+				}
+				printf("%s",inventario[k].codice_rotolo);
+				co(7);
+				tasto=pausa("\n");
+				if(tasto==1002){
+					if(k>0){
+						k-=2;
+					}else{
+						k--;
 					}
 				}
-				if(err!=0){
-					co(4);
-					printf("\tERRORE: Rotolo non trovato!\n");
-					co(7);
+				if(tasto==1003 && k==RCount-1){
+					k--;
 				}
-			}while(err!=0);
-			for(j=0;j<*PCount;j++){
+				if(tasto==13){
+					strcpy(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[k].codice_rotolo);
+					k=RCount;
+				}
+			}
+			for(j=0;j<RCount;j++){
 				if(strcmp(progetti[i].rotoli_richiesti[0].rotolo_richiesto,inventario[j].codice_rotolo)==0){
 					if(progetti[i].scarti_richiesti>inventario[j].scarti_utilizzabili){
 						co(4);
