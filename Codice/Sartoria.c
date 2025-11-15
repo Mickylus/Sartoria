@@ -334,12 +334,12 @@ int mostraProgetti(int PCount, int RCount){
 			}
 			if(tasto==1002){
 				if(i>0){
-					i--;
-				}else{
 					i-=2;
+				}else{
+					i--;
 				}
 			}
-			if(i>=PCount-1){
+			if(tasto==1003 && i>=PCount-1){
 				i--;
 			}
 			if(tasto==27){
