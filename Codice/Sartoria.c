@@ -94,7 +94,7 @@ struct progetto{
 
 // FUNZIONI
 
-int menu();							// Stampa il menu
+int menu(int);							// Stampa il menu
 int nuovoRotolo(int*);				// Aggiunge un nuovo rotolo
 int modificaRotolo(int,char[]);			// Modifica un rotolo esistente
 int eliminaRotolo(int*,char[]);			// Elimina un rotolo (azzera la scheda e diminusce la dimensione logica)
@@ -122,7 +122,7 @@ int main(){
 	caricaInventario(&RCount,&PCount);
 	system(CLEAR);
 	do{
-		scelta=menu();
+		scelta=menu(1);
 		switch(scelta){
 			case 11:
 				err=nuovoRotolo(&RCount);											// Input nuovo rotolo
@@ -985,8 +985,8 @@ Funzione che stampa il menu:
  4) Uscita
 	4.1) Termina il programma
 */
-int menu(){
-	int s1,s2,tasto=0,stato=1,i,j;
+int menu(int mode){
+	int s1,s2,tasto=0,stato=mode,i,j;
 	char val[10];
 	do{
 		system(CLEAR);
@@ -996,6 +996,7 @@ int menu(){
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("[SU/GIU] Muoviti, [INVIO] Seleziona\n");
 		for(i=1;i<=4;i++){
+			// Evidenzia la scelta attuale
 			if(stato==i){
 				co(15);
 			}else{
@@ -1009,24 +1010,26 @@ int menu(){
 					printf("\tGestione progetti\n");
 					break;
 				case 3:
-					printf("\tGestione inventario:\n");
+					printf("\tGestione inventario\n");
 					break;
 				case 4:
 					printf("\tEsci\n");
 					break;
 			}
 		}
+		// Leggo l'input dell'utente
 		tasto=pausa("\n");
 		if(tasto==1000){
-			stato--;
+			stato--;	// Torno indietro
 		}else if(tasto==1001){
-			stato++;
+			stato++;	// Vado avanti
 		}
 		if(stato<1){
-			stato=1;
+			stato=1;	// Controllo di non uscire
 		}else if(stato>4){
 			stato=4;
-		}
+		}	
+		// Seleziono la scelta
 		if(tasto==13){
 			s1=stato;
 		}
@@ -1050,7 +1053,7 @@ int menu(){
 			}
 			switch(j){
 				case 1:
-					printf("\tGestione rotolo\n");
+					printf("\tGestione rotoli\n");
 					break;
 				case 2:
 					printf("\tGestione progetti\n");
@@ -1116,8 +1119,9 @@ int menu(){
 			}
 		}
 		tasto=pausa("");
+		// Torno indietro
 		if(tasto==27){
-			return menu();
+			return menu(s1);
 		}
 		if(tasto==1000){
 			stato--;
