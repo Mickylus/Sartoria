@@ -91,6 +91,7 @@ struct progetto{
 	char tipoCapo[MAXSTRING];			// Il tipo di vestito ("Gonna", "Giacca")
 	int rdim;							// Numero di rotoli richiesti
 	float paga;							// Paga del progetto
+	float ricavi;						// Ricavi del progetto
 } progetti[MAXPROGETTI];				// Array globale dei progetti
 
 
@@ -104,7 +105,7 @@ int nuovoProgetto(int*,int);			// Aggiunge un nuovo progetto
 int modificaProgetto(int,char[],int);			// Modifica un progetto
 int eliminaProgetto(int*,char[]);			// Elimina un progetto
 float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
-int mostraProgetti(int,int);			// Stampa i progetti
+int mostraProgetti(int*,int);			// Stampa i progetti
 int avviaTaglio(int*,char[],int);				// Avvia il taglio (rimuove i progetti in attesa)
 int mostraTessuti(int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
@@ -203,6 +204,17 @@ int main(){
 					pausa("\nContinua...\n");
 				}
 				break;
+			case 25:
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Taglio        |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+				printf("Inserisci il nome da cercare: ");
+				scanf(" %s",filter);
+				if(avviaTaglio(&PCount,filter,RCount)==1){
+					errore("Qualcosa e' andato storto...\n");
+				}
+				pausa("\nContinua...\n");
+				break;
 			case 31:
 				if(mostraTessuti(RCount)==1){
 					errore("Non ci sono tessuti al momento!\n");
@@ -270,9 +282,14 @@ int main(){
 	}while(scelta!=41);
 	return 0;
 }
+/*
+Viene avviato il taglio e rimosso il progetto
+1: Errore
+0: Sucesso
+*/
 int avviaTaglio(int *PCount, char nome[],int RCount){
 	int i,j,k,f=1;
-	float ricavi;
+	float ricavi,tot=0;
 	int durata=0;
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,nome)==0){
@@ -280,6 +297,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 			ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 			co(8);
+			printf("Avvio taglio in corso...\n\n");
 			printf("Ricavi stimati: ");
 			if(ricavi<0){
 				co(4);
@@ -289,12 +307,12 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			printf("%.2f",ricavi);
 			co(8);
 			printf(" euro\n");
-			printf("Avvio taglio in corso...\n");
 			for(j=0;j<progetti[i].rdim;j++){
 				for(k=0;k<RCount;k++){
 					if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
 						if(progetti[i].mini==0){
 							inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+							tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
 							do{
 								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
 									inventario[k].quantita_disponibile+=(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
@@ -315,9 +333,16 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 				}
 			}
 			co(8);
+			printf("\n");
+			durata=tot/10;
+			if(durata<1){
+				durata=1;
+			}			
+			caricamento("Taglio in corso ",durata);
+			printf("\n");
 			printf("Taglio effettuato!\n");
 			budget+=progetti[i].paga;
-
+			eliminaProgetto(PCount,progetti[i].nome_progetto);
 		}
 	}
 	aggiorna(RCount,PCount);
@@ -335,10 +360,9 @@ int assegnaScarti(float q){
 /*
 Funzione che stampa a schermo i progetti
 */
-int mostraProgetti(int PCount, int RCount){
+int mostraProgetti(int *PCount, int RCount){
 	int i,tasto=0,j,k,f=1;
-	float ricavi;
-	for(i=0;i<PCount;i++){
+	for(i=0;i<*PCount;i++){
 		// Controllo se ci sono progetti
 		f=0;
 		do{
@@ -346,7 +370,7 @@ int mostraProgetti(int PCount, int RCount){
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-			printf("Progetto [%d/%d]\n",i+1,PCount);
+			printf("Progetto [%d/%d]\n",i+1,*PCount);
 			printf("Nome: %s\n",progetti[i].nome_progetto);
 			printf("Tipo: ");
 			if(progetti[i].mini==0){
@@ -365,20 +389,23 @@ int mostraProgetti(int PCount, int RCount){
 			}
 			printf("Costo approssimato: %.2f euro\n",progetti[i].costo_approssimato);
 			printf("Paga: %.2f euro\n",progetti[i].paga);
-			ricavi=progetti[i].paga-progetti[i].costo_approssimato;
+			progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 			printf("Ricavi: ");
-			if(ricavi<0){
+			if(progetti[i].ricavi<0){
 				co(4);
 			}else{
 				co(2);
 			}
-			printf("%.2f ",ricavi);
+			printf("%.2f ",progetti[i].ricavi);
 			co(7);
 			printf("euro\n");
 			// Attendo un input
-			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [ESC] Esci");
+			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [INVIO] Esegui progetto |[ESC] Esci");
 			if(tasto==32){
 				modificaProgetto(PCount,progetti[i].nome_progetto,RCount);
+			}
+			if(tasto==13){
+				avviaTaglio(PCount,progetti[i].nome_progetto,RCount);
 			}
 			if(tasto==1002){
 				if(i>0){
@@ -387,11 +414,11 @@ int mostraProgetti(int PCount, int RCount){
 					i--;
 				}
 			}
-			if(tasto==1003 && i>=PCount-1){
+			if(tasto==1003 && i>=*PCount-1){
 				i--;
 			}
 			if(tasto==27){
-				i=PCount;
+				i=*PCount;
 			}
 		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
@@ -521,6 +548,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									}while(progetti[i].rotoli_richiesti[j].quantita_richiesta<=0);
 								}
 								progetti[i].costo_approssimato=calcolaCostoProgetto(i,dim);
+								progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 								co(8);
 								printf("\t(Costo: %.2f)\n",progetti[i].costo_approssimato);
 								pausa("Continua...\n");
@@ -559,6 +587,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 									errore("ERRORE: Valore non valido!\n");
 								}
 							}while(progetti[i].paga<=0);
+							progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 							break;
 					}
 				}
@@ -822,13 +851,14 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(8);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
 		co(7);
+		progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 		printf("\tRicavi stimati: ");
-		if(progetti[i].paga-progetti[i].costo_approssimato>=0){
+		if(progetti[i].ricavi>=0){
 			co(2);
 		}else{
 			co(4);
 		}
-		printf("%.2f ",progetti[i].paga-progetti[i].costo_approssimato);		// Stampo il ricavo
+		printf("%.2f ",progetti[i].ricavi);		// Stampo il ricavo
 		co(7);
 		printf("euro\n");
 		(*PCount)++;
@@ -1139,7 +1169,7 @@ void caricaInventario(int *RCount, int *PCount){
 		// leggo i progetti
 		fscanf(FProg,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(FProg,"%s %f %d %f %s %d %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga);
+			fscanf(FProg,"%s %f %d %f %s %d %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi);
 			for(j=0;j<progetti[i].rdim;j++){
 				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
@@ -1176,7 +1206,7 @@ void salvaInventario(int RCount, int PCount){
 		// Salvo i progetti
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(FProg,"%s %f %d %f %s %d %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga);
+			fprintf(FProg,"%s %f %d %f %s %d %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi);
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
