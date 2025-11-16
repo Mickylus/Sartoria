@@ -199,7 +199,7 @@ int main(){
 				pausa("Continua...\n");
 				break;
 			case 24:
-				if(mostraProgetti(PCount,RCount)==1){
+				if(mostraProgetti(&PCount,RCount)==1){
 					errore("Non ci sono progetti al momento!\n");
 					pausa("\nContinua...\n");
 				}
@@ -345,7 +345,8 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			eliminaProgetto(PCount,progetti[i].nome_progetto);
 		}
 	}
-	aggiorna(RCount,PCount);
+	co(7);
+	aggiorna(RCount,*PCount);
 	return f;
 }
 // Assegna gli scarti in base al taglio effettuato
@@ -402,10 +403,15 @@ int mostraProgetti(int *PCount, int RCount){
 			// Attendo un input
 			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [INVIO] Esegui progetto |[ESC] Esci");
 			if(tasto==32){
-				modificaProgetto(PCount,progetti[i].nome_progetto,RCount);
+				modificaProgetto(*PCount,progetti[i].nome_progetto,RCount);
 			}
 			if(tasto==13){
 				avviaTaglio(PCount,progetti[i].nome_progetto,RCount);
+				if(i==*PCount-1 && i==0){
+					i==*PCount;
+				}else if(i==*PCount-1){
+					i-=2;
+				}
 			}
 			if(tasto==1002){
 				if(i>0){
