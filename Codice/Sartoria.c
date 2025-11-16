@@ -21,6 +21,8 @@
 #define BUDGETINIZIALE 1000
 // Massimo di rotoli per ogni progetto
 #define MAXP 10
+// Costante degli scarti
+#define SCARTI 0.14
 // Nome del file di salvataggio
 #define FILEINVENTARIO "Inventario.txt"
 #define FILEPROGETTI "Progetti.txt"
@@ -103,7 +105,7 @@ int modificaProgetto(int,char[],int);			// Modifica un progetto
 int eliminaProgetto(int*,char[]);			// Elimina un progetto
 float calcolaCostoProgetto(int,int);	// Calcola il costo progetto (Ogni volta che il rotolo finisce lo riacquista)
 int mostraProgetti(int,int);			// Stampa i progetti
-int avviaTaglio(int*);				// Avvia il taglio (rimuove i progetti in attesa)
+int avviaTaglio(int*,char[],int);				// Avvia il taglio (rimuove i progetti in attesa)
 int mostraTessuti(int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
 int rotazioneScorte(int);			// Ruota le scorte
@@ -113,6 +115,7 @@ void salvaInventario(int,int);		// Sotto forma di file .txt
 void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
 void reset(int*,int*);				// reset inventario
 void aggiorna(int,int);				// aggiorna i dati
+int assegnaScarti(float);			// assegna gli scarti del progetto in base al taglio effettuato
 
 
 // Main
@@ -121,6 +124,7 @@ int main(){
 	char val[10],filter[MAXSTRING];
 	caricaInventario(&RCount,&PCount);
 	system(CLEAR);
+	srand(time(NULL));
 	do{
 		scelta=menu(1);
 		switch(scelta){
@@ -265,6 +269,68 @@ int main(){
 		co(7);
 	}while(scelta!=41);
 	return 0;
+}
+int avviaTaglio(int *PCount, char nome[],int RCount){
+	int i,j,k,f=1;
+	float ricavi;
+	int durata=0;
+	for(i=0;i<*PCount;i++){
+		if(strcmp(progetti[i].nome_progetto,nome)==0){
+			f=0;
+			progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
+			ricavi=progetti[i].paga-progetti[i].costo_approssimato;
+			co(8);
+			printf("Ricavi stimati: ");
+			if(ricavi<0){
+				co(4);
+			}else{
+				co(2);
+			}
+			printf("%.2f",ricavi);
+			co(8);
+			printf(" euro\n");
+			printf("Avvio taglio in corso...\n");
+			for(j=0;j<progetti[i].rdim;j++){
+				for(k=0;k<RCount;k++){
+					if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
+						if(progetti[i].mini==0){
+							inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+							do{
+								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
+									inventario[k].quantita_disponibile+=(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
+									budget+=inventario[k].rot.costo;
+								}
+							}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
+							inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
+							inventario[k].scarti_utilizzabili=assegnaScarti(inventario[k].utilizzo_previsto);
+						}else{
+							if(progetti[i].scarti_richiesti>inventario[k].scarti_utilizzabili){
+								errore("ERRORE: Non ci sono abbastanza scarti per questo progetto!\n");
+								return 1;
+							}else{
+								inventario[k].scarti_utilizzabili-=progetti[i].scarti_richiesti;
+							}
+						}
+					}
+				}
+			}
+			co(8);
+			printf("Taglio effettuato!\n");
+			budget+=progetti[i].paga;
+
+		}
+	}
+	aggiorna(RCount,PCount);
+	return f;
+}
+// Assegna gli scarti in base al taglio effettuato
+int assegnaScarti(float q){
+	int max;
+	max=(int)q * SCARTI;
+	if(max<1){
+		max=1;
+	}
+	return (rand() % max) + 1;
 }
 /*
 Funzione che stampa a schermo i progetti
@@ -771,10 +837,10 @@ int nuovoProgetto(int *PCount,int RCount){
 	}
 }
 // Funzione che calcola il costo di un progetto
-float calcolaCostoProgetto(int dim,int PCount){
+float calcolaCostoProgetto(int dim,int RCount){
 	int i,j;
 	float costo=0,q,u;
-	for(i=0;i<PCount;i++){
+	for(i=0;i<RCount;i++){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
@@ -954,12 +1020,14 @@ int nuovoRotolo(int *RCount){
 			err=0;
 			printf("\tCodice Rotolo: ");
 			scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
+			/*
 			for(j=0;j<*RCount;j++){
 				if(strcmp(inventario[j].codice_rotolo,inventario[i].codice_rotolo)==0){
 					errore("\tERRORE: Rotolo gia' esistente!\n\n");
 					err=1;
 				}
 			}
+			*/
 		}while(err!=0);
 		printf("\tFornitore: ");
 		scanf(" %s",inventario[i].fornitore);								// Input nome fornitore
