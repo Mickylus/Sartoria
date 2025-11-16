@@ -1148,8 +1148,6 @@ int nuovoRotolo(int *RCount){
 		inventario[i].data_acquisto.a=a;
 		inventario[i].utilizzo_previsto=0;
 		inventario[i].scarti_utilizzabili=0;
-		printf("\n");
-		caricamento("Salvataggio in corso",1);
 		co(8);
 		printf("\n\nRotolo aggiunto con successo! ID: %s\n",inventario[i].codice_rotolo);
 		co(7);
