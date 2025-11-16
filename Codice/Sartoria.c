@@ -414,6 +414,8 @@ int mostraProgetti(int *PCount, int RCount){
 					i=*PCount;
 				}else if(i==*PCount){
 					i-=2;
+				}else{
+					i--;
 				}
 			}
 			if(tasto==1002){
@@ -852,6 +854,13 @@ int nuovoProgetto(int *PCount,int RCount){
 			progetti[i].rotoli_richiesti[0].quantita_richiesta=0;
 			progetti[i].rdim=1;
 		}
+		co(3);
+		printf("\n\tCalcolo costo in corso...\n");
+		co(7);
+		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);		// Calcolo il costo del progetto in base alle scorte attuali
+		co(8);
+		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
+		co(7);
 		do{
 			printf("\tPaga del progetto: ");
 			scanf(" %s",val);
@@ -860,13 +869,6 @@ int nuovoProgetto(int *PCount,int RCount){
 				errore("\tERRORE: Valore non valido!\n");
 			}
 		}while(progetti[i].paga<=0);
-		co(3);
-		printf("\n\tCalcolo costo in corso...\n");
-		co(7);
-		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);		// Calcolo il costo del progetto in base alle scorte attuali
-		co(8);
-		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
-		co(7);
 		progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 		printf("\tRicavi stimati: ");
 		if(progetti[i].ricavi>=0){
