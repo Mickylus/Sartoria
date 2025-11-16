@@ -290,13 +290,24 @@ Viene avviato il taglio e rimosso il progetto
 int avviaTaglio(int *PCount, char nome[],int RCount){
 	int i,j,k,f=1;
 	float tot=0;
-	int durata=0;
+	int durata=0,g,m,a,err;
+	char v1[10],v2[10],v3[10];
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,nome)==0){
 			f=0;
 			progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 			progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 			co(8);
+			do{
+				printf("\nIserisci la data di oggi (GG MM AAAA): ");
+				scanf(" %s %s %s",v1,v2,v3);
+				inputData(v1,v2,v3,&g,&m,&a);
+				err=checkData(g,m,a);
+				if(err!=0){
+					errore("ERRORE: Data non valida!\n");
+					co(8);
+				}
+			}while(err!=0);
 			printf("Avvio taglio in corso...\n\n");
 			printf("Ricavi stimati: ");
 			if(progetti[i].ricavi<0){
@@ -317,6 +328,10 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
 									inventario[k].quantita_disponibile+=(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
 									budget-=inventario[k].rot.costo;
+									// Aggiorno la data di acquisto
+									inventario[k].data_acquisto.g=g;
+									inventario[k].data_acquisto.m=m;
+									inventario[k].data_acquisto.a=a;
 								}
 							}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
 							inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
@@ -411,11 +426,9 @@ int mostraProgetti(int *PCount, int RCount){
 				avviaTaglio(PCount,progetti[i].nome_progetto,RCount);
 				pausa("\nContinua...\n");
 				if(*PCount==0){
-					i=*PCount;
-				}else if(i==*PCount){
-					i-=2;
-				}else{
-					i--;
+					i=*PCount+1;
+				}else if(i>=*PCount){
+					i=*PCount-1;;
 				}
 			}
 			if(tasto==1002){
