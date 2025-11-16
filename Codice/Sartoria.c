@@ -22,7 +22,7 @@
 // Massimo di rotoli per ogni progetto
 #define MAXP 10
 // Costante degli scarti
-#define SCARTI 0.14
+#define SCARTI 0.24
 // Nome del file di salvataggio
 #define FILEINVENTARIO "Inventario.txt"
 #define FILEPROGETTI "Progetti.txt"
@@ -406,9 +406,11 @@ int mostraProgetti(int *PCount, int RCount){
 				modificaProgetto(*PCount,progetti[i].nome_progetto,RCount);
 			}
 			if(tasto==13){
+				printf("\n");
 				avviaTaglio(PCount,progetti[i].nome_progetto,RCount);
-				if(i==*PCount-1 && i==0){
-					i==*PCount;
+				pausa("\nContinua...\n");
+				if(*PCount==1){
+					i=*PCount;
 				}else if(i==*PCount-1){
 					i-=2;
 				}
@@ -676,7 +678,7 @@ int nuovoProgetto(int *PCount,int RCount){
 	if(*PCount>=MAXPROGETTI){
 		return 1;
 	}else{
-		int i=*PCount,j,k,scelta,err,tasto=0;
+		int i=*PCount,j,k,t,scelta,err,tasto=0;
 		char val[10];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
@@ -754,10 +756,17 @@ int nuovoProgetto(int *PCount,int RCount){
 					}
 					printf(") : %d\n",progetti[i].rdim);
 					printf("\n\tRotoli:\n");
+					for(t=0;t<j;t++){
+						printf("\t\tRotolo [%d/%d]\n",t+1,progetti[i].rdim);
+						printf("\t\tCodice rotolo: %s\n",progetti[i].rotoli_richiesti[t].rotolo_richiesto);
+						printf("\t\tQuantita' richiesta (M^2): %.2f\n\n",progetti[i].rotoli_richiesti[t].quantita_richiesta);
+					}
 					printf("\t\tRotolo [%d/%d]\n",j+1,progetti[i].rdim);
 					printf("\t\tCodice rotolo: ");
 					co(15);
 					printf("%s",inventario[k].codice_rotolo);
+					co(8);
+					printf("\t[<-][->]");
 					co(7);
 					tasto=pausa("\n");
 					if(tasto==1002){
@@ -883,7 +892,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 				q=inventario[i].quantita_disponibile;
 				do{
 					if(u>q){
-						q+=inventario[i].rot.lunghezza*inventario[i].rot.larghezza;
+						q+=inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);
 						costo+=inventario[i].rot.costo;	// Aumento il costo fino a quando ne ho abbastanza
 					}
 				}while(u>q);
