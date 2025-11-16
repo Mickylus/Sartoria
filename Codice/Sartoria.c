@@ -289,22 +289,22 @@ Viene avviato il taglio e rimosso il progetto
 */
 int avviaTaglio(int *PCount, char nome[],int RCount){
 	int i,j,k,f=1;
-	float ricavi,tot=0;
+	float tot=0;
 	int durata=0;
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,nome)==0){
 			f=0;
 			progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
-			ricavi=progetti[i].paga-progetti[i].costo_approssimato;
+			progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 			co(8);
 			printf("Avvio taglio in corso...\n\n");
 			printf("Ricavi stimati: ");
-			if(ricavi<0){
+			if(progetti[i].ricavi<0){
 				co(4);
 			}else{
 				co(2);
 			}
-			printf("%.2f",ricavi);
+			printf("%.2f",progetti[i].ricavi);
 			co(8);
 			printf(" euro\n");
 			for(j=0;j<progetti[i].rdim;j++){
@@ -316,11 +316,11 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							do{
 								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
 									inventario[k].quantita_disponibile+=(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
-									budget+=inventario[k].rot.costo;
+									budget-=inventario[k].rot.costo;
 								}
 							}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
 							inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
-							inventario[k].scarti_utilizzabili=assegnaScarti(inventario[k].utilizzo_previsto);
+							inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
 						}else{
 							if(progetti[i].scarti_richiesti>inventario[k].scarti_utilizzabili){
 								errore("ERRORE: Non ci sono abbastanza scarti per questo progetto!\n");
@@ -337,7 +337,8 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			durata=tot/10;
 			if(durata<1){
 				durata=1;
-			}			
+			}
+			printf("Durata stimata: %ds\n",durata);			
 			caricamento("Taglio in corso ",durata);
 			printf("\n");
 			printf("Taglio effettuato!\n");
@@ -409,9 +410,9 @@ int mostraProgetti(int *PCount, int RCount){
 				printf("\n");
 				avviaTaglio(PCount,progetti[i].nome_progetto,RCount);
 				pausa("\nContinua...\n");
-				if(*PCount==1){
+				if(*PCount==0){
 					i=*PCount;
-				}else if(i==*PCount-1){
+				}else if(i==*PCount){
 					i-=2;
 				}
 			}
