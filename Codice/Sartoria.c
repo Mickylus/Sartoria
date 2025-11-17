@@ -117,6 +117,7 @@ void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
 void reset(int*,int*);				// reset inventario
 void aggiorna(int,int);				// aggiorna i dati
 int assegnaScarti(float);			// assegna gli scarti del progetto in base al taglio effettuato
+void riacquista(int);				// ricompra il rotolo
 
 
 // Main
@@ -282,6 +283,25 @@ int main(){
 	}while(scelta!=41);
 	return 0;
 }
+// Funzione che ricompra il rotolo
+void riacquista(int i){
+	int err,g,m,a;
+	char v1[10],v2[10],v3[10];
+	do{
+		printf("\nIserisci la data di oggi (GG MM AAAA): ");
+		scanf(" %s %s %s",v1,v2,v3);
+		inputData(v1,v2,v3,&g,&m,&a);
+		err=checkData(g,m,a);
+		if(err!=0){
+			errore("ERRORE: Data non valida!\n");
+		}
+	}while(err!=0);
+	inventario[i].data_acquisto.g=g;
+	inventario[i].data_acquisto.m=m;
+	inventario[i].data_acquisto.a=a;
+	inventario[i].quantita_disponibile+=inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);
+	budget-=inventario[i].rot.costo;
+}
 /*
 Viene avviato il taglio e rimosso il progetto
 1: Errore
@@ -326,8 +346,8 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
 							do{
 								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
-									inventario[k].quantita_disponibile+=(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
-									budget-=inventario[k].rot.costo;
+									inventario[k].quantita_disponibile++;
+									budget-=inventario[k].rot.costo/(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
 									// Aggiorno la data di acquisto
 									inventario[k].data_acquisto.g=g;
 									inventario[k].data_acquisto.m=m;
@@ -646,8 +666,12 @@ int mostraTessuti(int dim){
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
 			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
 			// Attendo un input
-			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [ESC] Esci");
+			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [INVIO] Ricompra | [ESC] Esci");
 			// Se <- torno indietro di 1
+			if(tasto==13){
+				riacquista(i);
+				i--;
+			}			
 			if(tasto==1002){
 				if(i>0){
 					i-=2;
@@ -908,8 +932,8 @@ float calcolaCostoProgetto(int dim,int RCount){
 				q=inventario[i].quantita_disponibile;
 				do{
 					if(u>q){
-						q+=inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);
-						costo+=inventario[i].rot.costo;	// Aumento il costo fino a quando ne ho abbastanza
+						q++;
+						costo+=inventario[i].rot.costo/inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);	// Aumento il costo fino a quando ne ho abbastanza
 					}
 				}while(u>q);
 			}
