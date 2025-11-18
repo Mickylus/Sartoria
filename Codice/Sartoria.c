@@ -348,7 +348,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							do{
 								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
 									inventario[k].quantita_disponibile++;
-									budget-=inventario[k].rot.costo/(inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza;
+									budget-=inventario[k].rot.costo/((inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza);
 									// Aggiorno la data di acquisto
 									inventario[k].data_acquisto.g=g;
 									inventario[k].data_acquisto.m=m;
@@ -450,8 +450,9 @@ int mostraProgetti(int *PCount, int RCount){
 				avviaTaglio(PCount,progetti[i].nome_progetto,RCount);
 				pausa("\nContinua...\n");
 				if(*PCount==0){
-					i=*PCount+1;
-				}else if(i>=*PCount){
+					return 0;
+				}
+				if(i>=*PCount){
 					i=*PCount-1;;
 				}
 			}
@@ -466,7 +467,7 @@ int mostraProgetti(int *PCount, int RCount){
 				i--;
 			}
 			if(tasto==27){
-				i=*PCount;
+				return 0;
 			}
 		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
@@ -481,7 +482,7 @@ void aggiorna(int RCount,int PCount){
 		inventario[i].utilizzo_previsto=0;
 		for(j=0;j<PCount;j++){
 			if(progetti[j].mini!=1){
-				for(k=0;k<progetti[i].rdim;k++){
+				for(k=0;k<progetti[j].rdim;k++){
 					if(strcmp(inventario[i].codice_rotolo,progetti[j].rotoli_richiesti[k].rotolo_richiesto)==0){
 						inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].quantita_richiesta;
 					}
