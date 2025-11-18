@@ -677,7 +677,6 @@ int mostraTessuti(int dim){
 			// Se <- torno indietro di 1
 			if(tasto==13){
 				riacquista(i);
-				i--;
 			}			
 			if(tasto==1002){
 				if(i>0){
