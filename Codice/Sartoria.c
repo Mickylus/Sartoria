@@ -92,6 +92,7 @@ struct progetto{
 	int rdim;							// Numero di rotoli richiesti
 	float paga;							// Paga del progetto
 	float ricavi;						// Ricavi del progetto
+	float valore;						// Valore del progetto
 } progetti[MAXPROGETTI];				// Array globale dei progetti
 
 
@@ -368,6 +369,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 				}
 			}
 			co(8);
+			/*
 			printf("\n");
 			durata=tot/10;
 			if(durata<1){
@@ -375,6 +377,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			}
 			printf("Durata stimata: %ds\n",durata);			
 			caricamento("Taglio in corso ",durata);
+			*/
 			printf("\n");
 			printf("Taglio effettuato!\n");
 			budget+=progetti[i].paga;
@@ -424,6 +427,7 @@ int mostraProgetti(int *PCount, int RCount){
 				printf("Rotolo: %s\n",progetti[i].rotoli_richiesti[0].rotolo_richiesto);
 				printf("Scarti richiesti: %d\n",progetti[i].scarti_richiesti);
 			}
+			printf("Valore risorse: %.2f euro\n",progetti[i].valore);
 			printf("Costo approssimato: %.2f euro\n",progetti[i].costo_approssimato);
 			printf("Paga: %.2f euro\n",progetti[i].paga);
 			progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
@@ -898,6 +902,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		co(7);
 		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);		// Calcolo il costo del progetto in base alle scorte attuali
 		co(8);
+		printf("\tValore risorse: %.2f euro\n",progetti[i].valore);
 		printf("\tIl progetto ha un costo approssimato di %.2f euro\n\n",progetti[i].costo_approssimato);
 		co(7);
 		do{
@@ -927,11 +932,21 @@ int nuovoProgetto(int *PCount,int RCount){
 float calcolaCostoProgetto(int dim,int RCount){
 	int i,j;
 	float costo=0,q,u;
+	progetti[dim].valore=0;
 	for(i=0;i<RCount;i++){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
 				q=0;
+				// Valore
+				do{
+					if(u>q){
+						q++;
+						progetti[dim].valore+=inventario[i].rot.costo/(inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100));	// Aumento il valore
+					}
+				}while(u>q);
+				// Costo
+				q=inventario[i].quantita_disponibile;
 				do{
 					if(u>q){
 						q++;
@@ -1227,7 +1242,7 @@ void caricaInventario(int *RCount, int *PCount){
 		// leggo i progetti
 		fscanf(FProg,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(FProg,"%s %f %d %f %s %d %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi);
+			fscanf(FProg,"%s %f %d %f %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
@@ -1264,7 +1279,7 @@ void salvaInventario(int RCount, int PCount){
 		// Salvo i progetti
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(FProg,"%s %f %d %f %s %d %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi);
+			fprintf(FProg,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
