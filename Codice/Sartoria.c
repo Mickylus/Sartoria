@@ -935,7 +935,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 				do{
 					if(u>q){
 						q++;
-						costo+=inventario[i].rot.costo/inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);	// Aumento il costo fino a quando ne ho abbastanza
+						costo+=inventario[i].rot.costo/(inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100));	// Aumento il costo fino a quando ne ho abbastanza
 					}
 				}while(u>q);
 			}
@@ -1172,7 +1172,7 @@ int nuovoRotolo(int *RCount){
 			}
 		}while(inventario[i].rot.costo<0 || scelta!='Y' && scelta!='y');
 		co(8);
-		printf("Costo M^2: %.2f\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
+		printf("\t\tCosto M^2: %.2f\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 		co(7);
 		budget-=inventario[i].rot.costo;
 		inventario[i].rot.usura=0;
