@@ -489,6 +489,7 @@ void aggiorna(int RCount,int PCount){
 	for(i=0;i<PCount;i++){
 		// Aggiorno il costo approssimato
 		progetti[i].costo_approssimato=calcolaCostoProgetto(i,PCount);
+		progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 	}
 }
 /*
@@ -664,7 +665,8 @@ int mostraTessuti(int dim){
 			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			printf("Usura: %.1f\n",inventario[i].rot.usura);
-			printf("Costo: %.2f\n\n",inventario[i].rot.costo);
+			printf("Costo: %.2f\n",inventario[i].rot.costo);
+			printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 			// Attendo un input
 			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [INVIO] Ricompra | [ESC] Esci");
 			// Se <- torno indietro di 1
@@ -929,7 +931,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 		for(j=0;j<progetti[dim].rdim;j++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
-				q=inventario[i].quantita_disponibile;
+				q=0;
 				do{
 					if(u>q){
 						q++;
@@ -1169,6 +1171,9 @@ int nuovoRotolo(int *RCount){
 				}
 			}
 		}while(inventario[i].rot.costo<0 || scelta!='Y' && scelta!='y');
+		co(8);
+		printf("Costo M^2: %.2f\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
+		co(7);
 		budget-=inventario[i].rot.costo;
 		inventario[i].rot.usura=0;
 		do{
