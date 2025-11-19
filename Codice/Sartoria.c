@@ -386,6 +386,7 @@ void riacquista(int i){
 	inventario[i].data_acquisto.a=a;
 	if(inventario[i].rot.usura>MAXUSURA){
 		inventario[i].quantita_disponibile=0;
+		inventario[i].rot.usura=0;
 	}else{
 		inventario[i].rot.usura-=aumentoUsura(inventario[i].quantita_disponibile);
 	}
@@ -448,6 +449,9 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 								inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
 								inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
 								inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
+								if(inventario[k].rot.usura>100){
+									inventario[k].rot.usura=100;
+								}
 							}else{
 								errore("ERRORE: Il tessuto e' troppo consumato per essere usato! Interrompo il progetto...\n");
 								return 1;
