@@ -331,8 +331,8 @@ int controlloTessuti(int RCount){
 				printf("Fantasia: %s\n",inventario[i].rot.fantasia);
 				printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
 				printf("Data di acquisto: %d/%d/%d\n",inventario[i].g,inventario[i].m,inventario[i].a);
-				printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
-				printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
+				printf("Quantita' disponibile: %.2f M^2\n",inventario[i].quantita_disponibile);
+				printf("Utilizzo previsto: %.2f M^2\n",inventario[i].utilizzo_previsto);
 				printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 				co(7);
 				printf("Usura: ");
@@ -348,8 +348,8 @@ int controlloTessuti(int RCount){
 				printf("%.2f",inventario[i].rot.usura);
 				co(7);
 				printf(" %%\n");
-				printf("Costo: %.2f\n",inventario[i].rot.costo);
-				printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
+				printf("Costo: %.2f euro\n",inventario[i].rot.costo);
+				printf("Costo M^2: %.2f euro\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 				// Attendo un input
 				tasto=pausa("[<-] [->] Muoviti | [INVIO] Ricompra | [ESC] Esci");
 				// Se <- torno indietro di 1
@@ -795,8 +795,8 @@ int mostraTessuti(int dim){
 			printf("Fantasia: %s\n",inventario[i].rot.fantasia);
 			printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
 			printf("Data di acquisto: %d/%d/%d\n",inventario[i].g,inventario[i].m,inventario[i].a);
-			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
-			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
+			printf("Quantita' disponibile: %.2f M^2\n",inventario[i].quantita_disponibile);
+			printf("Utilizzo previsto: %.2f M^2\n",inventario[i].utilizzo_previsto);
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
 			co(7);
 			printf("Usura: ");
@@ -812,8 +812,8 @@ int mostraTessuti(int dim){
 			printf("%.2f",inventario[i].rot.usura);
 			co(7);
 			printf(" %%\n");
-			printf("Costo: %.2f\n",inventario[i].rot.costo);
-			printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
+			printf("Costo: %.2f euro\n",inventario[i].rot.costo);
+			printf("Costo M^2: %.2f euro\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 			// Attendo un input
 			if(inventario[i].rot.usura>MAXUSURA){
 				tasto=pausa("[<-] [->] Muoviti | [INVIO] Ricompra | [ESC] Esci");	
