@@ -347,7 +347,7 @@ int controlloTessuti(int RCount){
 				}
 				printf("%.2f",inventario[i].rot.usura);
 				co(7);
-				printf(" %\n");
+				printf(" %%\n");
 				printf("Costo: %.2f\n",inventario[i].rot.costo);
 				printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 				// Attendo un input
@@ -596,16 +596,19 @@ int mostraProgetti(int *PCount, int RCount){
 }
 // Funzione che aggiorna i dati
 void aggiorna(int RCount,int PCount){
-	int i,j,k;
+	int i=0,j,k;
 	// Aggiorno i rotoli
 	for(i=0;i<RCount;i++){
-		// Aggiorno l'utilizzo previsto
+		// resetto l'utilizzo previsto
 		inventario[i].utilizzo_previsto=0;
-		for(j=0;j<PCount;j++){
+	}
+	for(j=0;j<PCount;j++){
+		for(k=0;k<progetti[j].rdim;k++){
 			if(progetti[j].mini!=1){
-				for(k=0;k<progetti[j].rdim;k++){
+				for(i=0;i<RCount;i++){
 					if(strcmp(inventario[i].codice_rotolo,progetti[j].rotoli_richiesti[k].rotolo_richiesto)==0){
 						inventario[i].utilizzo_previsto+=progetti[j].rotoli_richiesti[k].quantita_richiesta;
+						break;
 					}
 				}
 			}
