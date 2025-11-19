@@ -481,6 +481,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 								inventario[k].scarti_utilizzabili-=progetti[i].scarti_richiesti;
 							}
 						}
+						break;
 					}
 				}
 			}
@@ -803,7 +804,7 @@ int mostraTessuti(int dim){
 			}
 			printf("%.2f",inventario[i].rot.usura);
 			co(7);
-			printf(" %\n");
+			printf(" %%\n");
 			printf("Costo: %.2f\n",inventario[i].rot.costo);
 			printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 			// Attendo un input
@@ -948,7 +949,7 @@ int nuovoProgetto(int *PCount,int RCount){
 					printf("\t\tRotolo [%d/%d]\n",j+1,progetti[i].rdim);
 					printf("\t\tCodice rotolo: ");
 					co(15);
-					printf("%s",inventario[k].codice_rotolo);
+					printf("%s (%.2f)",inventario[k].codice_rotolo,inventario[k].quantita_disponibile);
 					co(8);
 					printf("\t[<-][->]");
 					co(7);
@@ -1071,8 +1072,8 @@ float calcolaCostoProgetto(int dim,int RCount){
 	int i,j;
 	float costo=0,q,u;
 	progetti[dim].valore=0;
-	for(i=0;i<RCount;i++){
-		for(j=0;j<progetti[dim].rdim;j++){
+	for(j=0;i<progetti[dim].rdim;j++){
+		for(i=0;i<RCount;i++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
 				q=0;
@@ -1091,6 +1092,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 						costo+=inventario[i].rot.costo/(inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100));	// Aumento il costo fino a quando ne ho abbastanza
 					}
 				}while(u>q);
+				break;
 			}
 		}
 	}
