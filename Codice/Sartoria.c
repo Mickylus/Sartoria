@@ -426,21 +426,26 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 				for(k=0;k<RCount;k++){
 					if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
 						if(progetti[i].mini==0){
-							inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
-							tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
-							do{
-								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
-									inventario[k].quantita_disponibile++;
-									budget-=inventario[k].rot.costo/((inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza);
-									// Aggiorno la data di acquisto
-									inventario[k].data_acquisto.g=g;
-									inventario[k].data_acquisto.m=m;
-									inventario[k].data_acquisto.a=a;
-								}
-							}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
-							inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
-							inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
-							inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
+							if(inventario[k].rot.usura<MAXUSURA){
+								inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+								tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+								do{
+									if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
+										inventario[k].quantita_disponibile++;
+										budget-=inventario[k].rot.costo/((inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza);
+										// Aggiorno la data di acquisto
+										inventario[k].data_acquisto.g=g;
+										inventario[k].data_acquisto.m=m;
+										inventario[k].data_acquisto.a=a;
+									}
+								}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
+								inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
+								inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
+								inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
+							}else{
+								errore("ERRORE: Il tessuto e' troppo consumato per essere usato! Interrompo il progetto...\n");
+								return 1;
+							}
 						}else{
 							if(progetti[i].scarti_richiesti>inventario[k].scarti_utilizzabili){
 								errore("ERRORE: Non ci sono abbastanza scarti per questo progetto!\n");
