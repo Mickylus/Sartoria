@@ -453,6 +453,11 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							if(inventario[k].rot.usura<MAXUSURA){
 								inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
 								tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+								if(inventario[k].utilizzo_previsto>inventario[k].quantita_disponibile){
+									inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
+								}else{
+									inventario[k].rot.usura=0;
+								}
 								do{
 									if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
 										inventario[k].quantita_disponibile++;
@@ -465,7 +470,6 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 								}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
 								inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
 								inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
-								inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
 								if(inventario[k].rot.usura>100){
 									inventario[k].rot.usura=100;
 								}
