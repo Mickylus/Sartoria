@@ -112,7 +112,7 @@ num = Numero convertito
 int checkValInt(char valore[]){
 	int num;
 	num=atoi(valore);
-	if(num==0){
+	if(num==0 || num>MAXINT){
 		return -1;
 	}
 	return num;

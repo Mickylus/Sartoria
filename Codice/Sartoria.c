@@ -297,7 +297,7 @@ int rotazioneScorte(int RCount){
 	int f=1,i,j;
 	struct scheda temp;
 	for(i=0;i<RCount;i++){
-		if(cmpData(inventario[i].g,inventario[i].m,inventario[i].a,inventario[i+1].g,inventario[i+1].m,inventario[i+1].a)==2){
+		if(cmpData(inventario[i].g,inventario[i].m,inventario[i].a,inventario[i+1].g,inventario[i+1].m,inventario[i+1].a)==1){
 			for(j=i;j<RCount-1;j++){
 				temp=inventario[j];
 				inventario[j]=inventario[j+1];
@@ -308,7 +308,7 @@ int rotazioneScorte(int RCount){
 	}
 	return f;
 }
-
+// Funzione che controlla quali tessuti sono andati oltre la soglia di usura
 int controlloTessuti(int RCount){
 	int i,tasto=0,j,k,f=1;
 	for(i=0;i<RCount;i++){
@@ -388,7 +388,7 @@ float aumentoUsura(float q){
 // Funzione che ricompra il rotolo
 void riacquista(int i){
 	int err,g,m,a;
-	char v1[10],v2[10],v3[10];
+	char v1[100],v2[100],v3[100];
 	do{
 		printf("\nIserisci la data di oggi (GG MM AAAA): ");
 		scanf(" %s %s %s",v1,v2,v3);
@@ -419,7 +419,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 	int i,j,k,f=1;
 	float tot=0;
 	int durata=0,g,m,a,err;
-	char v1[10],v2[10],v3[10];
+	char v1[100],v2[100],v3[100];
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,nome)==0){
 			f=0;
@@ -620,7 +620,7 @@ Funzione che modifica un progetto
 */
 int modificaProgetto(int dim,char filtro[],int RCount){
 	int i,j,tasto=0,stato=0,f=1,err=1,k;
-	char val[10];
+	char val[100];
 	for(i=0;i<dim;i++){
 		if(strcmp(progetti[i].nome_progetto,filtro)==0){
 			do{	
@@ -863,7 +863,7 @@ int nuovoProgetto(int *PCount,int RCount){
 		return 1;
 	}else{
 		int i=*PCount,j,k,t,scelta,err,tasto=0;
-		char val[10];
+		char val[100];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
@@ -1121,7 +1121,7 @@ Funzione che modifica i dati di un rotolo
 */
 int modificaRotolo(int dim, char filtro[]){
 	int i,tasto=0,stato=0,j,f=1;
-	char val[10];
+	char val[100];
 	for(i=0;i<dim;i++){
 		if(strcmp(filtro,inventario[i].codice_rotolo)==0){
 			printf("Rotolo trovato!\n");
@@ -1251,7 +1251,7 @@ int nuovoRotolo(int *RCount){
 	}else{
 		int i=*RCount,g,m,a,err,j;
 		char scelta='Y';
-		char val[10],v1[10],v2[10],v3[10];
+		char val[100],v1[100],v2[100],v3[100];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
@@ -1447,7 +1447,6 @@ Funzione che stampa il menu:
 */
 int menu(int mode){
 	int s1,s2,tasto=0,stato=mode,i,j;
-	char val[10];
 	do{
 		system(CLEAR);
 		co(7);
