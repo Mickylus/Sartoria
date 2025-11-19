@@ -219,6 +219,23 @@ void inputData(char g[], char m[], char a[],int *giorno, int *mese, int *anno){
 	*anno=atoi(a);
 }
 /*
+Funzione che confornta due date
+1: Data 1 piu' recente
+2: Data 2 piu' recente
+*/
+int cmpData(int g1,int m1,int a1,int g2,int m2,int a2){
+	if(a1>a2){
+		return 1;
+	}
+	if(m1>m2){
+		return 1;
+	}
+	if(g1>g2){
+		return 1;
+	}
+	return 2;
+}
+/*
 Funzione che stampa il messaggio di errore (in rosso)
 */
 void errore(const char *messaggio){
