@@ -225,6 +225,12 @@ int main(){
 					pausa("\nContinua...\n");
 				}
 				break;
+			case 32:
+				if(controlloTessuti(RCount)==1){
+					errore("Non ci sono tessuti inutilizzabili!\n");
+					pausa("Continua...\n");
+				}
+				break;
 			case 34:
 				co(8);
 				printf("Salvataggio in corso...\n");
@@ -289,8 +295,8 @@ int main(){
 int controlloTessuti(int RCount){
 	int i,tasto=0,j,k,f=1;
 	for(i=0;i<RCount;i++){
-		f=0;
 		if(inventario[i].rot.usura>MAXUSURA){
+			f=0;
 			do{
 				// Stampo tutti i campi
 				system(CLEAR);
@@ -806,7 +812,7 @@ int mostraTessuti(int dim){
 			}
 			// Esco dalla funzione
 			if(tasto==27){
-				i=dim;
+				return 0;
 			}
 		}while(tasto!=1003 && tasto != 1002 && tasto!=27);
 	}
