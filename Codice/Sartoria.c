@@ -297,7 +297,7 @@ int rotazioneScorte(int RCount){
 	int f=1,i,j;
 	struct scheda temp;
 	for(i=0;i<RCount;i++){
-		if(cmpData(inventario[i].g,inventario[i].m,inventario[i].a,inventario[i+1].g,inventario[i+1].m,inventario[i+1].a)==1){
+		if(cmpData(inventario[i].g,inventario[i].m,inventario[i].a,inventario[i+1].g,inventario[i+1].m,inventario[i+1].a)==2){
 			for(j=i;j<RCount-1;j++){
 				temp=inventario[j];
 				inventario[j]=inventario[j+1];
