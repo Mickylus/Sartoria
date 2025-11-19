@@ -409,6 +409,9 @@ void riacquista(int i){
 	}
 	inventario[i].quantita_disponibile+=inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);
 	budget-=inventario[i].rot.costo;
+	if(inventario[i].rot.usura<=0){
+		inventario[i].rot.usura=0;
+	}
 }
 /*
 Viene avviato il taglio e rimosso il progetto
