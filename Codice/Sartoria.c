@@ -23,6 +23,8 @@
 #define MAXP 10
 // Costante degli scarti
 #define SCARTI 0.24
+// Usura massima rotoli
+#define MAXUSURA 40
 // Nome del file di salvataggio
 #define FILEINVENTARIO "Inventario.txt"
 #define FILEPROGETTI "Progetti.txt"
@@ -112,7 +114,7 @@ int mostraTessuti(int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
 int rotazioneScorte(int);			// Ruota le scorte
 // Should
-float aumentoUsura();				// Aumenta l'usura (a ogni azione o a caso. ancora da decidere...)
+float aumentoUsura(float);				// Aumenta l'usura (a ogni azione o a caso. ancora da decidere...)
 void salvaInventario(int,int);		// Sotto forma di file .txt
 void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
 void reset(int*,int*);				// reset inventario
@@ -284,6 +286,82 @@ int main(){
 	}while(scelta!=41);
 	return 0;
 }
+int controlloTessuti(int RCount){
+	int i,tasto=0,j,k,f=1;
+	for(i=0;i<RCount;i++){
+		f=0;
+		if(inventario[i].rot.usura>MAXUSURA){
+			do{
+				// Stampo tutti i campi
+				system(CLEAR);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
+				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");	
+				printf("Rotolo [%d/%d]\n",i+1,RCount);
+				co(9);
+				printf("Rotolo inutilizzabile! E' necessario ricomprarlo per utilizzarlo di nuovo!\n");
+				co(8);
+				printf("Codice: %s\n",inventario[i].codice_rotolo);
+				printf("Fornitore: %s\n",inventario[i].fornitore);
+				printf("Tipo di tessuto: %s\n",inventario[i].rot.tipo_tessuto);
+				printf("Colore: %s\n",inventario[i].rot.colore);
+				printf("Fantasia: %s\n",inventario[i].rot.fantasia);
+				printf("Codice fornitore: %s\n",inventario[i].rot.codice_fornitura);
+				printf("Data di acquisto: %d/%d/%d\n",inventario[i].data_acquisto.g,inventario[i].data_acquisto.m,inventario[i].data_acquisto.a);
+				printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
+				printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
+				printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
+				co(7);
+				printf("Usura: ");
+				if(inventario[i].rot.usura>MAXUSURA){
+					co(4);
+				}else{
+					if(inventario[i].rot.usura>15){
+						co(6);
+					}else{
+						co(7);
+					}
+				}
+				printf("%.2f",inventario[i].rot.usura);
+				co(7);
+				printf(" %\n");
+				printf("Costo: %.2f\n",inventario[i].rot.costo);
+				printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
+				// Attendo un input
+				tasto=pausa("[<-] [->] Muoviti | [INVIO] Ricompra | [ESC] Esci");
+				// Se <- torno indietro di 1
+				if(tasto==13){
+					riacquista(i);
+				}			
+				if(tasto==1002){
+					if(i>0){
+						i-=2;
+					}else{
+						i--;
+					}
+				}
+				// Se -> e sono al limite rimane sullo stesso tessuto
+				if(tasto==1003 && i==RCount-1){
+					i--;
+				}
+				// Esco dalla funzione
+				if(tasto==27){
+					return 0;
+				}
+			}while(tasto!=1003 && tasto != 1002 && tasto!=27);
+		}
+	}
+	return f;
+}
+// Funzione che assegna l'usura in base al taglio effettuato
+float aumentoUsura(float q){
+	int max;
+	max=(int)q*0.39;
+	if(max<1){
+		max=1;
+	}
+	return (rand()%max)+1;
+}
 // Funzione che ricompra il rotolo
 void riacquista(int i){
 	int err,g,m,a;
@@ -300,6 +378,11 @@ void riacquista(int i){
 	inventario[i].data_acquisto.g=g;
 	inventario[i].data_acquisto.m=m;
 	inventario[i].data_acquisto.a=a;
+	if(inventario[i].rot.usura>MAXUSURA){
+		inventario[i].quantita_disponibile=0;
+	}else{
+		inventario[i].rot.usura-=aumentoUsura(inventario[i].quantita_disponibile);
+	}
 	inventario[i].quantita_disponibile+=inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);
 	budget-=inventario[i].rot.costo;
 }
@@ -357,6 +440,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
 							inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
 							inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
+							inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
 						}else{
 							if(progetti[i].scarti_richiesti>inventario[k].scarti_utilizzabili){
 								errore("ERRORE: Non ci sono abbastanza scarti per questo progetto!\n");
@@ -659,6 +743,11 @@ int mostraTessuti(int dim){
 			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");	
 			printf("Rotolo [%d/%d]\n",i+1,dim);
+			if(inventario[i].rot.usura>MAXUSURA){
+				co(9);
+				printf("Rotolo inutilizzabile! E' necessario ricomprarlo per utilizzarlo di nuovo!\n");
+				co(8);
+			}
 			printf("Codice: %s\n",inventario[i].codice_rotolo);
 			printf("Fornitore: %s\n",inventario[i].fornitore);
 			printf("Tipo di tessuto: %s\n",inventario[i].rot.tipo_tessuto);
@@ -669,11 +758,28 @@ int mostraTessuti(int dim){
 			printf("Quantita' disponibile: %.2f\n",inventario[i].quantita_disponibile);
 			printf("Utilizzo previsto: %.2f\n",inventario[i].utilizzo_previsto);
 			printf("Scarti: %d\n",inventario[i].scarti_utilizzabili);
-			printf("Usura: %.1f\n",inventario[i].rot.usura);
+			co(7);
+			printf("Usura: ");
+			if(inventario[i].rot.usura>MAXUSURA){
+				co(4);
+			}else{
+				if(inventario[i].rot.usura>15){
+					co(6);
+				}else{
+					co(7);
+				}
+			}
+			printf("%.2f",inventario[i].rot.usura);
+			co(7);
+			printf(" %\n");
 			printf("Costo: %.2f\n",inventario[i].rot.costo);
 			printf("Costo M^2: %.2f\n\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 			// Attendo un input
-			tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [INVIO] Ricompra | [ESC] Esci");
+			if(inventario[i].rot.usura>MAXUSURA){
+				tasto=pausa("[<-] [->] Muoviti | [INVIO] Ricompra | [ESC] Esci");	
+			}else{
+				tasto=pausa("[<-] [->] Muoviti | [SPAZIO] Modifica | [INVIO] Ricompra | [ESC] Esci");
+			}
 			// Se <- torno indietro di 1
 			if(tasto==13){
 				riacquista(i);
@@ -690,7 +796,7 @@ int mostraTessuti(int dim){
 				i--;
 			}
 			// Modifico il rotolo corrente
-			if(tasto==32){
+			if(tasto==32 && inventario[i].rot.usura<=MAXUSURA){
 				modificaRotolo(dim,inventario[i].codice_rotolo);
 			}
 			// Esco dalla funzione
