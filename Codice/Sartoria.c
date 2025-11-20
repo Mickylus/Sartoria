@@ -129,7 +129,7 @@ int elimiaTessuto(int*,char[]);		// Elimina un preset
 // Main
 int main(){
 	int RCount=0,PCount=0,scelta,err,tasto,presetCount=0;
-	char val[10],filter[MAXSTRING];
+	char filter[MAXSTRING];
 	caricaInventario(&RCount,&PCount,&presetCount);
 	system(CLEAR);
 	srand(time(NULL));	// Inizializzo la generazione di numeri casuali
@@ -346,7 +346,7 @@ void caricaPreset(int *RCount, int *PCount, char percorso_preset[]){
 		// leggo i progetti
 		fscanf(Preset,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(Preset,"%s %f %d %f %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
+			fscanf(Preset,"%s %f %d %d %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fscanf(Preset,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
@@ -406,15 +406,13 @@ int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 				}
 			}
 			if(tasto==1001){
-				if(i>=*PresetCount-1){
-					i--;
+				if(i<*PresetCount-1){
+					i++;
 				}
 			}
 			if(tasto==1000){
-				if(i<=0){
+				if(i>0){
 					i--;
-				}else{
-					i-=2;
 				}
 			}
 		}while(tasto!=1000 && tasto!=1001 && tasto!=13);
@@ -453,9 +451,9 @@ void nuovoPreset(int RCount, int PCount,int *PresetCount){
 		}
 		fprintf(Preset,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(Preset,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
+			fprintf(Preset,"%s %f %d %d %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
-				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
+				fprintf(Preset,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 		fclose(Preset);
@@ -470,7 +468,7 @@ Funzione che ordina le scorte in base alla data
 int rotazioneScorte(int RCount){
 	int f=1,i,j;
 	struct scheda temp;
-	for(i=0;i<RCount;i++){
+	for(i=0;i<RCount-1;i++){
 		if(cmpData(inventario[i].g,inventario[i].m,inventario[i].a,inventario[i+1].g,inventario[i+1].m,inventario[i+1].a)==1){
 			for(j=i;j<RCount-1;j++){
 				temp=inventario[j];
@@ -484,7 +482,7 @@ int rotazioneScorte(int RCount){
 }
 // Funzione che controlla quali tessuti sono andati oltre la soglia di usura
 int controlloTessuti(int RCount){
-	int i,tasto=0,j,k,f=1;
+	int i,tasto=0,f=1;
 	for(i=0;i<RCount;i++){
 		if(inventario[i].rot.usura>MAXUSURA){
 			f=0;
@@ -595,7 +593,7 @@ Viene avviato il taglio e rimosso il progetto
 int avviaTaglio(int *PCount, char nome[],int RCount){
 	int i,j,k,f=1;
 	float tot=0;
-	int durata=0,g,m,a,err;
+	int g,m,a,err;
 	char v1[100],v2[100],v3[100];
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,nome)==0){
@@ -630,10 +628,8 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							if(inventario[k].rot.usura<MAXUSURA){
 								inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
 								tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
-								if(inventario[k].utilizzo_previsto>inventario[k].quantita_disponibile){
-									inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
-								}else{
-									inventario[k].rot.usura=0;
+								if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
+									inventario[k].rot.usura+=aumentoUsura(inventario[k].utilizzo_previsto);
 								}
 								do{
 									if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
@@ -699,7 +695,7 @@ int assegnaScarti(float q){
 Funzione che stampa a schermo i progetti
 */
 int mostraProgetti(int *PCount, int RCount){
-	int i,tasto=0,j,k,f=1;
+	int i,tasto=0,j,f=1;
 	for(i=0;i<*PCount;i++){
 		// Controllo se ci sono progetti
 		f=0;
@@ -950,7 +946,7 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 }
 // Funzione che stampa i tessuti
 int mostraTessuti(int dim){
-	int i,tasto=0,j,k,f=1;
+	int i,tasto=0,f=1;
 	for(i=0;i<dim;i++){
 		f=0;
 		do{
@@ -1256,7 +1252,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 	int i,j;
 	float costo=0,q,u;
 	progetti[dim].valore=0;
-	for(j=0;i<progetti[dim].rdim;j++){
+	for(j=0;j<progetti[dim].rdim;j++){
 		for(i=0;i<RCount;i++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
@@ -1435,7 +1431,7 @@ int nuovoRotolo(int *RCount){
 	if(*RCount>=MAXTESSUTI){
 		return 1;
 	}else{
-		int i=*RCount,g,m,a,err,j;
+		int i=*RCount,g,m,a,err;
 		char scelta='Y';
 		char val[100],v1[100],v2[100],v3[100];
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
@@ -1509,7 +1505,7 @@ int nuovoRotolo(int *RCount){
 					return 0;
 				}
 			}
-		}while(inventario[i].rot.costo<0 || scelta!='Y' && scelta!='y');
+		}while(inventario[i].rot.costo<0 || (scelta!='Y' && scelta!='y'));
 		co(8);
 		printf("\t\tCosto M^2: %.2f\n",inventario[i].rot.costo/((inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza));
 		co(7);
@@ -1566,7 +1562,7 @@ void caricaInventario(int *RCount, int *PCount,int *PresetCount){
 		// leggo i progetti
 		fscanf(FProg,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(FProg,"%s %f %d %f %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
+			fscanf(FProg,"%s %f %d %d %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
@@ -1618,7 +1614,7 @@ void salvaInventario(int RCount, int PCount, int PresetCount){
 		// Salvo i progetti
 		fprintf(FProg,"%d\n",PCount);
 		for(i=0;i<PCount;i++){
-			fprintf(FProg,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
+			fprintf(FProg,"%s %f %d %d %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}

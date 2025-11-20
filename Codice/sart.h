@@ -3,6 +3,12 @@
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
+#include<limits.h>
+
+// Definizione di MAXINT se non è già definita
+#ifndef MAXINT
+#define MAXINT INT_MAX
+#endif
 
 // Librerie per la funzione pausa()
 #ifdef _WIN32
@@ -249,13 +255,14 @@ Parametri: descrizione, secondi
 */
 void caricamento(const char *messaggio,int secondi){
     if (secondi<=0){
-        printf("[####################] 100%\n");
+        printf("[####################] 100%%\n");
         return;
     }
 
     const int totalBlocks = 20;
-    int interval_ms=(secondi*1000)/totalBlocks,i,j;
+    int i,j;
 	#ifdef _WIN32
+		int interval_ms=(secondi*1000)/totalBlocks;
 		for (i = 0; i <= totalBlocks; i++) {
 			printf("\r%s :[",messaggio);
 			for (j = 0; j < totalBlocks; j++) {
