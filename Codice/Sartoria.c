@@ -253,6 +253,7 @@ int main(){
 				pausa("Continua...\n");
 				break;
 			case 35:
+				{
 				int i=0;
 				do{
 					system(CLEAR);
@@ -285,6 +286,7 @@ int main(){
 					errore("Reset annullato\n");
 				}
 				pausa("\nContinua...\n");
+				}
 				break;
 			case 41:
 				nuovoPreset(RCount,PCount,&presetCount);
