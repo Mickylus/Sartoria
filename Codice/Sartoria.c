@@ -389,6 +389,7 @@ int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 				return 0;
 			}
 			if(tasto==32){
+				// Da fixare
 				if(eliminaPreset(PresetCount,ArrayPreset[i])==1){
 					errore("\nERRORE: Impossibile eliminare il salvataggio!\n");
 				}else{
