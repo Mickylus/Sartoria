@@ -25,9 +25,12 @@
 #define SCARTI 0.24
 // Usura massima rotoli
 #define MAXUSURA 40
+// Numero massimo di preset
+#define MAXPRESET 100
 // Nome del file di salvataggio
 #define FILEINVENTARIO "Inventario.txt"
 #define FILEPROGETTI "Progetti.txt"
+#define FILEPRESET "Preset.txt"
 
 // pulizia schermo compatibile con i 2 sistemi operativi
 #ifdef _WIN32
@@ -41,10 +44,14 @@
 FILE *FInv;
 // File usato per salvare i progetti
 FILE *FProg;
+// File usato per salvare i preset
+FILE *Preset;
 
 // Variabili Globali
 // Budget sartoria
 float budget = BUDGETINIZIALE;
+// Array preset
+char ArrayPreset[MAXPRESET][50];
 
 // Structs
 // Struttura per i rotoli di tessuto
@@ -108,21 +115,23 @@ int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne p
 int rotazioneScorte(int);			// Ruota le scorte
 // Should
 float aumentoUsura(float);				// Aumenta l'usura (a ogni azione o a caso. ancora da decidere...)
-void salvaInventario(int,int);		// Sotto forma di file .txt
-void caricaInventario(int*,int*);	// e salva sia tessuti che progetti
+void salvaInventario(int,int,int);		// Sotto forma di file .txt
+void caricaInventario(int*,int*,int*);	// e salva sia tessuti che progetti
 void reset(int*,int*);				// reset inventario
 void aggiorna(int,int);				// aggiorna i dati
 int assegnaScarti(float);			// assegna gli scarti del progetto in base al taglio effettuato
 void riacquista(int);				// ricompra il rotolo
-
+void nuovoPreset(int,int,int*);			// Crea un nuovo preset
+void caricaPreset(int*,int*,char[]);		// Carica un preset
+int mostraPreset(int,int*,int*);
 
 // Main
 int main(){
-	int RCount=0,PCount=0,scelta,err,tasto;
+	int RCount=0,PCount=0,scelta,err,tasto,presetCount=0;
 	char val[10],filter[MAXSTRING];
-	caricaInventario(&RCount,&PCount);
+	caricaInventario(&RCount,&PCount,&presetCount);
 	system(CLEAR);
-	srand(time(NULL));
+	srand(time(NULL));	// Inizializzo la generazione di numeri casuali
 	do{
 		scelta=menu(1);
 		switch(scelta){
@@ -147,9 +156,9 @@ int main(){
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("Inserisci il codice da cercare: ");							// Input codice da cercare
+				printf("Inserisci il codice da cercare: ");		// Input codice da cercare
 				scanf(" %s",filter);
-				if(eliminaRotolo(&RCount,filter)==1){								// Procedo con l'eliminazione
+				if(eliminaRotolo(&RCount,filter)==1){		// Procedo con l'eliminazione
 					errore("Rotolo non trovato!\n");
 				}else{
 					co(2);
@@ -160,7 +169,7 @@ int main(){
 				break;
 			case 21:
 				if(RCount>0){
-					if(nuovoProgetto(&PCount,RCount)==1){								// Input nuovo progetto
+					if(nuovoProgetto(&PCount,RCount)==1){		// Input nuovo progetto
 						errore("ERRORE: dimensione massima raggiunta!\n");
 						pausa("\nContinua...\n");
 					}
@@ -173,7 +182,7 @@ int main(){
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 				printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 				printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-				printf("Inserisci il nome da cercare: ");							// Input nome da cercare
+				printf("Inserisci il nome da cercare: ");		// Input nome da cercare
 				scanf(" %s",filter);
 				if(modificaProgetto(PCount,filter,RCount)==1){
 					errore("Rotolo non trovato!\n");
@@ -236,7 +245,7 @@ int main(){
 				co(8);
 				printf("Salvataggio in corso...\n");
 				co(7);
-				salvaInventario(RCount,PCount);										// Salvataggio manuale
+				salvaInventario(RCount,PCount,presetCount);		// Salvataggio manuale
 				co(2);
 				printf("Salvataggio effettuato!\n");
 				co(7);
@@ -277,7 +286,17 @@ int main(){
 				pausa("\nContinua...\n");
 				break;
 			case 41:
-				salvaInventario(RCount,PCount);				// Salvo il programma
+				nuovoPreset(RCount,PCount,&presetCount);
+				pausa("\nContinua...\n");
+				break;
+			case 42:
+				if(mostraPreset(presetCount,&RCount,&PCount)==1){
+					errore("Non sono presenti preset!\n");
+					pausa("\nContinua...\n");
+				}
+				break;
+			case 51:
+				salvaInventario(RCount,PCount,presetCount);				// Salvo il programma
 				printf("Uscita in corso...\n");				// Termino il programma
 				break;
 			default:
@@ -286,13 +305,136 @@ int main(){
 				break;
 		}
 		aggiorna(RCount,PCount);
-		if(scelta != 41){
+		if(scelta != 51){
 			system(CLEAR);		// Pulisco lo schermo
 		}
 		co(7);
-	}while(scelta!=41);
+	}while(scelta!=51);
 	return 0;
 }
+/*
+Funzion che carica un preset
+*/
+void caricaPreset(int *RCount, int *PCount, char percorso_preset[]){
+	int i,j;
+	Preset=fopen(percorso_preset,"r");
+	if(Preset==NULL){
+		co(4);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",percorso_preset);
+		co(7);
+	}else{
+		// leggo i tessuti
+		fscanf(Preset,"%d %f",RCount,&budget);
+		for(i=0;i<*RCount;i++){
+			fscanf(Preset,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,&inventario[i].rot.lunghezza,&inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,&inventario[i].rot.costo,&inventario[i].rot.usura,&inventario[i].g,&inventario[i].m,&inventario[i].a,&inventario[i].quantita_disponibile,&inventario[i].utilizzo_previsto,&inventario[i].scarti_utilizzabili);
+		}
+		// leggo i progetti
+		fscanf(Preset,"%d",PCount);
+		for(i=0;i<*PCount;i++){
+			fscanf(Preset,"%s %f %d %f %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
+			for(j=0;j<progetti[i].rdim;j++){
+				fscanf(Preset,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
+			}
+		}
+		co(2);
+		printf("Preset caricato con successo...\n");
+		co(7);
+	}
+	pausa("Continua...\n");
+}
+/*
+Mostra i preset
+1= Nessun preset esistente
+*/
+int mostraPreset(int PresetCount, int*RCount, int *PCount){
+	int i,j,f=1,tasto=0;
+	for(i=0;i<PresetCount;i++){
+		f=0;
+		do{
+			co(7);
+			system(CLEAR);
+			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
+			printf("                 Menu Preset\n");
+			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
+			printf("[SU/GIU] Muoviti | [INVIO] Carica | [ESC] Esci\n");
+			for(j=0;j<PresetCount;j++){
+				if(j==i){
+					co(15);
+				}else{
+					co(8);
+				}
+				printf("\t%s\n",ArrayPreset[j]);
+			}
+			tasto=pausa("\n");
+			if(tasto==27){
+				return 0;
+			}
+			if(tasto==13){
+				caricaPreset(RCount,PCount,ArrayPreset[i]);
+				return 0;
+			}
+			if(tasto==1001){
+				if(i>=PresetCount-1){
+					i--;
+				}
+			}
+			if(tasto==1000){
+				if(i<=0){
+					i--;
+				}else{
+					i-=2;
+				}
+			}
+		}while(tasto!=1000 && tasto!=1001 && tasto!=13);
+	}
+	return f;
+}
+/*
+Funzione che crea un nuovo preset
+*/
+void nuovoPreset(int RCount, int PCount,int *PresetCount){
+	int i,j;
+	char preset[20],percorso[50];
+	if(*PresetCount>=MAXPRESET){
+		errore("Numero massimo di preset raggiunto\n");
+	}else{
+		printf("Inserisci il nome del preset: ");
+		scanf(" %s",preset);
+		// genero il nome e percorso del file
+		strcpy(percorso,"Presets/");
+		strcat(preset,".txt");
+		strcat(percorso,preset);
+		// Lo salvo
+		Preset=fopen(FILEPRESET,"w");
+		(*PresetCount)++;
+		strcpy(ArrayPreset[*PresetCount-1],percorso);
+		fprintf(Preset,"%d\n",*PresetCount);
+		for(i=0;i<*PresetCount;i++){
+			fprintf(Preset,"%s\n",ArrayPreset[i]);
+		}
+		fclose(Preset);
+
+		Preset=fopen(percorso,"w");
+		fprintf(Preset,"%d %f\n",RCount,budget);
+		for(i=0;i<RCount;i++){
+			fprintf(Preset,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].g,inventario[i].m,inventario[i].a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
+		}
+		fprintf(Preset,"%d\n",PCount);
+		for(i=0;i<PCount;i++){
+			fprintf(Preset,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
+			for(j=0;j<progetti[i].rdim;j++){
+				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
+			}
+		}
+		fclose(Preset);
+		co(8);
+		printf("Preset salvato in %s ...\n",percorso);
+		co(7);
+	}
+}
+/*
+Funzione che ordina le scorte in base alla data
+*/
 int rotazioneScorte(int RCount){
 	int f=1,i,j;
 	struct scheda temp;
@@ -1366,7 +1508,7 @@ int nuovoRotolo(int *RCount){
 /*
 Funzione che carica i dati dai due file e stampa messaggi di errore se si verificano
 */
-void caricaInventario(int *RCount, int *PCount){
+void caricaInventario(int *RCount, int *PCount,int *PresetCount){
 	int i,j;
 	FInv=fopen(FILEINVENTARIO,"r");
 	if(FInv==NULL){
@@ -1401,12 +1543,27 @@ void caricaInventario(int *RCount, int *PCount){
 		printf("Caricati con successo i progetti!\n");
 		co(7);
 	}
+	Preset=fopen(FILEPRESET,"r");
+	if(Preset==NULL){
+		co(4);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPRESET);
+		co(7);
+	}else{
+		// Leggo i preset
+		fscanf(Preset,"%d",PresetCount);
+		for(i=0;i<*PresetCount;i++){
+			fscanf(Preset,"%s",ArrayPreset[i]);
+		}
+		co(2);
+		printf("Caricati con successo i preset!\n");
+		co(7);
+	}
 	pausa("[INVIO] Continua...\n");
 }
 /*
 Funzione che salva i dati du due file separati, uno per l'inventario e uno per i progetti
 */
-void salvaInventario(int RCount, int PCount){
+void salvaInventario(int RCount, int PCount, int PresetCount){
 	int i,j;
 	FInv=fopen(FILEINVENTARIO,"w");
 	if(FInv==NULL){
@@ -1435,6 +1592,19 @@ void salvaInventario(int RCount, int PCount){
 			}
 		}
 	}
+	Preset=fopen(FILEPRESET,"w");
+	if(Preset==NULL){
+		co(4);
+		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPRESET);
+		co(7);
+	}else{
+		// Salvo la lista dei preset
+		fprintf(Preset,"%d\n",PresetCount);
+		for(i=0;i<PresetCount;i++){
+			fprintf(Preset,"%s\n",ArrayPreset[i]);
+		}
+	}
+	fclose(Preset);
 }
 /*
 Funzione che stampa il menu:
@@ -1454,8 +1624,11 @@ Funzione che stampa il menu:
 	3.3) Rotazione Scorta
 	3.4) Salvataggio
 	3.5) Reset
- 4) Uscita
-	4.1) Termina il programma
+ 4) Presets
+	4.1) Crea un preset
+	4.2) Carica un preset
+ 5) Esci
+	5.1) Termina il programma
 */
 int menu(int mode){
 	int s1,s2,tasto=0,stato=mode,i,j;
@@ -1466,7 +1639,7 @@ int menu(int mode){
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("[SU/GIU] Muoviti, [INVIO] Seleziona\n");
-		for(i=1;i<=4;i++){
+		for(i=1;i<=5;i++){
 			// Evidenzia la scelta attuale
 			if(stato==i){
 				co(15);
@@ -1484,6 +1657,9 @@ int menu(int mode){
 					printf("\tGestione inventario\n");
 					break;
 				case 4:
+					printf("\tPresets\n");
+					break;
+				case 5:
 					printf("\tEsci\n");
 					break;
 			}
@@ -1497,8 +1673,8 @@ int menu(int mode){
 		}
 		if(stato<1){
 			stato=1;	// Controllo di non uscire
-		}else if(stato>4){
-			stato=4;
+		}else if(stato>5){
+			stato=5;
 		}	
 		// Seleziono la scelta
 		if(tasto==13){
@@ -1506,8 +1682,8 @@ int menu(int mode){
 		}
 	}while(tasto!=13);
 	stato=1;
-	if(s1==4){
-		return 41;
+	if(s1==5){
+		return 51;
 	}
 	do{
 		system(CLEAR);
@@ -1516,7 +1692,7 @@ int menu(int mode){
 		printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("[SU/GIU] Muoviti, [INVIO] Seleziona, [ESC] Esci\n");
-		for(j=1;j<5;j++){
+		for(j=1;j<6;j++){
 			if(j==s1){
 				co(11);
 			}else{
@@ -1533,7 +1709,11 @@ int menu(int mode){
 					printf("\tGestione inventario\n");
 					break;
 				case 4:
+					printf("\tPreset\n");
+					break;
+				case 5:
 					printf("\tEsci\n");
+					break;
 			}
 			if(j==s1){
 				for(i=1;i<=5;i++){
@@ -1549,8 +1729,10 @@ int menu(int mode){
 								printf("\t\tNuovo rotolo\n");
 							}else if(s1==2){
 								printf("\t\tNuovo progetto\n");
-							}else{
+							}else if(s1==3){
 								printf("\t\tMostra tessuti\n");
+							}else{
+								printf("\t\tCrea preset\n");
 							}
 							break;
 						case 2:
@@ -1558,8 +1740,10 @@ int menu(int mode){
 								printf("\t\tModifica rotolo\n");
 							}else if(s1==2){
 								printf("\t\tModifica progetto\n");
-							}else{
+							}else if(s1==3){
 								printf("\t\tControlla i tessuti\n");
+							}else{
+								printf("\t\tCarica preset\n");
 							}
 							break;
 						case 3:
@@ -1567,7 +1751,7 @@ int menu(int mode){
 								printf("\t\tElimina rotolo\n");
 							}else if(s1==2){
 								printf("\t\tElimina progetto\n");
-							}else{
+							}else if(s1==3){
 								printf("\t\tRotazione scorte\n");
 							}
 							break;
@@ -1605,6 +1789,10 @@ int menu(int mode){
 		if(s1==1){
 			if(stato>3){
 				stato=3;
+			}
+		}else if(s1==4){
+			if(stato>2){
+				stato=2;
 			}
 		}else{
 			if(stato>5){
