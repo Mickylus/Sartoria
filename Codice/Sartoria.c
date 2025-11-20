@@ -393,7 +393,9 @@ int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 				}else{
 					co(2);
 					printf("\nIl salvataggio e' stato eliminato!\n");
+					co(7);
 				}
+				pausa("\nContinua...\n");
 				if(*PresetCount==0){
 					return 0;
 				}
