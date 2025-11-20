@@ -121,9 +121,10 @@ void reset(int*,int*);				// reset inventario
 void aggiorna(int,int);				// aggiorna i dati
 int assegnaScarti(float);			// assegna gli scarti del progetto in base al taglio effettuato
 void riacquista(int);				// ricompra il rotolo
-void nuovoPreset(int,int,int*);			// Crea un nuovo preset
-void caricaPreset(int*,int*,char[]);		// Carica un preset
-int mostraPreset(int,int*,int*);
+void nuovoPreset(int,int,int*);		// Crea un nuovo preset
+void caricaPreset(int*,int*,char[]);// Carica un preset
+int mostraPreset(int*,int*,int*);	// Mostra i preset
+int elimiaTessuto(int*,char[]);		// Elimina un preset
 
 // Main
 int main(){
@@ -290,7 +291,7 @@ int main(){
 				pausa("\nContinua...\n");
 				break;
 			case 42:
-				if(mostraPreset(presetCount,&RCount,&PCount)==1){
+				if(mostraPreset(&presetCount,&RCount,&PCount)==1){
 					errore("Non sono presenti preset!\n");
 					pausa("\nContinua...\n");
 				}
@@ -311,6 +312,19 @@ int main(){
 		co(7);
 	}while(scelta!=51);
 	return 0;
+}
+// Funzione che elimina un preset
+int eliminaPreset(int *PresetCount,char preset[]){
+	int i,j;
+	for(i=0;i<*PresetCount;i++){
+		if(strcmp(ArrayPreset[i],preset)==0){
+			for(j=i;j<*PresetCount-1;j++){
+				strcpy(ArrayPreset[j],ArrayPreset[j+1]);
+			}
+			(*PresetCount)--;
+			return remove(preset);
+		}
+	}
 }
 /*
 Funzion che carica un preset
@@ -346,7 +360,7 @@ void caricaPreset(int *RCount, int *PCount, char percorso_preset[]){
 Mostra i preset
 1= Nessun preset esistente
 */
-int mostraPreset(int PresetCount, int*RCount, int *PCount){
+int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 	int i,j,f=1,tasto=0;
 	for(i=0;i<PresetCount;i++){
 		f=0;
@@ -356,7 +370,7 @@ int mostraPreset(int PresetCount, int*RCount, int *PCount){
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 			printf("                 Menu Preset\n");
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
-			printf("[SU/GIU] Muoviti | [INVIO] Carica | [ESC] Esci\n");
+			printf("[SU/GIU] Muoviti | [INVIO] Carica | [SPAZIO] Elimina | [ESC] Esci\n");
 			for(j=0;j<PresetCount;j++){
 				if(j==i){
 					co(15);
@@ -372,6 +386,9 @@ int mostraPreset(int PresetCount, int*RCount, int *PCount){
 			if(tasto==13){
 				caricaPreset(RCount,PCount,ArrayPreset[i]);
 				return 0;
+			}
+			if(tasto==32){
+				if(eliminaPreset(PresetCount,ArrayPreset[i]));
 			}
 			if(tasto==1001){
 				if(i>=PresetCount-1){
