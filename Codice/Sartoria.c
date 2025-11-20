@@ -314,18 +314,31 @@ int main(){
 	return 0;
 }
 // Funzione che elimina un preset
-int eliminaPreset(int *PresetCount,char preset[]){
-	int i,j;
-	for(i=0;i<*PresetCount;i++){
-		if(strcmp(ArrayPreset[i],preset)==0){
-			for(j=i;j<*PresetCount-1;j++){
-				strcpy(ArrayPreset[j],ArrayPreset[j+1]);
-			}
-			(*PresetCount)--;
-			return remove(preset);
-		}
-	}
-	return -1;
+int eliminaPreset(int *PresetCount, char preset[]){
+    int i,j;
+    for(i=0;i<*PresetCount;i++){
+        if(strcmp(ArrayPreset[i], preset) == 0){
+            /* shift left */
+            for(j=i;j<*PresetCount-1;j++){
+                strcpy(ArrayPreset[j], ArrayPreset[j+1]);
+            }
+            (*PresetCount)--;
+            /* remove file */
+            if(remove(preset) != 0) {
+                return 1; // errore
+            }
+            /* riscrivi FILEPRESET */
+            Preset = fopen(FILEPRESET, "w");
+            if(Preset == NULL) return 1;
+            fprintf(Preset, "%d\n", *PresetCount);
+            for(j=0;j<*PresetCount;j++){
+                fprintf(Preset, "%s\n", ArrayPreset[j]);
+            }
+            fclose(Preset);
+            return 0; // successo
+        }
+    }
+    return 1; // non trovato
 }
 /*
 Funzion che carica un preset
@@ -1059,7 +1072,7 @@ int nuovoProgetto(int *PCount,int RCount){
 			scanf(" %s",progetti[i].nome_progetto);
 			for(j=0;j<*PCount;j++){
 				if(strcmp(progetti[j].nome_progetto,progetti[i].nome_progetto)==0){
-					errore("\tERRORE: Nome gia' esistente!\n");
+					errore("\tERRORE: Nome gia' esistente!\n\n");
 					err=1;
 				}
 			}
@@ -1390,7 +1403,7 @@ int modificaRotolo(int dim, char filtro[]){
 								if(inventario[i].rot.lunghezza<=0){
 									errore("ERRORE: Valore non valido!\n");
 								}
-							}while(inventario[i].rot.lunghezza <= 0);
+							}while(inventario[i].rot.lunghezza<=0);
 							inventario[i].quantita_disponibile=(inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza;
 							break;
 						case 6:
@@ -1401,7 +1414,7 @@ int modificaRotolo(int dim, char filtro[]){
 								if(inventario[i].rot.larghezza<=0){
 									errore("ERRORE: Valore non valido!\n");
 								}
-							}while(inventario[i].rot.larghezza <= 0);
+							}while(inventario[i].rot.larghezza<=0);
 							inventario[i].quantita_disponibile=(inventario[i].rot.larghezza/100)*inventario[i].rot.lunghezza;
 							break;
 						case 7:
@@ -1495,7 +1508,7 @@ int nuovoRotolo(int *RCount){
 			scanf(" %s",val);
 			inventario[i].rot.costo=checkValFloat(val);						// Controllo che il valore sia valido
 			if(inventario[i].rot.costo<0){
-				errore("\t\tERRORE: Valore non valido!!\n");
+				errore("\t\tERRORE: Valore non valido!\n");
 			}
 			if(inventario[i].rot.costo>budget){
 				printf("\t\tIl costo va oltre il tuo budget. Sei sicuro di volerlo comprare? (Y/N):\n");
