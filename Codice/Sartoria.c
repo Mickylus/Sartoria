@@ -124,7 +124,7 @@ void riacquista(int);				// ricompra il rotolo
 void nuovoPreset(int,int,int*);		// Crea un nuovo preset
 void caricaPreset(int*,int*,char[]);// Carica un preset
 int mostraPreset(int*,int*,int*);	// Mostra i preset
-int elimiaTessuto(int*,char[]);		// Elimina un preset
+int elimiaPreset(int*,char[]);		// Elimina un preset
 
 // Main
 int main(){
