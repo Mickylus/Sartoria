@@ -325,6 +325,7 @@ int eliminaPreset(int *PresetCount,char preset[]){
 			return remove(preset);
 		}
 	}
+	return -1;
 }
 /*
 Funzion che carica un preset
