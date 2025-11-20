@@ -362,7 +362,7 @@ Mostra i preset
 */
 int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 	int i,j,f=1,tasto=0;
-	for(i=0;i<PresetCount;i++){
+	for(i=0;i<*PresetCount;i++){
 		f=0;
 		do{
 			co(7);
@@ -371,7 +371,7 @@ int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 			printf("                 Menu Preset\n");
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 			printf("[SU/GIU] Muoviti | [INVIO] Carica | [SPAZIO] Elimina | [ESC] Esci\n");
-			for(j=0;j<PresetCount;j++){
+			for(j=0;j<*PresetCount;j++){
 				if(j==i){
 					co(15);
 				}else{
@@ -402,7 +402,7 @@ int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 				}
 			}
 			if(tasto==1001){
-				if(i>=PresetCount-1){
+				if(i>=*PresetCount-1){
 					i--;
 				}
 			}
