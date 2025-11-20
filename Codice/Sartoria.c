@@ -388,7 +388,18 @@ int mostraPreset(int *PresetCount, int*RCount, int *PCount){
 				return 0;
 			}
 			if(tasto==32){
-				if(eliminaPreset(PresetCount,ArrayPreset[i]));
+				if(eliminaPreset(PresetCount,ArrayPreset[i])==1){
+					errore("\nERRORE: Impossibile eliminare il salvataggio!\n");
+				}else{
+					co(2);
+					printf("\nIl salvataggio e' stato eliminato!\n");
+				}
+				if(*PresetCount==0){
+					return 0;
+				}
+				if(i>=*PresetCount){
+					i=*PresetCount-1;;
+				}
 			}
 			if(tasto==1001){
 				if(i>=PresetCount-1){
