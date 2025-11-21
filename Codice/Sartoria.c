@@ -1702,7 +1702,7 @@ int menu(int mode){
 					printf("\tGestione inventario\n");
 					break;
 				case 4:
-					printf("\tPresets\n");
+					printf("\tGestione Presets\n");
 					break;
 				case 5:
 					printf("\tEsci\n");
@@ -1754,7 +1754,7 @@ int menu(int mode){
 					printf("\tGestione inventario\n");
 					break;
 				case 4:
-					printf("\tPreset\n");
+					printf("\tGestione Presets\n");
 					break;
 				case 5:
 					printf("\tEsci\n");
