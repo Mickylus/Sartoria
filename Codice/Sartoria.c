@@ -643,7 +643,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 							if(inventario[k].rot.usura<MAXUSURA){
 								inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
 								tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
-								if(inventario[k].utilizzo_previsto>inventario[k].quantita_disponibile){
+								if(inventario[k].utilizzo_previsto<inventario[k].quantita_disponibile){
 									inventario[k].rot.usura=aumentoUsura(inventario[k].utilizzo_previsto);
 								}else{
 									inventario[k].rot.usura=0;
@@ -807,7 +807,7 @@ void aggiorna(int RCount,int PCount){
 	// Aggiorno i progetti
 	for(i=0;i<PCount;i++){
 		// Aggiorno il costo approssimato
-		progetti[i].costo_approssimato=calcolaCostoProgetto(i,PCount);
+		progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 		progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 	}
 }
@@ -1269,7 +1269,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 	int i,j;
 	float costo=0,q,u;
 	progetti[dim].valore=0;
-	for(j=0;i<progetti[dim].rdim;j++){
+	for(j=0;j<progetti[dim].rdim;j++){
 		for(i=0;i<RCount;i++){
 			if(strcmp(inventario[i].codice_rotolo,progetti[dim].rotoli_richiesti[j].rotolo_richiesto)==0){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;

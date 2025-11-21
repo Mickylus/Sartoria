@@ -1,2 +1,2 @@
 1
-Presets/Preset_Piccolo_Grande.txt
+Presets/Rotoli_Colorati.txt
