@@ -7,10 +7,12 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <h1 class="titolo">Sartoria</h1>
   <header>
-    <h1>Sartoria — Inventario Tessuti</h1>
+    <h1>Inventario Tessuti</h1>
     <div class="controls">
       <input id="search" placeholder="Cerca per nome, colore, categoria...">
+      <button id="reload-btn" title="Ricarica inventario">Ricarica</button>
     </div>
   </header>
 
@@ -18,6 +20,7 @@
     <table id="inventory">
       <thead>
         <tr>
+          <th>#</th>
           <th>Nome</th>
           <th>Categoria</th>
           <th>Materiale</th>
@@ -33,6 +36,18 @@
       <tbody></tbody>
     </table>
   </main>
+  
+  <section id="projects-section">
+    <h2>Progetti</h2>
+    <div id="projects">
+      <!-- I progetti verranno inseriti qui dinamicamente -->
+    </div>
+  </section>
+  
+  <section id="debug-section">
+    <h2>Debug</h2>
+    <pre id="debug-output" style="white-space:pre-wrap;max-height:200px;overflow:auto;background:#fff;padding:8px;border:1px solid #eee"></pre>
+  </section>
   <script src="script.js"></script>
 </body>
 </html>
