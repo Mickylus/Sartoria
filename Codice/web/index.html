@@ -10,9 +10,16 @@
   <h1 class="titolo">Sartoria</h1>
   <header>
     <h1>Inventario Tessuti</h1>
+    <div id="fetch-status" style="font-size:0.85rem;color:#555;margin-top:6px">--</div>
     <div class="controls">
       <input id="search" placeholder="Cerca per nome, colore, categoria...">
-      <button id="reload-btn" title="Ricarica inventario">Ricarica</button>
+      <div class="toolbar-btns" role="toolbar" aria-label="Controlli">
+        <button id="reload-btn" title="Ricarica inventario" class="btn small">⟳</button>
+        <label class="compact-auto" title="Auto-refresh">
+          <input id="auto-refresh-checkbox" type="checkbox"> Auto
+        </label>
+        <input id="auto-refresh-seconds" type="number" min="1" value="5" class="small-input" title="Secondi" aria-label="Intervallo auto-refresh">s
+      </div>
     </div>
   </header>
 
@@ -26,7 +33,7 @@
           <th>Materiale</th>
           <th>Colore</th>
           <th>Motivo</th>
-          <th>Quantità</th>
+          <th>Lunghezza</th>
           <th>Larghezza</th>
           <th>Codice</th>
           <th>Prezzo</th>
@@ -43,11 +50,14 @@
       <!-- I progetti verranno inseriti qui dinamicamente -->
     </div>
   </section>
-  
-  <section id="debug-section">
-    <h2>Debug</h2>
-    <pre id="debug-output" style="white-space:pre-wrap;max-height:200px;overflow:auto;background:#fff;padding:8px;border:1px solid #eee"></pre>
-  </section>
+  <br>
+  <br>
+  <details id="debug-section" style="margin-top:12px">
+    <summary style="cursor:pointer;font-weight:600">Debug (mostra/nascondi)</summary>
+    <div style="margin-top:8px">
+      <pre id="debug-output" style="white-space:pre-wrap;max-height:300px;overflow:auto;background:#fff;padding:8px;border:1px solid #eee"></pre>
+    </div>
+  </details>
   <script src="script.js"></script>
 </body>
 </html>

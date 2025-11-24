@@ -1,5 +1,3 @@
 @echo off
-REM Serve the Codice folder on port 8000 using Python's simple server
-pushd "%~dp0"
-python -m http.server 8000
-popd
+cd /d "%~dp0"
+http-server . -p 8000 -c-1

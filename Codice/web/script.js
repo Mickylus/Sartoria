@@ -15,7 +15,8 @@
 async function loadInventory() {
   // Percorso relativo: dal file `web/script.js` si sale di una cartella
   // per leggere `Codice/Inventario.txt` quando il server è impostato su `Codice`.
-  const url = '../Inventario.txt';
+  // Aggiungo un parametro timestamp per evitare cache del browser
+  const url = `../Inventario.txt?t=${Date.now()}`;
   debug(`fetch: ${url}`);
   const resp = await fetch(url);
   debug(`fetch status: ${resp.status} ${resp.statusText} -> ${resp.url}`);
@@ -25,6 +26,17 @@ async function loadInventory() {
   }
   const txt = await resp.text();
   debug(`loadInventory: letti ${txt.split(/\r?\n/).length} righe`);
+  // Provo ad ottenere l'intestazione Last-Modified per verificare il file sul server
+  try {
+    const headResp = await fetch(`../Inventario.txt?t=${Date.now()}`, { method: 'HEAD' });
+    const lm = headResp.headers.get('Last-Modified') || headResp.headers.get('last-modified');
+    if (lm) debug('Inventario.txt Last-Modified: ' + lm);
+    // Aggiorna indicatore visibile nella pagina
+    try {
+      const el = document.getElementById('fetch-status');
+      if (el) el.textContent = `Ultimo Aggiornamento: ${new Date().toLocaleString()}`;
+    } catch(e){}
+  } catch(e){ debug('No Last-Modified header: ' + e); }
 
   // Divido il testo in righe, rimuovo eventuali righe vuote
   const lines = txt.trim().split(/\r?\n/).filter(Boolean);
@@ -32,6 +44,8 @@ async function loadInventory() {
 
   // Scarto la prima riga (metadata) e considero ogni riga successiva come un elemento
   const dataLines = lines.slice(1);
+  // Esponi le righe raw per debug/associazione con la tabella
+  try { window.__lastRawLines = dataLines.slice(); } catch(e){}
 
   // Mappatura dei token: adattare se il formato cambia
   const items = dataLines.map(line => {
@@ -59,6 +73,8 @@ async function loadInventory() {
 
     return { name, category, material, color, pattern, quantity, width, code, price, date };
   });
+  // keep items also global for debug
+  try { window.__lastItems = items.slice(); } catch(e){}
   return items;
 }
 
@@ -83,12 +99,12 @@ async function reloadDataWithRaw() {
     renderProjects(projects, items);
     // fetch raw text and display
     try {
-      const r1 = await fetch('../Inventario.txt');
+      const r1 = await fetch(`../Inventario.txt?t=${Date.now()}`);
       const t1 = await r1.text();
       debug('Raw Inventario.txt:\n' + t1);
     } catch(e){ debug('Errore fetching raw Inventario: '+e); }
     try {
-      const r2 = await fetch('../Progetti.txt');
+      const r2 = await fetch(`../Progetti.txt?t=${Date.now()}`);
       const t2 = await r2.text();
       debug('Raw Progetti.txt:\n' + t2);
     } catch(e){ debug('Errore fetching raw Progetti: '+e); }
@@ -110,7 +126,7 @@ async function reloadDataWithRaw() {
  *     seguite da <numComponents> righe: <fabricName> <quantity>
  */
 async function loadProjects() {
-  const url = '../Progetti.txt';
+  const url = `../Progetti.txt?t=${Date.now()}`;
   debug(`fetch: ${url}`);
   const resp = await fetch(url);
   debug(`fetch status: ${resp.status} ${resp.statusText} -> ${resp.url}`);
@@ -133,6 +149,19 @@ async function loadProjects() {
     // Il numero di componenti sembra trovarsi token[5] (best-effort)
     const numComp = parseInt(headerTokens[5], 10) || 0;
     const rawFields = headerTokens;
+    // Provo a leggere possibili valori numerici presenti nell'header del progetto
+    // token[6] frequentemente è ricavo, token[7]/[8] possono contenere duplicati
+    // o il costo; applichiamo una semplice heuristica per scegliere il valore
+    // corretto evitando situazioni in cui token[7] == token[6].
+    const t6 = parseFloat(headerTokens[6]);
+    const t7 = parseFloat(headerTokens[7]);
+    const t8 = parseFloat(headerTokens[8]);
+    const projectRevenue = Number.isFinite(t6) && t6 > 0 ? t6 : (Number.isFinite(t7) && t7 > 0 ? t7 : (Number.isFinite(t8) ? t8 : 0));
+    // Preferiamo token[8] come costo se presente e diverso dal ricavo.
+    let projectCostFromFile = 0;
+    if (Number.isFinite(t8) && t8 > 0 && t8 !== projectRevenue) projectCostFromFile = t8;
+    else if (Number.isFinite(t7) && t7 > 0 && t7 !== projectRevenue) projectCostFromFile = t7;
+    else projectCostFromFile = 0;
     const components = [];
     for (let j = 0; j < numComp; j++) {
       const compLine = lines[idx + 1 + j];
@@ -142,7 +171,7 @@ async function loadProjects() {
       const qty = parseFloat(t[1]) || 0;
       components.push({ name, qty });
     }
-    projects.push({ name: projName, rawFields, components });
+    projects.push({ name: projName, rawFields, components, revenue: projectRevenue, costFromFile: projectCostFromFile });
     idx += 1 + numComp;
   }
   return projects;
@@ -156,6 +185,7 @@ async function loadProjects() {
 function renderInventory(items) {
   const tbody = document.querySelector('#inventory tbody');
   tbody.innerHTML = '';
+  const rawLines = window.__lastRawLines || [];
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     const tr = document.createElement('tr');
@@ -174,6 +204,21 @@ function renderInventory(items) {
       <td>${escapeHtml(it.date)}</td>
     `;
     tbody.appendChild(tr);
+    // aggiungo riga raw (nascosta) per ogni elemento, utile per debug e per capire parsing
+    const rawTr = document.createElement('tr');
+    rawTr.className = 'raw-row';
+    const rawTd = document.createElement('td');
+    rawTd.colSpan = 11;
+    const rawText = rawLines[i] || '';
+    rawTd.innerHTML = `<small style="color:#666">${escapeHtml(rawText)}</small>`;
+    rawTr.style.display = 'none';
+    rawTr.appendChild(rawTd);
+    tbody.appendChild(rawTr);
+    // click su riga principale per toggle della raw
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', () => {
+      rawTr.style.display = rawTr.style.display === 'none' ? '' : 'none';
+    });
   }
 }
 
@@ -243,7 +288,32 @@ function renderProjects(projects, inventoryItems) {
   for (const p of projects) {
     const details = document.createElement('details');
     const summary = document.createElement('summary');
+
+    // Preferiamo usare i valori forniti nel file Progetti.txt se presenti
+    // (p.costFromFile e p.revenue). Se non sono presenti, cadiamo
+    // indietro al calcolo a partire dai prezzi presenti in inventario.
+    let projectCost = 0;
+    let costSource = 'calcolato da inventario';
+    if (p.costFromFile && p.costFromFile > 0) {
+      projectCost = p.costFromFile;
+      costSource = 'da Progetti.txt';
+    } else {
+      for (const c of p.components) {
+        const inv = inventoryItems.find(it => it.name === c.name);
+        const price = inv ? (parseFloat(inv.price) || 0) : 0;
+        projectCost += (parseFloat(c.qty) || 0) * price;
+      }
+    }
+    const projectRevenue = parseFloat(p.revenue) || 0;
+    const projectProfit = projectRevenue - projectCost;
+
     summary.textContent = `${p.name} — componenti: ${p.components.length}`;
+    const metaSpan = document.createElement('span');
+    metaSpan.style.marginLeft = '10px';
+    metaSpan.style.fontSize = '0.95rem';
+    metaSpan.style.color = '#333';
+    metaSpan.textContent = `Costo approssimato: ≈ €${projectCost.toFixed(2)} (${costSource}) — Ricavi: €${projectRevenue.toFixed(2)} — Profitto: €${projectProfit.toFixed(2)}`;
+    summary.appendChild(metaSpan);
     details.appendChild(summary);
 
     const table = document.createElement('table');
@@ -268,7 +338,13 @@ function renderProjects(projects, inventoryItems) {
       tbody.appendChild(tr);
     }
 
+    // Riga riepilogo costi (sotto la tabella)
+    const summaryDiv = document.createElement('div');
+    summaryDiv.style.marginTop = '8px';
+    summaryDiv.style.fontSize = '0.95rem';
+    summaryDiv.innerHTML = `<strong>Costo approssimato:</strong> ≈ €${projectCost.toFixed(2)} (${costSource}) &nbsp; <strong>Ricavi:</strong> €${projectRevenue.toFixed(2)} &nbsp; <strong>Profitto:</strong> €${projectProfit.toFixed(2)}`;
     details.appendChild(table);
+    details.appendChild(summaryDiv);
     root.appendChild(details);
   }
 }
@@ -292,8 +368,26 @@ function renderProjects(projects, inventoryItems) {
     const rb = document.getElementById('reload-btn');
     if (rb) {
       rb.addEventListener('click', () => reloadDataWithRaw());
-      rb.title = 'Ricarica e mostra contenuto raw dei file (debug)';
     }
+    // Auto-refresh setup
+    const autoCb = document.getElementById('auto-refresh-checkbox');
+    const autoSec = document.getElementById('auto-refresh-seconds');
+    let autoTimer = null;
+    function startAuto() {
+      stopAuto();
+      const s = Math.max(1, parseInt(autoSec.value, 10) || 5);
+      autoTimer = setInterval(() => reloadDataWithRaw(), s * 1000);
+      debug('Auto-refresh attivato ogni ' + s + 's');
+    }
+    function stopAuto() {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; debug('Auto-refresh fermato'); }
+    }
+    if (autoCb) {
+      autoCb.addEventListener('change', () => {
+        if (autoCb.checked) startAuto(); else stopAuto();
+      });
+    }
+    if (autoSec) autoSec.addEventListener('change', () => { if (autoCb && autoCb.checked) startAuto(); });
     debug('Pagina inizializzata');
   } catch (e) {
     const el = document.getElementById('debug-output');

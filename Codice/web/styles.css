@@ -37,6 +37,43 @@ h1{
 	width:280px;
 	background-color:#ffffff;
 }
+/* Layout compatto per i controlli header */
+.controls{
+	display:flex;
+	align-items:center;
+	gap:10px;
+}
+.toolbar-btns{
+	display:flex;
+	gap:8px;
+	align-items:center;
+}
+.btn.small{
+	padding:6px 8px;
+	border-radius:6px;
+	border:1px solid #ccc;
+	background:#f7f7f7;
+	cursor:pointer;
+	font-size:1rem;
+}
+.compact-auto{
+	display:inline-flex;
+	align-items:center;
+	gap:6px;
+	font-size:0.95rem;
+}
+.small-input{
+	width:48px;
+	padding:6px;
+	border:1px solid #ddd;
+	border-radius:6px;
+}
+/*
+details #debug-section{
+}
+*/
+/* Rendere la ricerca responsive: occupa spazio disponibile su schermi piccoli */
+.controls input#search{width:min(280px,40vw)}
 table{
 	width:100%;
 	border-collapse:collapse;
