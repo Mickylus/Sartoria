@@ -1,0 +1,10 @@
+Progetto Sartoria - Istruzioni
+
+1.Installare Node
+ - Aprire termiale ed eseguire il comando: npm install -g nvp
+
+2.Avvio del server:
+ - Avviare il server locale tramite il file server_win.bat/server_mac_linux.sh
+
+3.Aprire il sito
+ - Andare sul browser ed incollare il seguente link: http://localhost:8000/web/index.html

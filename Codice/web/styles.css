@@ -70,40 +70,41 @@ h1{
 	margin:0;
 }
 .controls input{
-	padding:8px 10px;
-	border:1px solid #ddd;
+	padding:6px 8px;
+	border:1px solid #979286;
 	border-radius:6px;
 	width:280px;
-	background-color:#ffffff;
+	background-color:#ded6c4;
+	margin:0;
 }
 /* Layout compatto per i controlli header */
 .controls{
 	display:flex;
 	align-items:center;
-	gap:10px;
+	gap:6px; /* ridotto per avvicinare i controlli */
 }
 .toolbar-btns{
 	display:flex;
-	gap:8px;
+	gap:4px; /* spazio più compatto tra i bottoni */
 	align-items:center;
 }
 .btn.small{
-	padding:6px 8px;
+	padding:4px 6px;
 	border-radius:6px;
-	border:1px solid #ccc;
-	background:#f7f7f7;
+	border:1px solid #979286;
+	background:#ded6c4;
 	cursor:pointer;
-	font-size:1rem;
+	font-size:0.95rem;
 }
 .compact-auto{
 	display:inline-flex;
 	align-items:center;
-	gap:6px;
-	font-size:0.95rem;
+	gap:4px; /* avvicina checkbox/label */
+	font-size:0.93rem;
 }
 .small-input{
 	width:48px;
-	padding:6px;
+	padding:4px;
 	border:1px solid #ddd;
 	border-radius:6px;
 }
