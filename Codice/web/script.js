@@ -62,8 +62,8 @@ async function loadInventory() {
     const code = tokens[7] || '';        // codice stringa (es. Yellow80)
     // Il prezzo è stato mappato qui come token[13] (best-effort). Se hai
     // un significato preciso per le colonne, comunicamelo e aggiorno il mapping.
-    const price = parseFloat(tokens[13]) || 0;
-
+    const price = parseFloat(tokens[8]) || 0;
+    const var1 = parseFloat(tokens[13]) || 0;
     // La data sembra trovarsi in tre token separati (giorno mese anno)
     let date = '';
     if (tokens[10] && tokens[11] && tokens[12]) {
@@ -71,7 +71,7 @@ async function loadInventory() {
       date = `${tokens[10].padStart(2,'0')}/${tokens[11].padStart(2,'0')}/${tokens[12]}`;
     }
 
-    return { name, category, material, color, pattern, quantity, width, code, price, date };
+    return { name, category, material, color, pattern, quantity, width, code, price, date, var1 };
   });
   // keep items also global for debug
   try { window.__lastItems = items.slice(); } catch(e){}
@@ -319,20 +319,22 @@ function renderProjects(projects, inventoryItems) {
     const table = document.createElement('table');
     table.className = 'project-table';
     table.innerHTML = `
-      <thead><tr><th>Tessuto</th><th>Quantità richiesta</th><th>Disponibile</th><th>Stato</th></tr></thead>
+      <thead><tr><th>Tessuto</th><th>Quantità richiesta</th><th>Quantità disponibile</th><th>Stato</th></tr></thead>
       <tbody></tbody>
     `;
     const tbody = table.querySelector('tbody');
 
     for (const c of p.components) {
       const inv = inventoryItems.find(it => it.name === c.name);
-      const available = inv ? inv.quantity : 0;
-      const ok = available >= c.qty;
+      // Mostriamo la lunghezza (width) nella tabella, ma manteniamo
+      // il controllo di disponibilità basato sulla quantità effettiva.
+      const availableQty = inv ? inv.var1 : 0;
+      const ok = availableQty >= c.qty;
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${escapeHtml(c.name)}</td>
         <td>${c.qty}</td>
-        <td>${available}</td>
+        <td>${availableQty}</td>
         <td>${ok ? 'OK' : 'Scarso'}</td>
       `;
       tbody.appendChild(tr);

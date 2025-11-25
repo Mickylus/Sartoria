@@ -1,5 +1,5 @@
 :root{
-	--bg:#ffffff;
+	--bg:#a9a398b2;
 	--card:#fff;
 	--accent:#e4ebf8;
 	--muted:#666;
@@ -18,6 +18,45 @@ header{
 	align-items:center;
 	justify-content:space-between;
 	margin-bottom:12px;
+}
+div.descrizione{
+	text-align: justify;
+}
+/* rende il summary una riga flessibile e sposta il riepilogo a destra */
+#projects details > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* lo span di riepilogo nel summary (meta) */
+#projects details > summary span {
+  margin-left: auto;        /* spinge il riepilogo a destra */
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 400;
+}
+
+/* evidenzia quando il details è aperto */
+#projects details[open] > summary {
+  background: rgba(0,0,0,0.03);
+  border-radius: 6px;
+}
+code{
+	color: rgb(255, 255, 255);
+	background:#23272ec9;
+	padding: 1px;
+	padding-left: 6px;
+	padding-right: 6px;
+	margin: 1px;
+	border-radius: 6px;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.8rem;
+	font-weight: 500;
+
 }
 h1.titolo{
 	font-size: 1.5rem;
@@ -68,33 +107,49 @@ h1{
 	border:1px solid #ddd;
 	border-radius:6px;
 }
-/*
-details #debug-section{
+
+pre{
+	color:rgb(183, 183, 183);
+	white-space:pre-wrap;
+	max-height:300px;
+	overflow:auto;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.75rem;
+	font-weight: bold;
+	background:#23272e;
+	padding:8px;
+	border:2px solid #131212;
+	border-radius: 6px;
 }
-*/
+
 /* Rendere la ricerca responsive: occupa spazio disponibile su schermi piccoli */
-.controls input#search{width:min(280px,40vw)}
+.controls input#search{
+	width:min(280px,40vw);
+}
 table{
 	width:100%;
 	border-collapse:collapse;
 	background:var(--card);
 	box-shadow:0 1px 2px #0000001b;
 }
-
 th,td{
 	padding:8px 10px;
 	text-align:left;
-	border-bottom:1px solid #f1f1f1;
+	border-bottom:1px solid #50493bed;
 	font-size:0.92rem;
 	color: black;
 }
+td{
+	background: rgb(206, 202, 191);
+}
 thead th{
-	background:#2b2929c3;
+	background:#50493bed;
 	font-weight:600;
 	color: #ffffff;
 }
 tr:hover td{
-	background:#fcfcff;
+	background:#918978ce;
+	font-weight: 500;
 }
 .error{
 	color:#b33;

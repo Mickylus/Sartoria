@@ -8,6 +8,19 @@
 </head>
 <body>
   <h1 class="titolo">Sartoria</h1>
+  <div class="descrizione">
+    <p>
+      Questo progetto simula la gestione completa di una sartoria: permette di mantenere un inventario
+      di rotoli di tessuto, creare e modificare progetti (capo, quantità richieste, costo approssimato),
+      e simulare il taglio dei tessuti con produzione di scarti e aggiornamento dell'usura.
+    </p>
+    <p>
+      L'interfaccia web mostra l'inventario e l'elenco dei progetti leggendo i file di testo
+      <code>Inventario.txt</code> e <code>Progetti.txt</code> presenti nella cartella <code>Codice</code> del progetto. La pagina
+      fornisce strumenti rapidi di ricerca, ricarica manuale e un pannello di debug per ispezionare
+      il contenuto raw dei file quando necessario.
+    </p>
+  </div>
   <header>
     <h1>Inventario Tessuti</h1>
     <div id="fetch-status" style="font-size:0.85rem;color:#555;margin-top:6px">--</div>
@@ -43,9 +56,8 @@
       <tbody></tbody>
     </table>
   </main>
-  
   <section id="projects-section">
-    <h2>Progetti</h2>
+    <h2>Elenco Progetti</h2>
     <div id="projects">
       <!-- I progetti verranno inseriti qui dinamicamente -->
     </div>
@@ -53,9 +65,9 @@
   <br>
   <br>
   <details id="debug-section" style="margin-top:12px">
-    <summary style="cursor:pointer;font-weight:600">Debug (mostra/nascondi)</summary>
+    <summary style="cursor:pointer;font-weight:600">Debug ...</summary>
     <div style="margin-top:8px">
-      <pre id="debug-output" style="white-space:pre-wrap;max-height:300px;overflow:auto;background:#fff;padding:8px;border:1px solid #eee"></pre>
+      <pre id="debug-output"></pre>
     </div>
   </details>
   <script src="script.js"></script>
