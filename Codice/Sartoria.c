@@ -446,9 +446,9 @@ void nuovoPreset(int RCount, int PCount,int *PresetCount){
 		printf("Inserisci il nome del preset: ");
 		scanf(" %s",preset);
 		// genero il nome e percorso del file
-		strcpy(percorso,"Presets/");
-		strcat(preset,".txt");
-		strcat(percorso,preset);
+		strcpy(percorso,"Presets/");		// Ci aggiungo "Percorso/"
+		strcat(preset,".txt");				// Ci aggiungo ".txt"
+		strcat(percorso,preset);			// Li unisco
 		// Lo salvo
 		Preset=fopen(FILEPRESET,"w");
 		(*PresetCount)++;
@@ -821,7 +821,8 @@ int modificaProgetto(int dim,char filtro[],int RCount){
 	char val[100];
 	for(i=0;i<dim;i++){
 		if(strcmp(progetti[i].nome_progetto,filtro)==0){
-			do{	
+			do{
+				// Faccio selezionare il campo da modificare
 				system(CLEAR);
 				printf("MODIFICA:\n");
 				printf("(SU/GIU): Spostati, (INVIO): Seleziona, (ESC): Esci\n\n");
@@ -973,7 +974,7 @@ int mostraTessuti(int dim){
 			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");	
 			printf("Rotolo [%d/%d]\n",i+1,dim);
-			if(inventario[i].rot.usura>MAXUSURA){
+			if(inventario[i].rot.usura>MAXUSURA){	// Controllo che il rotolo sia utilizzabile
 				co(9);
 				printf("Rotolo inutilizzabile! E' necessario ricomprarlo per utilizzarlo di nuovo!\n");
 				co(8);
@@ -1044,6 +1045,7 @@ Funzione che elimina un progetto
 */
 int eliminaProgetto(int *PCount, char filtro[]){
 	int i,j;
+	// Riduco di 1 la dimensione dei progetti
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,filtro)==0){
 			for(j=i;j<*PCount-1;j++){
@@ -1118,6 +1120,8 @@ int nuovoProgetto(int *PCount,int RCount){
 			}while(progetti[i].rdim<=0 || progetti[i].rdim>RCount);
 			for(j=0;j<progetti[i].rdim;j++){
 				for(k=0;k<RCount;k++){
+					// Menu di scelta per selezionare il rotolo
+					// Ristampo tutti i messagi precedenti
 					system(CLEAR);
 					printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 					printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
@@ -1275,6 +1279,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 				u=progetti[dim].rotoli_richiesti[j].quantita_richiesta;
 				q=0;
 				// Valore
+				// Per il valore faccio il calcolo in base al prezzo per m^2
 				do{
 					if(u>q){
 						q++;
@@ -1282,6 +1287,7 @@ float calcolaCostoProgetto(int dim,int RCount){
 					}
 				}while(u>q);
 				// Costo
+				// Per il costo del progetto faccio il calcolo in base alle scorte che ho in magazzino
 				q=inventario[i].quantita_disponibile;
 				do{
 					if(u>q){
@@ -1302,6 +1308,7 @@ Funzione che elimina un rotolo
 */
 int eliminaRotolo(int *RCount, char filtro[]){
 	int i,j;
+	// Riduco di 1 l'elenco dei rotoli
 	for(i=0;i<*RCount;i++){
 		if(strcmp(inventario[i].codice_rotolo,filtro)==0){
 			for(j=i;j<*RCount-1;j++){
@@ -1325,6 +1332,7 @@ int modificaRotolo(int dim, char filtro[]){
 		if(strcmp(filtro,inventario[i].codice_rotolo)==0){
 			printf("Rotolo trovato!\n");
 			do{
+				// Menu con le freccie
 				system(CLEAR);
 				printf("MODIFICA:\n");
 				printf("(SU/GIU): Spostati, (INVIO): Seleziona, (ESC): Esci\n\n");
@@ -1448,6 +1456,7 @@ int nuovoRotolo(int *RCount){
 	if(*RCount>=MAXTESSUTI){
 		return 1;
 	}else{
+		// Assegno a i il valore di RCount per non scrivere ogni volta ...[*RCount] ed evitare errori a causa del puntatore
 		int i=*RCount,g,m,a,err,j;
 		char scelta='Y';
 		char val[100],v1[100],v2[100],v3[100];
@@ -1460,10 +1469,12 @@ int nuovoRotolo(int *RCount){
 			printf("\tCodice Rotolo: ");
 			scanf(" %s",inventario[i].codice_rotolo);							// Input codice rotolo
 			/*
+			CODICE NON UTILIZZATO
+			Controllo di ID gia' esistente rimosso per favorire la rotazione FIFO
 			for(j=0;j<*RCount;j++){
 				if(strcmp(inventario[j].codice_rotolo,inventario[i].codice_rotolo)==0){
 					errore("\tERRORE: Rotolo gia' esistente!\n\n");
-					err=1;
+					err=1;	// Eseguo di nuovo il ciclo
 				}
 			}
 			*/
@@ -1554,8 +1565,8 @@ int nuovoRotolo(int *RCount){
 Funzione che carica i dati dai due file e stampa messaggi di errore se si verificano
 */
 void caricaInventario(int *RCount, int *PCount,int *PresetCount){
-	int i,j;
-	FInv=fopen(FILEINVENTARIO,"r");
+	int i,j;	// Contatori usati per spostarsi nell'array
+	FInv=fopen(FILEINVENTARIO,"r");	// Apro il file dei tessuti in modalita' lettura
 	if(FInv==NULL){
 		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEINVENTARIO);
@@ -1570,7 +1581,7 @@ void caricaInventario(int *RCount, int *PCount,int *PresetCount){
 		printf("Caricati con successo i tessuti!\n");
 		co(7);
 	}
-	FProg=fopen(FILEPROGETTI,"r");
+	FProg=fopen(FILEPROGETTI,"r");	// Apro il file dei progetti in modalita' lettura
 	if(FProg==NULL){
 		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPROGETTI);
@@ -1609,36 +1620,39 @@ void caricaInventario(int *RCount, int *PCount,int *PresetCount){
 Funzione che salva i dati du due file separati, uno per l'inventario e uno per i progetti
 */
 void salvaInventario(int RCount, int PCount, int PresetCount){
-	int i,j;
-	FInv=fopen(FILEINVENTARIO,"w");
-	if(FInv==NULL){
+	int i,j;	// Contatori usati per spostarsi negli array
+	FInv=fopen(FILEINVENTARIO,"w");	// Apro il file dei tessuti e budget
+	if(FInv==NULL){		// Verifico chel'apertura sia andata a buon fine
 		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEINVENTARIO);
 		co(7);
 	}else{
 		// Salvo i tessuti
-		fprintf(FInv,"%d %f\n",RCount,budget);
+		fprintf(FInv,"%d %f\n",RCount,budget);		// Salvo il contatore dei tessuti e il budget
 		for(i=0;i<RCount;i++){
+			// Salvo un rotolo per righa
 			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].g,inventario[i].m,inventario[i].a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
 		}
 	}
-	FProg=fopen(FILEPROGETTI,"w");
-	if(FProg==NULL){
+	FProg=fopen(FILEPROGETTI,"w");	// Apro il file dei progetti
+	if(FProg==NULL){	// Verifico che l'apertura sia andata a buon fine
 		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPROGETTI);
 		co(7);
 	}else{
 		// Salvo i progetti
-		fprintf(FProg,"%d\n",PCount);
-		for(i=0;i<PCount;i++){
+		fprintf(FProg,"%d\n",PCount);	// Salvo il contatore dei progetti
+		for(i=0;i<PCount;i++){	
+			// Salvo il progetto
 			fprintf(FProg,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
+			// Salvo i rotoli richiesti con relativa quantita'
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 	}
-	Preset=fopen(FILEPRESET,"w");
-	if(Preset==NULL){
+	Preset=fopen(FILEPRESET,"w");	// Apro i file con i persorsi dei preset
+	if(Preset==NULL){	// Veriico che l'apertura abbia avuto successo
 		co(4);
 		printf("Si e' verificato un'errore nell'apertura del file '%s'.\n",FILEPRESET);
 		co(7);
@@ -1691,7 +1705,7 @@ int menu(int mode){
 			}else{
 				co(8);
 			}
-			switch(i){
+			switch(i){	// Stampo la scelta (se stato == i allora la coloro di bianco(15), altrimenti grigio(8))
 				case 1:
 					printf("\tGestione rotoli\n");
 					break;
@@ -1728,7 +1742,7 @@ int menu(int mode){
 	}while(tasto!=13);
 	stato=1;
 	if(s1==5){
-		return 51;
+		return 51;	// Codice di uscita
 	}
 	do{
 		system(CLEAR);
@@ -1738,6 +1752,7 @@ int menu(int mode){
 		printf("- - - - - - - - - - - - - - - - - - - - - - - -\n\n");
 		printf("[SU/GIU] Muoviti, [INVIO] Seleziona, [ESC] Esci\n");
 		for(j=1;j<6;j++){
+			// Evidenzio la scelta eseguita prima in blu (11)
 			if(j==s1){
 				co(11);
 			}else{
@@ -1821,7 +1836,7 @@ int menu(int mode){
 		tasto=pausa("");
 		// Torno indietro
 		if(tasto==27){
-			return menu(s1);
+			return menu(s1);  // Richiamo il menu passando come stato iniziale s1
 		}
 		if(tasto==1000){
 			stato--;
@@ -1849,12 +1864,12 @@ int menu(int mode){
 		}
 	}while(tasto!=13);
 	co(7);
-	system(CLEAR);
-	return s1*10 + s2;
+	system(CLEAR);		// Pulisco lo schermo
+	return s1*10 + s2;	// Ritorno la scelta (s1*10 + s2)
 }
 // Funzione che resetta il programma
 void reset(int *RCount, int *PCount){
-	budget=BUDGETINIZIALE;
-	*RCount=0;
-	*PCount=0;
+	budget=BUDGETINIZIALE;	// resetto il budget
+	*RCount=0;				// Imposto i contatori dei progetti e dei rotoli a 0
+	*PCount=0;				// in modo che il programma non li legga più
 }
