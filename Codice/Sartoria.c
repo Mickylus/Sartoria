@@ -113,14 +113,14 @@ int avviaTaglio(int*,char[],int);				// Avvia il taglio (rimuove i progetti in a
 int mostraTessuti(int);			// Mostra i tessuti
 int controlloTessuti(int);			// Controlla i tessuti con usura troppo alta e ne propone la sostituzione
 int rotazioneScorte(int);			// Ruota le scorte
-// Should
 float aumentoUsura(float);				// Aumenta l'usura (a ogni azione o a caso. ancora da decidere...)
-void salvaInventario(int,int,int);		// Sotto forma di file .txt
-void caricaInventario(int*,int*,int*);	// e salva sia tessuti che progetti
-void reset(int*,int*);				// reset inventario
 void aggiorna(int,int);				// aggiorna i dati
 int assegnaScarti(float);			// assegna gli scarti del progetto in base al taglio effettuato
 void riacquista(int);				// ricompra il rotolo
+// Should
+void salvaInventario(int,int,int);		// Sotto forma di file .txt
+void caricaInventario(int*,int*,int*);	// e salva sia tessuti che progetti
+void reset(int*,int*);				// reset inventario
 void nuovoPreset(int,int,int*);		// Crea un nuovo preset
 void caricaPreset(int*,int*,char[]);// Carica un preset
 int mostraPreset(int*,int*,int*);	// Mostra i preset
