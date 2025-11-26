@@ -359,7 +359,7 @@ void caricaPreset(int *RCount, int *PCount, char percorso_preset[]){
 		// leggo i progetti
 		fscanf(Preset,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(Preset,"%s %f %d %f %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
+			fscanf(Preset,"%s %f %d %d %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fscanf(Preset,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
@@ -449,11 +449,17 @@ void nuovoPreset(int RCount, int PCount,int *PresetCount){
 		strcpy(percorso,"Presets/");		// Ci aggiungo "Percorso/"
 		strcat(preset,".txt");				// Ci aggiungo ".txt"
 		strcat(percorso,preset);			// Li unisco
-		// Lo salvo
+		// Lo salvo: apro il file master dei preset e verifico l'apertura
 		Preset=fopen(FILEPRESET,"w");
+		if(Preset==NULL){
+			co(4);
+			printf("Errore: impossibile aprire '%s' per scrittura. Preset non salvato.\n", FILEPRESET);
+			co(7);
+			return;
+		}
 		(*PresetCount)++;
 		strcpy(ArrayPreset[*PresetCount-1],percorso);
-		fprintf(Preset,"%d\n",*PresetCount);
+		fprintf(Preset, "%d\n", *PresetCount);
 		for(i=0;i<*PresetCount;i++){
 			fprintf(Preset,"%s\n",ArrayPreset[i]);
 		}
@@ -464,9 +470,9 @@ void nuovoPreset(int RCount, int PCount,int *PresetCount){
 		for(i=0;i<RCount;i++){
 			fprintf(Preset,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].g,inventario[i].m,inventario[i].a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
 		}
-		fprintf(Preset,"%d\n",PCount);
-		for(i=0;i<PCount;i++){
-			fprintf(Preset,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
+		fprintf(Preset, "%d\n", PCount);
+		for (i=0;i<PCount;i++) {
+			fprintf(Preset,"%s %f %d %d %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(Preset,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
@@ -1672,7 +1678,8 @@ void salvaInventario(int RCount, int PCount, int PresetCount){
 		fprintf(FProg,"%d\n",PCount);	// Salvo il contatore dei progetti
 		for(i=0;i<PCount;i++){	
 			// Salvo il progetto
-			fprintf(FProg,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
+			// scarti_richiesti e' un int; usare %d per evitare output malformato
+			fprintf(FProg, "%s %f %d %d %s %d %f %f %f\n", progetti[i].nome_progetto, progetti[i].costo_approssimato, progetti[i].mini, progetti[i].scarti_richiesti, progetti[i].tipoCapo, progetti[i].rdim, progetti[i].paga, progetti[i].ricavi, progetti[i].valore);
 			// Salvo i rotoli richiesti con relativa quantita'
 			for(j=0;j<progetti[i].rdim;j++){
 				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
