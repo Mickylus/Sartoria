@@ -468,7 +468,7 @@ void nuovoPreset(int RCount, int PCount,int *PresetCount){
 		for(i=0;i<PCount;i++){
 			fprintf(Preset,"%s %f %d %f %s %d %f %f %f\n",progetti[i].nome_progetto,progetti[i].costo_approssimato,progetti[i].mini,progetti[i].scarti_richiesti,progetti[i].tipoCapo,progetti[i].rdim,progetti[i].paga,progetti[i].ricavi,progetti[i].valore);
 			for(j=0;j<progetti[i].rdim;j++){
-				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
+				fprintf(Preset,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 		fclose(Preset);
