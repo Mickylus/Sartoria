@@ -11,6 +11,7 @@
 #else
     #include <termios.h> // per impostazioni terminale su Linux/macOS
     #include <unistd.h>  // per STDIN_FILENO
+	#define MAXINT 2147483647 // Definisce il massimo intero
 #endif
 
 /*

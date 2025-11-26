@@ -1,7 +1,10 @@
 Progetto Sartoria - Istruzioni
 
 1.Installare Node
- - Aprire termiale ed eseguire il comando: npm install -g nvp
+ - Aprire termiale ed eseguire i comandi: 
+ 	winget install OpenJS.NodeJS
+	npm install -g nvp
+	npm install -g http-server
 
 2.Avvio del server:
  - Avviare il server locale tramite il file server_win.bat/server_mac_linux.sh
