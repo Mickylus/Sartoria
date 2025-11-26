@@ -57,13 +57,13 @@ async function loadInventory() {
     const material = tokens[2] || '';    // es. Sintetico
     const color = tokens[3] || '';       // es. Giallo
     const pattern = tokens[4] || '';     // es. Nessuna / Righe
-    const quantity = parseFloat(tokens[5]) || 0; // quantità (es. metri)
+    const quantity = parseFloat(tokens[5]) || 0; // Lunghezza (es. metri)
     const width = parseFloat(tokens[6]) || 0;    // larghezza o altro valore numerico
     const code = tokens[7] || '';        // codice stringa (es. Yellow80)
     // Il prezzo è stato mappato qui come token[13] (best-effort). Se hai
     // un significato preciso per le colonne, comunicamelo e aggiorno il mapping.
     const price = parseFloat(tokens[8]) || 0;
-    const var1 = parseFloat(tokens[13]) || 0;
+    const disp = parseFloat(tokens[13]) || 0;
     // La data sembra trovarsi in tre token separati (giorno mese anno)
     let date = '';
     if (tokens[10] && tokens[11] && tokens[12]) {
@@ -71,7 +71,7 @@ async function loadInventory() {
       date = `${tokens[10].padStart(2,'0')}/${tokens[11].padStart(2,'0')}/${tokens[12]}`;
     }
 
-    return { name, category, material, color, pattern, quantity, width, code, price, date, var1 };
+    return { name, category, material, color, pattern, quantity, width, code, price, date, disp };
   });
   // keep items also global for debug
   try { window.__lastItems = items.slice(); } catch(e){}
@@ -140,15 +140,29 @@ async function loadProjects() {
   const lines = txt.trim().split(/\r?\n/).filter(Boolean);
   if (lines.length === 0) return [];
 
-  // Skip primo numero (numero progetti) se presente
-  let idx = 1;
+  // Decido se saltare la prima riga: alcuni file hanno il numero di progetti
+  // nella prima riga, altri no. Se la prima riga è un intero valido e
+  // minore del numero di righe totali la trattiamo come count e iniziamo
+  // dalla riga successiva; altrimenti iniziamo dalla riga 0.
+  let idx = 0;
+  const possibleCount = parseInt(lines[0], 10);
+  if (Number.isFinite(possibleCount) && possibleCount > 0 && possibleCount < lines.length) {
+    idx = 1;
+  }
   const projects = [];
   while (idx < lines.length) {
-    const headerTokens = lines[idx].split(/\s+/);
-    const projName = headerTokens[0] || `progetto_${projects.length+1}`;
-    // Il numero di componenti sembra trovarsi token[5] (best-effort)
-    const numComp = parseInt(headerTokens[5], 10) || 0;
-    const rawFields = headerTokens;
+    try {
+      const headerLine = lines[idx] || '';
+      const headerTokens = headerLine.split(/\s+/);
+      const projName = headerTokens[0] || `progetto_${projects.length+1}`;
+      // Il numero di componenti sembra trovarsi token[5] (best-effort)
+      let numComp = parseInt(headerTokens[5], 10);
+      if (!Number.isFinite(numComp) || numComp < 0) numComp = 0;
+      // Non permettiamo che numComp superi le righe rimanenti (prevenire letture fuori
+      // limite se il file è malformato). Se rimane 0 o negativo, procederemo comunque.
+      const maxPossible = Math.max(0, lines.length - idx - 1);
+      if (numComp > maxPossible) numComp = maxPossible;
+      const rawFields = headerTokens;
     // Provo a leggere possibili valori numerici presenti nell'header del progetto
     // token[6] frequentemente è ricavo, token[7]/[8] possono contenere duplicati
     // o il costo; applichiamo una semplice heuristica per scegliere il valore
@@ -163,16 +177,23 @@ async function loadProjects() {
     else if (Number.isFinite(t7) && t7 > 0 && t7 !== projectRevenue) projectCostFromFile = t7;
     else projectCostFromFile = 0;
     const components = [];
-    for (let j = 0; j < numComp; j++) {
-      const compLine = lines[idx + 1 + j];
-      if (!compLine) break;
-      const t = compLine.split(/\s+/);
-      const name = t[0] || '';
-      const qty = parseFloat(t[1]) || 0;
-      components.push({ name, qty });
+      for (let j = 0; j < numComp; j++) {
+        const compLine = lines[idx + 1 + j];
+        if (!compLine) break;
+        const t = compLine.split(/\s+/);
+        const name = t[0] || '';
+        const qty = parseFloat(t[1]) || 0;
+        components.push({ name, qty });
+      }
+      projects.push({ name: projName, rawFields, components, revenue: projectRevenue, costFromFile: projectCostFromFile });
+      // Avanzamento indice: garantire che idx aumenti sempre di almeno 1 per evitare loop infiniti
+      const advance = 1 + Math.max(0, numComp);
+      idx += advance;
+    } catch (err) {
+      // Se qualcosa va storto nel parsing di una sezione, logghiamo e interrompiamo
+      debug('Errore parsing progetto alla riga ' + idx + ': ' + err);
+      break;
     }
-    projects.push({ name: projName, rawFields, components, revenue: projectRevenue, costFromFile: projectCostFromFile });
-    idx += 1 + numComp;
   }
   return projects;
 }
@@ -328,7 +349,7 @@ function renderProjects(projects, inventoryItems) {
       const inv = inventoryItems.find(it => it.name === c.name);
       // Mostriamo la lunghezza (width) nella tabella, ma manteniamo
       // il controllo di disponibilità basato sulla quantità effettiva.
-      const availableQty = inv ? inv.var1 : 0;
+      const availableQty = inv ? inv.disp : 0;
       const ok = availableQty >= c.qty;
       const tr = document.createElement('tr');
       tr.innerHTML = `

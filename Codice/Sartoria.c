@@ -483,6 +483,7 @@ Funzione che ordina le scorte in base alla data
 int rotazioneScorte(int RCount){
 	int f=1,i,j;
 	struct scheda temp;
+	// Le ordino in base alla data
 	for(i=0;i<RCount;i++){
 		if(cmpData(inventario[i].g,inventario[i].m,inventario[i].a,inventario[i+1].g,inventario[i+1].m,inventario[i+1].a)==1){
 			for(j=i;j<RCount-1;j++){
@@ -566,6 +567,7 @@ int controlloTessuti(int RCount){
 // Funzione che assegna l'usura in base al taglio effettuato
 float aumentoUsura(float q){
 	int max;
+	// Calcolo l'usura del rotolo in base alla quantita' tagliata
 	max=(int)q*0.39;
 	if(max<1){
 		max=1;
@@ -589,9 +591,11 @@ void riacquista(int i){
 	inventario[i].m=m;
 	inventario[i].a=a;
 	if(inventario[i].rot.usura>MAXUSURA){
+		// resetto l'ussura
 		inventario[i].quantita_disponibile=0;
 		inventario[i].rot.usura=0;
 	}else{
+		// Diminusico l'usura generale in quanto la parte usurata e' ancora presente
 		inventario[i].rot.usura-=aumentoUsura(inventario[i].quantita_disponibile);
 	}
 	inventario[i].quantita_disponibile+=inventario[i].rot.lunghezza*(inventario[i].rot.larghezza/100);
@@ -606,16 +610,22 @@ Viene avviato il taglio e rimosso il progetto
 0: Sucesso
 */
 int avviaTaglio(int *PCount, char nome[],int RCount){
+	// Variabili
 	int i,j,k,f=1;
+	/* Inutilizzata
 	float tot=0;
+	*/
 	int durata=0,g,m,a,err;
 	char v1[100],v2[100],v3[100];
+	// Cerco il progetto
 	for(i=0;i<*PCount;i++){
 		if(strcmp(progetti[i].nome_progetto,nome)==0){
-			f=0;
+			f=0;	// Segnalo che il prgetto e' stato trovato
+			// Ricontrollo i costi del progetto (per sicurezza)
 			progetti[i].costo_approssimato=calcolaCostoProgetto(i,RCount);
 			progetti[i].ricavi=progetti[i].paga-progetti[i].costo_approssimato;
 			co(8);
+			// Chiedo la data di oggi in caso si debba riacquistare un rotolo
 			do{
 				printf("\nIserisci la data di oggi (GG MM AAAA): ");
 				scanf(" %s %s %s",v1,v2,v3);
@@ -627,6 +637,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 				}
 			}while(err!=0);
 			printf("Avvio taglio in corso...\n\n");
+			// Stampo i ricavi stimati, in verde se positivi e in rosso se negativi
 			printf("Ricavi stimati: ");
 			if(progetti[i].ricavi<0){
 				co(4);
@@ -638,17 +649,24 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			printf(" euro\n");
 			for(j=0;j<progetti[i].rdim;j++){
 				for(k=0;k<RCount;k++){
+					// Cerco i tessuti di ogni progetto
 					if(strcmp(progetti[i].rotoli_richiesti[j].rotolo_richiesto,inventario[k].codice_rotolo)==0){
+						// Controllo che tipo di progetto e'
 						if(progetti[i].mini==0){
+							// Controllo che il rotolo sia utilizzabile
 							if(inventario[k].rot.usura<MAXUSURA){
 								inventario[k].utilizzo_previsto=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+								/* Inutilizzata
 								tot+=progetti[i].rotoli_richiesti[j].quantita_richiesta;
+								*/
+								// Aumento l'usura
 								if(inventario[k].utilizzo_previsto<inventario[k].quantita_disponibile){
 									inventario[k].rot.usura+=aumentoUsura(inventario[k].utilizzo_previsto);
 								}else{
 									inventario[k].rot.usura=0;
 								}
 								do{
+									// Ricompro il rotolo fino a quando ne ho abbastanza
 									if(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto){
 										inventario[k].quantita_disponibile++;
 										budget-=inventario[k].rot.costo/((inventario[k].rot.larghezza/100)*inventario[k].rot.lunghezza);
@@ -658,20 +676,26 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 										inventario[k].a=a;
 									}
 								}while(inventario[k].quantita_disponibile<inventario[k].utilizzo_previsto);
+								// Prelevo il tessuto
 								inventario[k].quantita_disponibile-=inventario[k].utilizzo_previsto;
+								// Assegno gli scarti
 								inventario[k].scarti_utilizzabili+=assegnaScarti(inventario[k].utilizzo_previsto);
+								// Controllo che la percentuale di usura non sfori
 								if(inventario[k].rot.usura>100){
 									inventario[k].rot.usura=100;
 								}
 							}else{
+								// Stampo il messaggio di errore
 								errore("ERRORE: Il tessuto e' troppo consumato per essere usato! Interrompo il progetto...\n");
 								return 1;
 							}
 						}else{
 							if(progetti[i].scarti_richiesti>inventario[k].scarti_utilizzabili){
+								// Stampo il messaggio di errore
 								errore("ERRORE: Non ci sono abbastanza scarti per questo progetto!\n");
 								return 1;
 							}else{
+								// Prelevo gli scarti
 								inventario[k].scarti_utilizzabili-=progetti[i].scarti_richiesti;
 							}
 						}
@@ -689,6 +713,7 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 			printf("Durata stimata: %ds\n",durata);			
 			caricamento("Taglio in corso ",durata);
 			*/
+			// Aggiorno il budget
 			printf("\n");
 			printf("Taglio effettuato!\n");
 			budget+=progetti[i].paga;
@@ -696,12 +721,14 @@ int avviaTaglio(int *PCount, char nome[],int RCount){
 		}
 	}
 	co(7);
+	// Aggiorno i dati
 	aggiorna(RCount,*PCount);
 	return f;
 }
 // Assegna gli scarti in base al taglio effettuato
 int assegnaScarti(float q){
 	int max;
+	// Assegno gli scarti in base alla quantita' tagliata
 	max=(int)q * SCARTI;
 	if(max<1){
 		max=1;
@@ -717,6 +744,7 @@ int mostraProgetti(int *PCount, int RCount){
 		// Controllo se ci sono progetti
 		f=0;
 		do{
+			// Menu a freccie
 			system(CLEAR);
 			printf("- - - - - - - - - - - - - - - - - - - - - - - -\n");
 			printf(" Menu Sartoria      |  Budget: %.2f euro\n",budget);
