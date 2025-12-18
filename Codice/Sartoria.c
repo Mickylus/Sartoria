@@ -1609,7 +1609,22 @@ void caricaInventario(int *RCount, int *PCount,int *PresetCount){
 		// leggo i tessuti
 		fscanf(FInv,"%d %f",RCount,&budget);
 		for(i=0;i<*RCount;i++){
-			fscanf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,&inventario[i].rot.lunghezza,&inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,&inventario[i].rot.costo,&inventario[i].rot.usura,&inventario[i].g,&inventario[i].m,&inventario[i].a,&inventario[i].quantita_disponibile,&inventario[i].utilizzo_previsto,&inventario[i].scarti_utilizzabili);
+			fscanf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d",
+				inventario[i].codice_rotolo,
+				inventario[i].fornitore,
+				inventario[i].rot.tipo_tessuto,
+				inventario[i].rot.colore,
+				inventario[i].rot.fantasia,
+				&inventario[i].rot.lunghezza,
+				&inventario[i].rot.larghezza,
+				inventario[i].rot.codice_fornitura,
+				&inventario[i].rot.costo,
+				&inventario[i].rot.usura,
+				&inventario[i].g,&inventario[i].m,&inventario[i].a,
+				&inventario[i].quantita_disponibile,
+				&inventario[i].utilizzo_previsto,
+				&inventario[i].scarti_utilizzabili
+			);
 		}
 		co(2);
 		printf("Caricati con successo i tessuti!\n");
@@ -1624,9 +1639,21 @@ void caricaInventario(int *RCount, int *PCount,int *PresetCount){
 		// leggo i progetti
 		fscanf(FProg,"%d",PCount);
 		for(i=0;i<*PCount;i++){
-			fscanf(FProg,"%s %f %d %f %s %d %f %f %f",progetti[i].nome_progetto,&progetti[i].costo_approssimato,&progetti[i].mini,&progetti[i].scarti_richiesti,progetti[i].tipoCapo,&progetti[i].rdim,&progetti[i].paga,&progetti[i].ricavi,&progetti[i].valore);
+			fscanf(FProg,"%s %f %d %f %s %d %f %f %f",
+				progetti[i].nome_progetto,
+				&progetti[i].costo_approssimato,
+				&progetti[i].mini,
+				&progetti[i].scarti_richiesti,
+				progetti[i].tipoCapo,
+				&progetti[i].rdim,
+				&progetti[i].paga,
+				&progetti[i].ricavi,
+				&progetti[i].valore
+			);
 			for(j=0;j<progetti[i].rdim;j++){
-				fscanf(FProg,"%s %f",progetti[i].rotoli_richiesti[j].rotolo_richiesto,&progetti[i].rotoli_richiesti[j].quantita_richiesta);
+				fscanf(FProg,"%s %f",
+					progetti[i].rotoli_richiesti[j].rotolo_richiesto,
+					&progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 		co(2);
@@ -1665,7 +1692,21 @@ void salvaInventario(int RCount, int PCount, int PresetCount){
 		fprintf(FInv,"%d %f\n",RCount,budget);		// Salvo il contatore dei tessuti e il budget
 		for(i=0;i<RCount;i++){
 			// Salvo un rotolo per righa
-			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",inventario[i].codice_rotolo,inventario[i].fornitore,inventario[i].rot.tipo_tessuto,inventario[i].rot.colore,inventario[i].rot.fantasia,inventario[i].rot.lunghezza,inventario[i].rot.larghezza,inventario[i].rot.codice_fornitura,inventario[i].rot.costo,inventario[i].rot.usura,inventario[i].g,inventario[i].m,inventario[i].a,inventario[i].quantita_disponibile,inventario[i].utilizzo_previsto,inventario[i].scarti_utilizzabili);
+			fprintf(FInv,"%s %s %s %s %s %f %f %s %f %f %d %d %d %f %f %d\n",
+				inventario[i].codice_rotolo,
+				inventario[i].fornitore,
+				inventario[i].rot.tipo_tessuto,
+				inventario[i].rot.colore,
+				inventario[i].rot.fantasia,
+				inventario[i].rot.lunghezza,
+				inventario[i].rot.larghezza,
+				inventario[i].rot.codice_fornitura,
+				inventario[i].rot.costo,
+				inventario[i].rot.usura,
+				inventario[i].g,inventario[i].m,inventario[i].a,
+				inventario[i].quantita_disponibile,
+				inventario[i].utilizzo_previsto,
+				inventario[i].scarti_utilizzabili);
 		}
 	}
 	FProg=fopen(FILEPROGETTI,"w");	// Apro il file dei progetti
@@ -1679,10 +1720,22 @@ void salvaInventario(int RCount, int PCount, int PresetCount){
 		for(i=0;i<PCount;i++){	
 			// Salvo il progetto
 			// scarti_richiesti e' un int; usare %d per evitare output malformato
-			fprintf(FProg, "%s %f %d %d %s %d %f %f %f\n", progetti[i].nome_progetto, progetti[i].costo_approssimato, progetti[i].mini, progetti[i].scarti_richiesti, progetti[i].tipoCapo, progetti[i].rdim, progetti[i].paga, progetti[i].ricavi, progetti[i].valore);
+			fprintf(FProg, "%s %f %d %d %s %d %f %f %f\n",
+				progetti[i].nome_progetto,
+				progetti[i].costo_approssimato,
+				progetti[i].mini,
+				progetti[i].scarti_richiesti,
+				progetti[i].tipoCapo,
+				progetti[i].rdim,
+				progetti[i].paga,
+				progetti[i].ricavi,
+				progetti[i].valore
+			);
 			// Salvo i rotoli richiesti con relativa quantita'
 			for(j=0;j<progetti[i].rdim;j++){
-				fprintf(FProg,"%s %f\n",progetti[i].rotoli_richiesti[j].rotolo_richiesto,progetti[i].rotoli_richiesti[j].quantita_richiesta);
+				fprintf(FProg,"%s %f\n",
+					progetti[i].rotoli_richiesti[j].rotolo_richiesto,
+					progetti[i].rotoli_richiesti[j].quantita_richiesta);
 			}
 		}
 	}
