@@ -362,7 +362,7 @@ int main(){
 			system(CLEAR);        // Pulisco lo schermo
 		}
 		co(7);
-	}while(scelta!=51);
+	}while(scelta!=61);
 	return 0;
 }
 // Funzione che elimina un preset
@@ -1568,9 +1568,9 @@ int nuovoRotolo(int *RCount){
 		// Integrazione con sistema fornitori: se ci sono fornitori registrati li mostro e permetto la scelta
 		if(FornCount>0){
 			co(8);
-			printf("Fornitori registrati:\n");
+			printf("\tFornitori registrati:\n");
 			for(j=0;j<FornCount;j++){
-				printf("\t%s - %s - %s\n",fornitori[j].nome, fornitori[j].provenienza, fornitori[j].specialita);
+				printf("\t\t%s - %s - %s\n",fornitori[j].nome, fornitori[j].provenienza, fornitori[j].specialita);
 			}
 			co(7);
 			printf("\tFornitore (inserire nome o nuovo nome): ");
