@@ -2103,7 +2103,7 @@ int menu(int mode){
 }
 // Funzione che resetta il programma
 void reset(int *RCount, int *PCount){
-	budget=BUDGETINIZIALE;    // resetto il budget
+	budget=BUDGETINIZIALE;	  // resetto il budget
 	*RCount=0;                // Imposto i contatori dei progetti e dei rotoli a 0
 	*PCount=0;                // in modo che il programma non li legga più
 }
